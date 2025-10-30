@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function renderEntries() {
     dashboardLogs.innerHTML = "<p><em>Lade Einträge …</em></p>";
 
-    const { data: entries, error } = await window.supabase
+    const { data: entries, error } = await window.supabaseClient
       .from("dashboard_entries")
       .select("id, user_id, title, message, created_at, deleted")
       .eq("deleted", false)
@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function deleteEntry(id) {
     if (!confirm("Eintrag wirklich löschen, Kapitän?")) return;
 
-    const { error } = await window.supabase
+    const { error } = await window.supabaseClient
       .from("dashboard_entries")
       .update({ deleted: true })
       .eq("id", id);
