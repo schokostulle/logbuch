@@ -7,7 +7,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     // 🚪 Abmelden über Supabase Auth
-    const { error } = await window.supabase.auth.signOut();
+    const { error } = await window.supabaseClient.auth.signOut();
     if (error) {
       console.error("Fehler beim Abmelden:", error);
       alert("Beim Abmelden ist ein Fehler aufgetreten.");
