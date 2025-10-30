@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // 🔐 2️⃣ Aktuelle Sitzung laden
-    const { data: sessionData, error: sessionError } = await window.supabase.auth.getUser();
+    const { data: sessionData, error: sessionError } = await window.supabaseClient.auth.getUser();
 
     if (sessionError || !sessionData?.user) {
       console.warn("Keine aktive Sitzung gefunden. Weiterleitung zur Anmeldung.");
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const authUser = sessionData.user;
 
     // ⚓ 3️⃣ Benutzerstatus aus 'users'-Tabelle laden
-    const { data: userData, error: userError } = await window.supabase
+    const { data: userData, error: userError } = await window.supabaseClient
       .from("users")
       .select("id, username, role, status, deleted")
       .eq("id", authUser.id)
@@ -36,14 +36,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (userError) {
       console.error("Fehler beim Laden der Benutzerinformationen:", userError);
       alert("Fehler beim Benutzerabgleich. Bitte erneut anmelden.");
-      await window.supabase.auth.signOut();
+      await window.supabaseClient.auth.signOut();
       window.location.href = "login.html";
       return;
     }
 
     if (!userData) {
       console.warn("Kein Eintrag in users-Tabelle für diesen Account.");
-      await window.supabase.auth.signOut();
+      await window.supabaseClient.auth.signOut();
       window.location.href = "login.html";
       return;
     }
@@ -51,14 +51,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 🚫 4️⃣ Sicherheitsprüfungen
     if (userData.deleted) {
       alert("Zugang verweigert – Benutzer wurde gelöscht.");
-      await window.supabase.auth.signOut();
+      await window.supabaseClient.auth.signOut();
       window.location.href = "login.html";
       return;
     }
 
     if (userData.status?.toLowerCase() !== "aktiv") {
       alert("Zugang verweigert – dein Account ist nicht aktiv. Bitte Admin kontaktieren.");
-      await window.supabase.auth.signOut();
+      await window.supabaseClient.auth.signOut();
       window.location.href = "login.html";
       return;
     }
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (err) {
     console.error("❌ Unerwarteter Fehler im access-guard:", err);
     alert("Ein unerwarteter Fehler ist aufgetreten. Du wirst ausgeloggt.");
-    await window.supabase.auth.signOut();
+    await window.supabaseClient.auth.signOut();
     window.location.href = "login.html";
   }
 });
