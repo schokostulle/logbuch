@@ -1,6 +1,6 @@
 // =============================================================
-// Kampfberichte.js – v2.3  (Build 03.11.2025)
-// Unterstützt beide Formate (Markdown + Tab-getrennt)
+// berichte.js – v2.5 (Build 03.11.2025)
+// Ausgabe exakt passend zur HTML-Tabelle
 // =============================================================
 
 import { supabase } from "./logbuch.js";
@@ -27,8 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     const entry = {
-      attacker: parsed.attackerName || `Angreifer (${username})`,
-      defender: parsed.defenderName || "Verteidiger",
+      user: username,
       oz: parsed.coords?.oz ?? null,
       ig: parsed.coords?.ig ?? null,
       i: parsed.coords?.i ?? null,
@@ -51,11 +50,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     await renderLogs();
   });
 
-  // ------------------------------------------------------------
-  // Logs anzeigen
-  // ------------------------------------------------------------
+  // =============================================================
+  // Tabellen-Rendering (passend zu Kopfstruktur)
+  // =============================================================
   async function renderLogs() {
-    tbody.innerHTML = "<tr><td colspan='8'><em>Lade Berichte...</em></td></tr>";
+    tbody.innerHTML = "<tr><td colspan='50'><em>Lade Berichte...</em></td></tr>";
 
     const { data, error } = await supabase
       .from("battle_reports")
@@ -64,35 +63,81 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (error) {
       console.error("SUPABASE LOAD ERROR:", error);
-      tbody.innerHTML = "<tr><td colspan='8'><em>Fehler beim Laden.</em></td></tr>";
+      tbody.innerHTML = "<tr><td colspan='50'><em>Fehler beim Laden.</em></td></tr>";
       return;
     }
 
     if (!data || data.length === 0) {
-      tbody.innerHTML = "<tr><td colspan='8'><em>Keine Berichte vorhanden.</em></td></tr>";
+      tbody.innerHTML = "<tr><td colspan='50'><em>Keine Berichte vorhanden.</em></td></tr>";
       return;
     }
 
     tbody.innerHTML = "";
     data.forEach((r) => {
+      const u = r.attacker_units || {};
+      const v = r.defender_units || {};
+      const b = r.destroyed_buildings || {};
+      const f = r.research_changes || {};
+
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${new Date(r.created_at).toLocaleString("de-DE")}</td>
-        <td>${r.attacker}</td>
-        <td>${r.defender}</td>
-        <td>${r.oz}:${r.ig}:${r.i}</td>
-        <td><pre>${JSON.stringify(r.attacker_units, null, 2)}</pre></td>
-        <td><pre>${JSON.stringify(r.defender_units, null, 2)}</pre></td>
-        <td><pre>${JSON.stringify(r.destroyed_buildings, null, 2)}</pre></td>
-        <td><pre>${JSON.stringify(r.research_changes, null, 2)}</pre></td>
+        <td>${r.user || "?"}</td>
+        <td>${r.oz ?? ""}</td>
+        <td>${r.ig ?? ""}</td>
+        <td>${r.i ?? ""}</td>
+
+        <!-- Einheiten -->
+        <td>${u.Steinschleuderer?.total ?? 0}</td>
+        <td>${u.Lanzenträger?.total ?? 0}</td>
+        <td>${u.Langbogenschütze?.total ?? 0}</td>
+        <td>${u.Kanonen?.total ?? 0}</td>
+        <td>${u.Fregatte?.total ?? 0}</td>
+        <td>${u.Handelskogge?.total ?? 0}</td>
+        <td>${u.Kolonialschiff?.total ?? 0}</td>
+        <td>${u.Spähschiff?.total ?? 0}</td>
+
+        <!-- Verluste -->
+        <td>${u.Steinschleuderer?.losses ?? 0}</td>
+        <td>${u.Lanzenträger?.losses ?? 0}</td>
+        <td>${u.Langbogenschütze?.losses ?? 0}</td>
+        <td>${u.Kanonen?.losses ?? 0}</td>
+        <td>${u.Fregatte?.losses ?? 0}</td>
+        <td>${u.Handelskogge?.losses ?? 0}</td>
+        <td>${u.Kolonialschiff?.losses ?? 0}</td>
+        <td>${u.Spähschiff?.losses ?? 0}</td>
+
+        <!-- Gebäude -->
+        ${renderBuilding(b, "Hauptgebäude")}
+        ${renderBuilding(b, "Goldbergwerk")}
+        ${renderBuilding(b, "Steinbruch")}
+        ${renderBuilding(b, "Holzfällerhütte")}
+        ${renderBuilding(b, "Universität")}
+        ${renderBuilding(b, "Baracke")}
+        ${renderBuilding(b, "Werft")}
+        ${renderBuilding(b, "Lagerhaus")}
+        ${renderBuilding(b, "Steinwall")}
+        ${renderBuilding(b, "Wachturm")}
+        ${renderBuilding(b, "Ruhestätte")}
+
+        <!-- Forschungen -->
+        <td>${f.Lanze ?? 0}</td>
+        <td>${f.Schild ?? 0}</td>
+        <td>${f.Langbogen ?? 0}</td>
+        <td>${f.Kanone ?? 0}</td>
       `;
       tbody.appendChild(tr);
     });
   }
+
+  function renderBuilding(obj, name) {
+    const v = obj[name] || {};
+    return `<td>${v.vor ?? ""}</td><td>${v.neu ?? ""}</td>`;
+  }
 });
 
 // =============================================================
-// Parser (robust gegen Formatvarianten)
+// Parser v2.5 – erkennt Einheiten, Gebäude, Forschungen etc.
 // =============================================================
 function parseReport(text) {
   const lines = text
@@ -122,119 +167,73 @@ function parseReport(text) {
     "Lagerhaus",
     "Steinwall",
     "Wachturm",
+    "Ruhestätte",
   ];
   const RESEARCH_KEYS = ["Lanze", "Schild", "Langbogen", "Kanone"];
 
-  let attackerName = "";
-  let defenderName = "";
   let coords = null;
   let attackerUnits = {};
   let defenderUnits = {};
   let destroyedBuildings = {};
   let researchChanges = {};
 
-  // ---------------------------------------
-  // Namen & Koordinaten
-  // ---------------------------------------
-  for (const line of lines) {
-    if (/Angreifers/i.test(line)) {
-      attackerName = extractName(line);
-      coords = extractCoords(line);
-    } else if (/Verteidigers/i.test(line)) {
-      defenderName = extractName(line);
-      coords = extractCoords(line) || coords;
-    }
-  }
+  // --- Koordinaten ---
+  const coordMatch = text.match(/\((\d+):(\d+):(\d+)\)/);
+  if (coordMatch) coords = { oz: +coordMatch[1], ig: +coordMatch[2], i: +coordMatch[3] };
 
-  // ---------------------------------------
-  // Einheiten parsen
-  // ---------------------------------------
+  // --- Einheiten ---
   const attackerStart = lines.findIndex((l) => /Einheiten des Angreifers/i.test(l));
   const defenderStart = lines.findIndex((l) => /Einheiten des Verteidigers/i.test(l));
-
-  if (attackerStart !== -1) {
+  if (attackerStart !== -1)
     attackerUnits = parseUnits(lines.slice(attackerStart + 1, defenderStart === -1 ? lines.length : defenderStart), UNIT_KEYS);
-  }
-  if (defenderStart !== -1) {
+  if (defenderStart !== -1)
     defenderUnits = parseUnits(lines.slice(defenderStart + 1), UNIT_KEYS);
-  }
 
-  // ---------------------------------------
-  // Zerstörung & Kollateralschaden
-  // ---------------------------------------
+  // --- Zerstörung / Kollateralschaden ---
   lines.forEach((l, i) => {
     const m = l.match(/(Zerstörung|Kollateralschaden)\s+(.+?)\s*\((\d+)\s*auf\s*(\d+)\)/i);
     if (m) {
       const geb = m[2].trim();
-      destroyedBuildings[geb] = { vor: parseInt(m[3]), neu: parseInt(m[4]) };
-    } else if (/^(Zerstörung|Kollateralschaden)$/i.test(l)) {
-      const geb = lines[i + 1];
-      const s = lines[i + 2]?.match(/\((\d+)\s*auf\s*(\d+)\)/);
-      if (geb && s) destroyedBuildings[geb] = { vor: parseInt(s[1]), neu: parseInt(s[2]) };
+      destroyedBuildings[geb] = { vor: +m[3], neu: +m[4] };
     }
   });
 
-  // ---------------------------------------
-  // Gebäude aus Spähbericht
-  // ---------------------------------------
+  // --- Spähbericht: Gebäude-Level ---
   const spyStart = lines.findIndex((l) => /^Spähbericht$/i.test(l));
   if (spyStart !== -1) {
     for (let i = spyStart + 1; i < lines.length; i++) {
       const m = lines[i].match(/^([A-Za-zÄÖÜäöüß\s]+)\s*\(Stufe\s*(\d+)\)/i);
       if (m) {
         const b = m[1].trim();
-        const lvl = parseInt(m[2]);
+        const lvl = +m[2];
         if (!destroyedBuildings[b] && BUILDING_KEYS.includes(b))
           destroyedBuildings[b] = { vor: lvl, neu: lvl };
       }
     }
   }
 
-  // ---------------------------------------
-  // Forschungen (Lanze, Schild, Langbogen, Kanone)
-  // ---------------------------------------
+  // --- Forschungen ---
   const resStart = lines.findIndex((l) => /^Forschungen$/i.test(l));
   if (resStart !== -1) {
     for (let i = resStart + 1; i < lines.length; i++) {
       const m = lines[i].match(/^(Lanze|Schild|Langbogen|Kanone)\s*\(Stufe\s*(\d+)\)/i);
-      if (m) researchChanges[m[1]] = parseInt(m[2]);
-      if (/^Rohstoffe$/i.test(lines[i])) break;
+      if (m) researchChanges[m[1]] = +m[2];
     }
   }
-  // Fehlende Forschungen auf 0 setzen
-  RESEARCH_KEYS.forEach((k) => {
-    if (!researchChanges[k]) researchChanges[k] = 0;
-  });
+  RESEARCH_KEYS.forEach((k) => (researchChanges[k] = researchChanges[k] ?? 0));
 
-  return { attackerName, defenderName, coords, attackerUnits, defenderUnits, destroyedBuildings, researchChanges };
+  return { coords, attackerUnits, defenderUnits, destroyedBuildings, researchChanges };
 }
 
-// =============================================================
-// Hilfsfunktionen
-// =============================================================
-function extractName(line) {
-  const m = line.match(/([A-Z0-9-]+)\s*\((\d+:\d+:\d+)\)/);
-  return m ? m[1] : "";
-}
-
-function extractCoords(line) {
-  const m = line.match(/\((\d+):(\d+):(\d+)\)/);
-  return m ? { oz: parseInt(m[1]), ig: parseInt(m[2]), i: parseInt(m[3]) } : null;
-}
-
-function parseUnits(lines, UNIT_KEYS) {
+function parseUnits(lines, keys) {
   const result = {};
   for (const l of lines) {
-    const parts = l.split(/\s+/).filter(Boolean);
-    const name = parts[0];
-    if (UNIT_KEYS.includes(name) && parts.length >= 3) {
-      const total = parseInt(parts[1]) || 0;
-      const losses = parseInt(parts[2]) || 0;
-      result[name] = { total, losses };
+    const p = l.split(/\s+/).filter(Boolean);
+    const name = p[0];
+    if (keys.includes(name) && p.length >= 3) {
+      result[name] = { total: +p[1] || 0, losses: +p[2] || 0 };
     }
   }
-  UNIT_KEYS.forEach((u) => {
-    if (!result[u]) result[u] = { total: 0, losses: 0 };
-  });
+  keys.forEach((k) => (result[k] = result[k] || { total: 0, losses: 0 }));
   return result;
 }
