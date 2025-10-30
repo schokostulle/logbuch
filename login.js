@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // Anmeldung bei Supabase Auth
-      const { data: signData, error: signError } = await window.supabase.auth.signInWithPassword({
+      const { data: signData, error: signError } = await window.supabaseClient.auth.signInWithPassword({
         email,
         password: pass,
       });
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // -------------------------------
       // Wir suchen zuerst nach einem users-Eintrag mit id = authUser.id
       // Falls nicht vorhanden, erzeugen wir einen neuen Eintrag und koppeln username -> name
-      const { data: userRecord, error: userFetchError } = await window.supabase
+      const { data: userRecord, error: userFetchError } = await window.supabaseClient
         .from("users")
         .select("id, username, role, status")
         .eq("id", authUser.id)
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!userEntry) {
         // Kein expliziter users-Eintrag mit dieser id vorhanden.
         // Versuche Alternativsuche nach username (ältere Daten) --> falls existiert, update id to auth id
-        const { data: byName, error: byNameError } = await window.supabase
+        const { data: byName, error: byNameError } = await window.supabaseClient
           .from("users")
           .select("id, username, role, status")
           .ilike("username", name)
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
           // Aktualisiere den vorhandenen users-Eintrag: setze id = authUser.id (falls möglich)
           // Achtung: direkte Änderung der PK kann fehlschlagen falls schon verwendet — in dem Fall legen wir neuen Eintrag an.
           try {
-            const { error: updErr } = await window.supabase
+            const { error: updErr } = await window.supabaseClient
               .from("users")
               .update({ id: authUser.id })
               .match({ id: byName.id });
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (updErr) {
               // Falls nicht möglich, ignoriere und erstelle neuen Eintrag
               console.warn("Konflikt beim Update user.id – Erstelle neuen Eintrag.", updErr);
-              const { data: insData, error: insErr } = await window.supabase
+              const { data: insData, error: insErr } = await window.supabaseClient
                 .from("users")
                 .insert({
                   id: authUser.id,
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
               userEntry = insData;
             } else {
               // Lade aktualisierten Eintrag
-              const { data: refreshed } = await window.supabase
+              const { data: refreshed } = await window.supabaseClient
                 .from("users")
                 .select("id, username, role, status")
                 .eq("id", authUser.id)
@@ -117,13 +117,13 @@ document.addEventListener("DOMContentLoaded", () => {
           } catch (err) {
             console.error("Fehler beim Erstellen/Aktualisieren des Benutzers:", err);
             alert("Fehler bei der Benutzerverarbeitung. Bitte Admin kontaktieren.");
-            await window.supabase.auth.signOut();
+            await window.supabaseClient.auth.signOut();
             return;
           }
         } else {
           // Kein Eintrag vorhanden: Erzeuge einen neuen users-Eintrag
           try {
-            const { data: newUser, error: insertErr } = await window.supabase
+            const { data: newUser, error: insertErr } = await window.supabaseClient
               .from("users")
               .insert({
                 id: authUser.id,
@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (status !== "aktiv") {
         alert("Zugang verweigert – Benutzer ist nicht aktiv. Bitte Admin kontaktieren.");
         // Log user out to be safe
-        await window.supabase.auth.signOut();
+        await window.supabaseClient.auth.signOut();
         return;
       }
 
