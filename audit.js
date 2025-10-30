@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const tableBody = document.querySelector("#auditTable tbody");
 
   // --- Authentifizierung prüfen ---
-  const { data: sessionData, error: sessionError } = await window.supabase.auth.getUser();
+  const { data: sessionData, error: sessionError } = await window.supabaseClient.auth.getUser();
   if (sessionError || !sessionData?.user) {
     alert("Zugang verweigert – keine gültige Sitzung.");
     window.location.href = "login.html";
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const authUser = sessionData.user;
 
   // --- Benutzer laden ---
-  const { data: currentUser, error: userError } = await window.supabase
+  const { data: currentUser, error: userError } = await window.supabaseClient
     .from("users")
     .select("id, username, role")
     .eq("id", authUser.id)
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // --- Auditdaten laden ---
-  const { data: logs, error: loadError } = await window.supabase
+  const { data: logs, error: loadError } = await window.supabaseClient
     .from("audit_log")
     .select("*")
     .order("created_at", { ascending: false })
