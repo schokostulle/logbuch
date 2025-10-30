@@ -1,103 +1,140 @@
 // ===========================================================
-// dashboard.js – Logbuch-Projekt
-// Version: 1.3 – 02.11.2025
-// Autor: Kapitän
+// dashboard.js – Supabase-Integration
+// Version: 2.0 – 02.11.2025
 // Beschreibung:
-// - Logeinträge werden ohne Tabelle dargestellt
-// - Titel = rot & fett (Zeile 1)
-// - Nachricht = Fließtext (Zeile 2)
-// - Fußnote = Datum + Benutzername (Zeile 3, kleiner & sandfarben)
-// - Admins dürfen neue Einträge erstellen und löschen
+// - Vollständige Anbindung an Supabase (keine LocalStorage-Nutzung)
+// - Admins dürfen posten und löschen
+// - Normale Member können nur lesen
+// - Darstellung im Logbuch-Stil
 // ===========================================================
 
-const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+import { Logbuch } from "./logbuch.js";
 
-if (!currentUser) {
-  window.location.href = "gate.html";
-}
-
-const role = currentUser?.role?.toLowerCase() || "";
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  const dashboardLogs = document.getElementById("dashboardLogs");
   const postSection = document.getElementById("adminPostSection");
   const postForm = document.getElementById("postForm");
   const postTitle = document.getElementById("postTitle");
   const postMessage = document.getElementById("postMessage");
-  const dashboardLogs = document.getElementById("dashboardLogs");
 
-  // Nur Admins sehen Eingabeformular
-  if (role === "admin") {
+  // 🔐 Aktuellen Benutzer prüfen
+  const { data: sessionData, error: sessionError } = await window.supabase.auth.getUser();
+  if (sessionError || !sessionData?.user) {
+    alert("Keine gültige Sitzung – bitte erneut anmelden.");
+    window.location.href = "login.html";
+    return;
+  }
+  const authUser = sessionData.user;
+
+  // 🔎 Benutzerrolle ermitteln
+  const { data: currentUser, error: userError } = await window.supabase
+    .from("users")
+    .select("id, username, role, status")
+    .eq("id", authUser.id)
+    .single();
+
+  if (userError || !currentUser) {
+    alert("Benutzer konnte nicht geladen werden.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  // Nur aktive Benutzer dürfen Dashboard sehen
+  if (currentUser.status !== "aktiv") {
+    alert("Zugang verweigert – Benutzer ist nicht aktiv.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const isAdmin = currentUser.role.toLowerCase() === "admin";
+
+  // 📋 Einträge laden
+  await renderEntries();
+
+  // Nur Admins dürfen neue Einträge posten
+  if (isAdmin) {
     postSection.style.display = "block";
 
-    postForm.addEventListener("submit", (e) => {
+    postForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const title = postTitle.value.trim();
       const message = postMessage.value.trim();
 
-      if (!title || !message) return;
+      if (!title || !message) return alert("Titel und Nachricht erforderlich.");
 
-      const now = new Date();
-      const timestamp = now.toLocaleString("de-DE", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+      const { error } = await window.supabase.from("dashboard_entries").insert([
+        {
+          user_id: currentUser.id,
+          title,
+          message,
+        },
+      ]);
 
-      const entry = {
-        id: crypto.randomUUID(),
-        title,
-        message,
-        user: currentUser.name,
-        date: timestamp,
-      };
-
-      const entries = JSON.parse(localStorage.getItem("dashboardEntries") || "[]");
-      entries.unshift(entry);
-      localStorage.setItem("dashboardEntries", JSON.stringify(entries));
+      if (error) {
+        console.error("Fehler beim Speichern:", error);
+        alert("Fehler beim Erstellen des Eintrags.");
+        return;
+      }
 
       postTitle.value = "";
       postMessage.value = "";
-      renderEntries();
+      await renderEntries();
     });
+  } else {
+    postSection.style.display = "none";
   }
 
-  renderEntries();
+  // =========================================================
+  // Einträge laden & anzeigen
+  // =========================================================
+  async function renderEntries() {
+    dashboardLogs.innerHTML = "<p><em>Lade Einträge …</em></p>";
 
-  // ----------------------------------------------------------
-  // Logbucheinträge anzeigen (ohne Tabelle)
-  // ----------------------------------------------------------
-  function renderEntries() {
-    dashboardLogs.innerHTML = "";
-    const entries = JSON.parse(localStorage.getItem("dashboardEntries") || "[]");
+    const { data: entries, error } = await window.supabase
+      .from("dashboard_entries")
+      .select("id, user_id, title, message, created_at, deleted")
+      .eq("deleted", false)
+      .order("created_at", { ascending: false });
 
-    if (entries.length === 0) {
-      dashboardLogs.innerHTML = `<p><em>Noch keine Einträge im Logbuch.</em></p>`;
+    if (error) {
+      console.error("Fehler beim Laden:", error);
+      dashboardLogs.innerHTML = "<p><em>Fehler beim Laden der Einträge.</em></p>";
       return;
     }
+
+    if (!entries || entries.length === 0) {
+      dashboardLogs.innerHTML = "<p><em>Noch keine Einträge im Logbuch.</em></p>";
+      return;
+    }
+
+    dashboardLogs.innerHTML = "";
+
+    // Benutzer-Namen für Zuordnung laden
+    const { data: allUsers } = await window.supabase
+      .from("users")
+      .select("id, username");
 
     entries.forEach((entry) => {
       const entryDiv = document.createElement("div");
       entryDiv.classList.add("log-entry");
 
-      // Titel (rot, fett)
       const titleEl = document.createElement("h3");
       titleEl.classList.add("log-title");
       titleEl.textContent = entry.title;
 
-      // Nachricht (Fließtext)
       const messageEl = document.createElement("p");
       messageEl.classList.add("log-message");
       messageEl.textContent = entry.message;
 
-      // Fußnote (Datum & Benutzer)
+      const author = allUsers.find((u) => u.id === entry.user_id)?.username || "Unbekannt";
+      const date = new Date(entry.created_at).toLocaleString("de-DE");
+
       const footerEl = document.createElement("div");
       footerEl.classList.add("log-footer");
-      footerEl.textContent = `${entry.date} – ${entry.user}`;
+      footerEl.textContent = `${date} – ${author}`;
 
-      // Löschbutton (nur Admins)
-      if (role === "admin") {
+      // 🗑️ Nur Admins dürfen löschen
+      if (isAdmin) {
         const deleteBtn = document.createElement("button");
         deleteBtn.textContent = "🗑️ Löschen";
         deleteBtn.classList.add("delete-btn");
@@ -112,16 +149,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ----------------------------------------------------------
-  // Eintrag löschen (nur Admin)
-  // ----------------------------------------------------------
-  function deleteEntry(id) {
+  // =========================================================
+  // Soft Delete für Einträge (Admins)
+  // =========================================================
+  async function deleteEntry(id) {
     if (!confirm("Eintrag wirklich löschen, Kapitän?")) return;
 
-    let entries = JSON.parse(localStorage.getItem("dashboardEntries") || "[]");
-    entries = entries.filter((e) => e.id !== id);
-    localStorage.setItem("dashboardEntries", JSON.stringify(entries));
+    const { error } = await window.supabase
+      .from("dashboard_entries")
+      .update({ deleted: true })
+      .eq("id", id);
 
-    renderEntries();
+    if (error) {
+      console.error("Fehler beim Löschen:", error);
+      alert("Fehler beim Löschen des Eintrags.");
+      return;
+    }
+
+    await renderEntries();
   }
+
+  Logbuch.log("Dashboard v2.0 – Supabase aktiv, Soft-Delete & Admin-Posting aktiv ⚓");
 });
