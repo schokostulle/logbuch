@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Daten aus Supabase laden
   // ------------------------------------------------------------
   async function loadFleetLogs() {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from("fleet_logs")
       .select("*")
       .order("date", { ascending: false });
@@ -39,10 +39,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!text) return;
 
     const totalFleet = parseFleetText(text);
-    const user = await supabase.auth.getUser();
+    const user = await supabaseClient.auth.getUser();
     const userId = user?.data?.user?.id || null;
 
-    const { error } = await supabase.from("fleet_logs").insert([
+    const { error } = await supabaseClient.from("fleet_logs").insert([
       {
         user_id: userId,
         date: new Date().toISOString(),
