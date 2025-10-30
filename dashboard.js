@@ -1,11 +1,10 @@
 // ===========================================================
 // dashboard.js – Supabase-Integration
-// Version: 2.0 – 02.11.2025
+// Version: 2.1 – 03.11.2025
 // Beschreibung:
 // - Vollständige Anbindung an Supabase (keine LocalStorage-Nutzung)
 // - Admins dürfen posten und löschen
 // - Normale Member können nur lesen
-// - Darstellung im Logbuch-Stil
 // ===========================================================
 
 import { Logbuch } from "./logbuch.js";
@@ -17,17 +16,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   const postTitle = document.getElementById("postTitle");
   const postMessage = document.getElementById("postMessage");
 
+  // 🔐 Supabase-Client prüfen
+  if (!window.supabase) {
+    console.error("❌ Supabase ist nicht initialisiert! (logbuch.js fehlt?)");
+    alert("Fehler: Keine Verbindung zur Datenbank.");
+    return;
+  }
+
   // 🔐 Aktuellen Benutzer prüfen
-  const { data: sessionData, error: sessionError } = await window.supabaseClient.auth.getUser();
+  const { data: sessionData, error: sessionError } = await window.supabase.auth.getUser();
   if (sessionError || !sessionData?.user) {
     alert("Keine gültige Sitzung – bitte erneut anmelden.");
     window.location.href = "login.html";
     return;
   }
+
   const authUser = sessionData.user;
 
   // 🔎 Benutzerrolle ermitteln
-  const { data: currentUser, error: userError } = await window.supabaseClient
+  const { data: currentUser, error: userError } = await window.supabase
     .from("users")
     .select("id, username, role, status")
     .eq("id", authUser.id)
@@ -39,7 +46,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Nur aktive Benutzer dürfen Dashboard sehen
   if (currentUser.status !== "aktiv") {
     alert("Zugang verweigert – Benutzer ist nicht aktiv.");
     window.location.href = "login.html";
@@ -51,18 +57,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   // 📋 Einträge laden
   await renderEntries();
 
-  // Nur Admins dürfen neue Einträge posten
+  // Nur Admins dürfen posten
   if (isAdmin) {
     postSection.style.display = "block";
 
     postForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+
       const title = postTitle.value.trim();
       const message = postMessage.value.trim();
 
       if (!title || !message) return alert("Titel und Nachricht erforderlich.");
 
-      const { error } = await window.supabaseClient.from("dashboard_entries").insert([
+      const { error } = await window.supabase.from("dashboard_entries").insert([
         {
           user_id: currentUser.id,
           title,
@@ -90,7 +97,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function renderEntries() {
     dashboardLogs.innerHTML = "<p><em>Lade Einträge …</em></p>";
 
-    const { data: entries, error } = await window.supabaseClient
+    const { data: entries, error } = await window.supabase
       .from("dashboard_entries")
       .select("id, user_id, title, message, created_at, deleted")
       .eq("deleted", false)
@@ -110,9 +117,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     dashboardLogs.innerHTML = "";
 
     // Benutzer-Namen für Zuordnung laden
-    const { data: allUsers } = await window.supabaseClient
-      .from("users")
-      .select("id, username");
+    const { data: allUsers } = await window.supabase.from("users").select("id, username");
 
     entries.forEach((entry) => {
       const entryDiv = document.createElement("div");
@@ -155,7 +160,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function deleteEntry(id) {
     if (!confirm("Eintrag wirklich löschen, Kapitän?")) return;
 
-    const { error } = await window.supabaseClient
+    const { error } = await window.supabase
       .from("dashboard_entries")
       .update({ deleted: true })
       .eq("id", id);
@@ -169,5 +174,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     await renderEntries();
   }
 
-  Logbuch.log("Dashboard v2.0 – Supabase aktiv, Soft-Delete & Admin-Posting aktiv ⚓");
+  Logbuch.log("Dashboard v2.1 – Supabase aktiv, Soft-Delete & Admin-Posting aktiv ⚓");
 });
