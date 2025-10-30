@@ -1,30 +1,35 @@
 // =============================================================
-// Kampfberichte.js – v1.2  (Build 29.10.2025)
-// Fix: Kollateralschaden korrekt zuordnen (vor/neu)
-// Neu: Forschung "Kanone" aufgenommen
+// Kampfberichte.js – v2.0 (Supabase Build 03.11.2025)
+// Portiert auf Supabase: kein LocalStorage, direkter DB-Zugriff
 // =============================================================
-const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
-if (!currentUser || currentUser.status !== "aktiv") {
-  window.location.href = "gate.html";
-}
+
 import { Logbuch } from "./logbuch.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // 🧭 Aktuellen Benutzer aus Supabase laden
+  const { data: currentUser } = await Logbuch.getCurrentUser();
+  if (!currentUser || currentUser.status !== "aktiv") {
+    window.location.href = "gate.html";
+    return;
+  }
+
   const form = document.getElementById("berichtForm");
   const textarea = document.getElementById("berichtText");
   const tbody = document.querySelector("#berichteTable tbody");
 
-  let logs = await Logbuch.load("kampfberichte_logs");
-  renderLogs(logs);
+  // -------------------- Bestehende Logs laden --------------------
+  const { data: logs, error } = await Logbuch.load("kampfberichte_logs");
+  if (error) console.error("Fehler beim Laden:", error);
+  renderLogs(logs || []);
 
+  // -------------------- Formular absenden ------------------------
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const text = textarea.value.trim();
     if (!text) return;
 
-    const userElem = document.querySelector(".user-status");
-    const username = userElem ? userElem.textContent.split("–")[0].trim() : "Unbekannt";
     const datum = extractDate(text);
+    const username = currentUser.username || "Unbekannt";
 
     const { attacker, defender } = parseReport(text);
     attacker.Datum = defender.Datum = datum;
@@ -32,14 +37,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     attacker.Rolle = "Angreifer";
     defender.Rolle = "Verteidiger";
 
-    logs.unshift(attacker, defender);
-    await Logbuch.save("kampfberichte_logs", logs);
-    renderLogs(logs);
+    // Zwei Datensätze speichern
+    const { error: saveError } = await Logbuch.save("kampfberichte_logs", [attacker, defender]);
+    if (saveError) {
+      console.error("Fehler beim Speichern:", saveError);
+      alert("Fehler beim Speichern des Berichts.");
+      return;
+    }
+
     textarea.value = "";
+    alert("Kampfbericht erfolgreich gespeichert!");
+
+    // Neu laden
+    const { data: updated } = await Logbuch.load("kampfberichte_logs");
+    renderLogs(updated || []);
   });
 
   // -------------------- Hilfsfunktionen -----------------------
-
   function extractDate(text) {
     const m = text.match(/vom\s+(\d{1,2}\.\d{1,2}\.\d{4})\s+(\d{1,2}:\d{2})/);
     return m ? `${m[1]} ${m[2]}` : new Date().toLocaleString("de-DE");
@@ -49,17 +63,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     const t = {
       Oz: 0, Ig: 0, In: 0,
       Steinschleuderer: 0, Lanzenträger: 0, Langbogenschütze: 0,
-      Kanonen: 0, Fregatte: 0, Handelskogge: 0,
-      Kolonialschiff: 0, Spähschiff: 0,
+      Kanonen: 0, Fregatte: 0, Handelskogge: 0, Kolonialschiff: 0, Spähschiff: 0,
       "V-Stein": 0, "V-Lanze": 0, "V-Bogen": 0, "V-Kanonen": 0,
       "V-Fregatte": 0, "V-Kogge": 0, "V-Kolonial": 0, "V-Späh": 0,
-      // Forschung (inkl. Kanone)
       Lanze: "", Schild: "", Langbogen: "", Kanone: ""
     };
     const buildings = [
       "Hauptgebäude","Goldbergwerk","Steinbruch","Holzfällerhütte",
-      "Universität","Baracke","Werft","Lagerhaus","Steinwall",
-      "Wachturm","Ruhestätte"
+      "Universität","Baracke","Werft","Lagerhaus","Steinwall","Wachturm","Ruhestätte"
     ];
     buildings.forEach(b=>{
       t[`${b} vor`] = "";
@@ -82,14 +93,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     parseUnits(atkBlock, attacker);
     parseUnits(defBlock, defender);
-
-    parseBuildings(text, defender);   // vor/neu inkl. Kollateralschaden
-    parseResearch(text, defender);    // inkl. Kanone
+    parseBuildings(text, defender);
+    parseResearch(text, defender);
 
     return { attacker, defender };
   }
 
-  // -------------------- Einheiten -----------------------------
   function parseUnits(block, obj) {
     if (!block) return;
     const lines = block[1].trim().split("\n");
@@ -98,10 +107,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (p.length < 3) return;
       const name = p[0];
       const total = parseInt(p[1]) || 0;
-      const loss  = parseInt(p[2]) || 0;
-
+      const loss = parseInt(p[2]) || 0;
       if (obj.hasOwnProperty(name)) obj[name] = total;
-
       const map = {
         Steinschleuderer: "V-Stein",
         Lanzenträger: "V-Lanze",
@@ -116,23 +123,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // -------------------- Gebäude (vor/neu) ---------------------
   function parseBuildings(text, obj) {
-    // umfasst sowohl "Zerstörung ...", "Kollateralschaden ..." als auch "Gebäude ... (Stufe X)"
     const gebRx = /(Zerstörung|Gebäude)([\s\S]*?)(Forschungen|Rohstoffe|$)/;
     const m = text.match(gebRx);
     if (!m) return;
-
     const lines = m[2].split("\n").map((l) => l.trim()).filter(Boolean);
-
     lines.forEach((raw) => {
-      // Tabs neutralisieren, Prefixe entfernen
       let line = raw.replace(/\t+/g, " ").replace(/\s+/g, " ").trim();
-
-      // 1) Zerstörung/Kollateralschaden: "... <Gebäude> (x auf y)"
       let mDestr = line.match(/\((\d+)\s*auf\s*(\d+)\)/);
       if (mDestr) {
-        // Gebäudename extrahieren (ohne Prefixe)
         let namePart = line.replace(/\(.*\)/, "").trim();
         namePart = namePart.replace(/^(Zerstörung|Kollateralschaden)\s*/i, "").trim();
         const key = normalizeBuildingKey(namePart);
@@ -143,15 +142,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         return;
       }
-
-      // 2) Gebäude-Liste (Spähbericht): "<Gebäude> (Stufe X)"
       let mStufe = line.match(/^([A-Za-zÄÖÜäöüß\s]+)\s*\(Stufe\s*(\d+)\)$/);
       if (mStufe) {
         const key = normalizeBuildingKey(mStufe[1]);
         const st = mStufe[2];
         if (obj.hasOwnProperty(`${key} vor`)) {
           obj[`${key} vor`] = st;
-          obj[`${key} neu`] = st; // kein Zerstörungsereignis → vor = neu
+          obj[`${key} neu`] = st;
         }
       }
     });
@@ -161,16 +158,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     return s.replace(/\s+/g, " ").trim();
   }
 
-  // -------------------- Forschung -----------------------------
   function parseResearch(text, obj) {
     const rx = /Forschungen([\s\S]*?)(?:Rohstoffe|$)/;
     const m = text.match(rx);
     if (!m) return;
     const lines = m[1].split("\n").map((l) => l.trim()).filter(Boolean);
-
     lines.forEach((raw) => {
       const line = raw.replace(/\t+/g, " ").replace(/\s+/g, " ").trim();
-      // Muster: "Lanze (Stufe 10)" oder "Lanze (10)" – robust extrahieren
       const kv = line.match(/^([A-Za-zÄÖÜäöüß]+).*?(\d+)$/);
       if (!kv) return;
       const key = kv[1];
@@ -179,7 +173,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // -------------------- Darstellung ---------------------------
   function renderLogs(entries) {
     tbody.innerHTML = "";
     if (!entries || entries.length === 0) {
@@ -206,5 +199,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  Logbuch.log("Kampfberichte v1.2 geladen – Kollateralschaden-Fix & Forschung Kanone aktiv.");
+  Logbuch.log("Kampfberichte v2.0 (Supabase) aktiv – Parser vollständig portiert.");
 });
