@@ -1,16 +1,18 @@
 // ===========================================================
-// navigation.js – Logbuch-Projekt
-// Version: 2.0 – 02.11.2025
+// navigation.js – Logbuch-Projekt (final, Supabase-only)
+// Version: 2.1 – 03.11.2025
 // Autor: Kapitän ⚓
 // Beschreibung:
 // Einheitliches Navigationssystem mit Supabase Auth,
 // Benutzeranzeige, Adminprüfung & Seitenhervorhebung
 // ===========================================================
 
+import { supabase } from "./logbuch.js";
+
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    // 🧭 1. Aktive Supabase-Session prüfen
-    const { data: sessionData, error: sessionError } = await window.supabaseClient.auth.getUser();
+    // 🧭 1️⃣ Aktive Supabase-Session prüfen
+    const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
     if (sessionError) throw sessionError;
 
     const authUser = sessionData?.user;
@@ -20,8 +22,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    // 🧭 2. Benutzerdetails aus users-Tabelle laden
-    const { data: userData, error: userError } = await window.supabaseClient
+    // 🧭 2️⃣ Benutzerdetails aus users-Tabelle laden
+    const { data: userData, error: userError } = await supabase
       .from("users")
       .select("id, username, role, status")
       .eq("id", authUser.id)
@@ -29,7 +31,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (userError || !userData) {
       console.error("❌ Benutzer nicht in users-Tabelle gefunden:", userError);
-      await window.supabaseClient.auth.signOut();
+      await supabase.auth.signOut();
       window.location.href = "gate.html";
       return;
     }
@@ -38,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (userData.status?.toLowerCase() !== "aktiv") {
       console.warn(`Benutzer "${userData.username}" ist inaktiv.`);
       alert("Zugang verweigert – dein Account ist nicht aktiv.");
-      await window.supabaseClient.auth.signOut();
+      await supabase.auth.signOut();
       window.location.href = "login.html";
       return;
     }
@@ -56,7 +58,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 // ===========================================================
 // Menüstruktur (statisch definiert)
 // ===========================================================
-
 const navItems = [
   { href: "dashboard.html", icon: "📯", text: "Dashboard" },
   { href: "reservierungen.html", icon: "📌", text: "Reservierungen" },
@@ -68,7 +69,7 @@ const navItems = [
   { href: "mitglieder.html", icon: "⚓", text: "Mitglieder", adminOnly: true },
   { href: "diplomatie.html", icon: "🕊️", text: "Diplomatie", adminOnly: true },
   { href: "import.html", icon: "📂", text: "CSV", adminOnly: true },
-  { href: "audit.html", icon: "🗃️", text: "auditlog", adminOnly: true },
+  { href: "audit.html", icon: "🗃️", text: "Auditlog", adminOnly: true },
   // Logout immer am Ende
   { href: "logout.html", icon: "⛩️", text: "Logout", logout: true }
 ];
@@ -86,8 +87,7 @@ function buildNavigation(userData) {
   sidebar.innerHTML = "";
 
   navItems.forEach(item => {
-    // Admin-Check
-    if (item.adminOnly && role !== "admin") return;
+    if (item.adminOnly && role !== "admin") return; // Nur Admins sehen Admin-Seiten
 
     const li = document.createElement("li");
     if (item.logout) li.classList.add("logout");
