@@ -437,3 +437,11 @@ body.login-page {
 }
 
 .login-container p { animation: pulse 2s infinite; }
+
+/* Kampfbericht-Rollenfarben */
+.attacker-row {
+  background-color: rgba(255, 0, 0, 0.08);
+}
+.defender-row {
+  background-color: rgba(0, 100, 255, 0.08);
+}
