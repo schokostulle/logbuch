@@ -1,9 +1,11 @@
 // =============================================================
-// gate.js – Supabase-only Türsteherseite
-// Version: 2.0 – 02.11.2025
+// gate.js – Supabase-only Türsteherseite (final)
+// Version: 2.1 – 03.11.2025
 // Prüft Supabase-Session, Rolle & Status
 // Weiterleitung zu Dashboard oder Login
 // =============================================================
+
+import { supabase } from "./logbuch.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const statusBox = document.getElementById("statusMessage");
@@ -24,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setTimeout(async () => {
     try {
       // 1️⃣ Session prüfen
-      const { data: sessionData, error: sessionError } = await window.supabaseClient.auth.getUser();
+      const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
       if (sessionError) throw sessionError;
 
       const authUser = sessionData?.user;
@@ -35,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       // 2️⃣ Benutzerinformationen laden
-      const { data: userData, error: userError } = await window.supabaseClient
+      const { data: userData, error: userError } = await supabase
         .from("users")
         .select("id, username, role, status")
         .eq("id", authUser.id)
@@ -44,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (userError || !userData) {
         console.warn("Benutzer konnte nicht in der users-Tabelle gefunden werden:", userError);
         showMessage("🚫 Kein gültiger Benutzer gefunden. Weiterleitung...");
-        await window.supabaseClient.auth.signOut();
+        await supabase.auth.signOut();
         redirect("login.html");
         return;
       }
@@ -55,7 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         showMessage(
           `🚫 Zugang verweigert – Benutzer <strong>${userData.username}</strong> ist geblockt oder inaktiv.`
         );
-        await window.supabaseClient.auth.signOut();
+        await supabase.auth.signOut();
         redirect("login.html");
         return;
       }
