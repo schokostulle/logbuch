@@ -1,18 +1,21 @@
 // =============================================================
-// Flotte.js – v1.9
-// Loggt nur Gesamtwerte:
-// Spalte 1 = Datum/Zeit, Spalte 2 = Benutzername
+// flotte.js – v2.0 (Supabase)
+// Nur Gesamtwerte – speichert & lädt direkt aus Supabase
 // =============================================================
-const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
-if (!currentUser || currentUser.status !== "aktiv") {
-  window.location.href = "gate.html";
-}
-import { Logbuch } from './logbuch.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
-  const form = document.getElementById('flottenForm');
-  const textarea = document.getElementById('flottenText');
-  const tableContainer = document.querySelector('#flottenTable').parentElement;
+import { Logbuch } from "./logbuch.js";
+
+// Zugriff prüfen
+document.addEventListener("DOMContentLoaded", async () => {
+  const { data: currentUser } = await Logbuch.getCurrentUser();
+  if (!currentUser || currentUser.status !== "aktiv") {
+    window.location.href = "gate.html";
+    return;
+  }
+
+  const form = document.getElementById("flottenForm");
+  const textarea = document.getElementById("flottenText");
+  const tableContainer = document.querySelector("#flottenTable").parentElement;
 
   const keys = [
     "Steinschleuderer",
@@ -25,50 +28,65 @@ document.addEventListener('DOMContentLoaded', async () => {
     "Spähschiff"
   ];
 
-  // Bisherige Log-Einträge laden
-  let flotteLogs = await Logbuch.load('flotten_logs');
-  renderLogs(flotteLogs);
+  // ------------------------------------------------------------
+  // Log-Einträge laden
+  // ------------------------------------------------------------
+  const { data: flotteLogs, error: loadError } = await Logbuch.load("flotten_logs");
+  if (loadError) console.error("Fehler beim Laden:", loadError);
+  renderLogs(flotteLogs || []);
 
   // ------------------------------------------------------------
   // Formular absenden → Analyse durchführen & speichern
   // ------------------------------------------------------------
-  form.addEventListener('submit', async e => {
+  form.addEventListener("submit", async e => {
     e.preventDefault();
     const text = textarea.value.trim();
     if (!text) return;
 
     const gesamt = parseGesamtOderInselFlotte(text);
 
-    const timestamp = new Date().toLocaleString('de-DE', {
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    const timestamp = new Date().toLocaleString("de-DE", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
     });
 
-    // Benutzername aus der Kopfzeile holen
-    const userElem = document.querySelector('.user-status');
-    const username = userElem ? userElem.textContent.split('–')[0].trim() : 'Unbekannt';
+    // Benutzername aus Supabase Session
+    const username = currentUser.username || "Unbekannt";
 
-    // Nur Gesamtzeile speichern
-    const row = { Datum: timestamp, Benutzer: username };
-    keys.forEach(k => (row[k] = gesamt[k] || 0));
+    // Datensatz aufbauen
+    const entry = {
+      datum: timestamp,
+      benutzer: username,
+      ...gesamt
+    };
 
-    const logEintrag = { zeit: timestamp, daten: [row] };
-    flotteLogs.unshift(logEintrag);
+    const { error } = await Logbuch.save("flotten_logs", entry);
+    if (error) {
+      console.error("Fehler beim Speichern:", error);
+      alert("Fehler beim Speichern des Eintrags.");
+      return;
+    }
 
-    await Logbuch.save('flotten_logs', flotteLogs);
-    renderLogs(flotteLogs);
-    textarea.value = '';
+    textarea.value = "";
+    alert("Flotteneintrag erfolgreich gespeichert!");
+
+    // Tabelle neu laden
+    const { data: updatedLogs } = await Logbuch.load("flotten_logs");
+    renderLogs(updatedLogs || []);
   });
 
   // ------------------------------------------------------------
   // Parser erkennt automatisch: Gesamt oder Inselweise
   // ------------------------------------------------------------
   function parseGesamtOderInselFlotte(text) {
-    const lines = text.split('\n').map(l => l.trim()).filter(l => l !== '');
-    if (lines[0].toLowerCase().includes('im hafen') || lines[0].toLowerCase().includes('gesamt')) {
+    const lines = text.split("\n").map(l => l.trim()).filter(l => l !== "");
+    if (lines[0].toLowerCase().includes("im hafen") || lines[0].toLowerCase().includes("gesamt")) {
       return parseGesamtflotte(lines)[0];
     }
-
     // Inselweise Summierung
     const daten = parseInselflotte(lines);
     const summe = {};
@@ -76,13 +94,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     return summe;
   }
 
-  // ------------------------------------------------------------
-  // Inselweise Tabelle parsen
-  // ------------------------------------------------------------
   function parseInselflotte(lines) {
     const ergebnis = [];
     for (let line of lines) {
-      const parts = line.split('\t').map(p => p.trim()).filter(p => p !== '');
+      const parts = line.split("\t").map(p => p.trim()).filter(p => p !== "");
       if (parts.length < 9) continue;
       const [insel, sw, lt, bs, kk, fr, hs, ko, ss] = parts;
       const values = [sw, lt, bs, kk, fr, hs, ko, ss].map(v => parseInt(v, 10) || 0);
@@ -102,14 +117,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     return ergebnis;
   }
 
-  // ------------------------------------------------------------
-  // Gesamtflotte (Im Hafen / Unterwegs / Gesamt)
-  // ------------------------------------------------------------
   function parseGesamtflotte(lines) {
     const row = {};
     const dataLines = lines.slice(1);
     dataLines.forEach(line => {
-      const parts = line.split(/\t| {2,}/).map(p => p.trim()).filter(p => p !== '');
+      const parts = line.split(/\t| {2,}/).map(p => p.trim()).filter(p => p !== "");
       if (parts.length < 2) return;
       const name = parts[0];
       const value = parseInt(parts[parts.length - 1], 10) || 0;
@@ -120,57 +132,37 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ------------------------------------------------------------
-  // Logbuchdarstellung
+  // Darstellung
   // ------------------------------------------------------------
   function renderLogs(logs) {
-    tableContainer.innerHTML = '';
-
+    tableContainer.innerHTML = "";
     if (!logs || logs.length === 0) {
-      tableContainer.innerHTML = '<p><em>Keine Flotteneinträge im Logbuch vorhanden.</em></p>';
+      tableContainer.innerHTML = "<p><em>Keine Flotteneinträge vorhanden.</em></p>";
       return;
     }
 
-    const table = document.createElement('table');
-    table.className = 'flotten-tabelle';
+    const table = document.createElement("table");
+    table.className = "flotten-tabelle";
     table.innerHTML = `
       <thead>
         <tr>
           <th>Datum</th>
           <th>Benutzer</th>
-          <th>Steinschleuderer</th>
-          <th>Lanzenträger</th>
-          <th>Langbogenschütze</th>
-          <th>Kanonen</th>
-          <th>Fregatte</th>
-          <th>Handelskogge</th>
-          <th>Kolonialschiff</th>
-          <th>Spähschiff</th>
+          ${keys.map(k => `<th>${k}</th>`).join("")}
         </tr>
       </thead>
-      <tbody></tbody>
+      <tbody>
+        ${logs.map(r => `
+          <tr>
+            <td>${r.datum}</td>
+            <td>${r.benutzer}</td>
+            ${keys.map(k => `<td>${r[k] ?? 0}</td>`).join("")}
+          </tr>
+        `).join("")}
+      </tbody>
     `;
-
-    const tbody = table.querySelector('tbody');
-    logs.forEach(entry => {
-      const row = entry.daten[0];
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${row.Datum}</td>
-        <td>${row.Benutzer}</td>
-        <td>${row.Steinschleuderer}</td>
-        <td>${row.Lanzenträger}</td>
-        <td>${row.Langbogenschütze}</td>
-        <td>${row.Kanonen}</td>
-        <td>${row.Fregatte}</td>
-        <td>${row.Handelskogge}</td>
-        <td>${row.Kolonialschiff}</td>
-        <td>${row.Spähschiff}</td>
-      `;
-      tbody.appendChild(tr);
-    });
-
     tableContainer.appendChild(table);
   }
 
-  Logbuch.log("Flottenmodul v1.9 aktiv – Datum in Spalte 1, Benutzer in Spalte 2.");
+  Logbuch.log("Flottenmodul v2.0 (Supabase) aktiv.");
 });
