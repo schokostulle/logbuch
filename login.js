@@ -1,9 +1,11 @@
 // =============================================================
-// login.js – Supabase-only Login
-// Version: 1.0 – 02.11.2025
+// login.js – Supabase-only Login (final)
+// Version: 2.1 – 03.11.2025
 // Hinweis: Nutzt fake-email: <username>@bullfrog.fake
-// Supabase muss via window.supabase initialisiert sein (supabase.createClient)
+// Funktioniert mit Supabase-Client aus logbuch.js
 // =============================================================
+
+import { supabase } from "./logbuch.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
@@ -31,13 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // Anmeldung bei Supabase Auth
-      const { data: signData, error: signError } = await window.supabaseClient.auth.signInWithPassword({
+      const { data: signData, error: signError } = await supabase.auth.signInWithPassword({
         email,
         password: pass,
       });
 
       if (signError) {
-        // Fehler beim Authentifizieren
         console.error("Login fehlgeschlagen:", signError);
         alert("Anmeldung fehlgeschlagen. Bitte überprüfe Benutzername/Passwort.");
         return;
@@ -52,97 +53,61 @@ document.addEventListener("DOMContentLoaded", () => {
       // -------------------------------
       // Sicherstellen, dass users-Tabelle einen Eintrag hat
       // -------------------------------
-      // Wir suchen zuerst nach einem users-Eintrag mit id = authUser.id
-      // Falls nicht vorhanden, erzeugen wir einen neuen Eintrag und koppeln username -> name
-      const { data: userRecord, error: userFetchError } = await window.supabaseClient
+      const { data: userRecord, error: userFetchError } = await supabase
         .from("users")
         .select("id, username, role, status")
         .eq("id", authUser.id)
         .single();
 
       if (userFetchError && userFetchError.code !== "PGRST116") {
-        // PGRST116 = no rows (single() returned nothing) -> behandeln wir separat
         console.error("Fehler beim Lesen der users-Tabelle:", userFetchError);
         alert("Fehler beim Benutzerladen. Bitte später erneut versuchen.");
-        // Bei ernsteren Fehlern loggen und abbrechen
         return;
       }
 
       let userEntry = userRecord || null;
 
+      // Falls kein Eintrag existiert → automatisch anlegen
       if (!userEntry) {
-        // Kein expliziter users-Eintrag mit dieser id vorhanden.
-        // Versuche Alternativsuche nach username (ältere Daten) --> falls existiert, update id to auth id
-        const { data: byName, error: byNameError } = await window.supabaseClient
+        const { data: byName } = await supabase
           .from("users")
           .select("id, username, role, status")
           .ilike("username", name)
           .limit(1)
-          .single();
+          .maybeSingle();
 
-        if (byName && !byNameError) {
-          // Aktualisiere den vorhandenen users-Eintrag: setze id = authUser.id (falls möglich)
-          // Achtung: direkte Änderung der PK kann fehlschlagen falls schon verwendet — in dem Fall legen wir neuen Eintrag an.
-          try {
-            const { error: updErr } = await window.supabaseClient
-              .from("users")
-              .update({ id: authUser.id })
-              .match({ id: byName.id });
+        if (byName) {
+          // Versuch Update
+          const { error: updErr } = await supabase
+            .from("users")
+            .update({ id: authUser.id })
+            .match({ id: byName.id });
 
-            if (updErr) {
-              // Falls nicht möglich, ignoriere und erstelle neuen Eintrag
-              console.warn("Konflikt beim Update user.id – Erstelle neuen Eintrag.", updErr);
-              const { data: insData, error: insErr } = await window.supabaseClient
-                .from("users")
-                .insert({
-                  id: authUser.id,
-                  username: name,
-                  role: "member",
-                  status: "aktiv",
-                })
-                .select()
-                .single();
-
-              if (insErr) throw insErr;
-              userEntry = insData;
-            } else {
-              // Lade aktualisierten Eintrag
-              const { data: refreshed } = await window.supabaseClient
-                .from("users")
-                .select("id, username, role, status")
-                .eq("id", authUser.id)
-                .single();
-              userEntry = refreshed;
-            }
-          } catch (err) {
-            console.error("Fehler beim Erstellen/Aktualisieren des Benutzers:", err);
-            alert("Fehler bei der Benutzerverarbeitung. Bitte Admin kontaktieren.");
-            await window.supabaseClient.auth.signOut();
-            return;
-          }
-        } else {
-          // Kein Eintrag vorhanden: Erzeuge einen neuen users-Eintrag
-          try {
-            const { data: newUser, error: insertErr } = await window.supabaseClient
-              .from("users")
-              .insert({
-                id: authUser.id,
-                username: name,
-                role: "member",
-                status: "aktiv",
-              })
-              .select()
-              .single();
-
-            if (insertErr) throw insertErr;
-            userEntry = newUser;
-          } catch (err) {
-            console.error("Fehler beim Anlegen des Benutzer-Eintrags:", err);
-            alert("Fehler beim Anlegen des Benutzers. Bitte Admin kontaktieren.");
-            await window.supabaseClient.auth.signOut();
-            return;
+          if (updErr) {
+            console.warn("Update-Konflikt, neuer Eintrag wird erstellt:", updErr);
           }
         }
+
+        // Neuer Benutzer falls noch keiner existiert
+        const { data: newUser, error: insertErr } = await supabase
+          .from("users")
+          .insert({
+            id: authUser.id,
+            username: name,
+            role: "member",
+            status: "aktiv",
+          })
+          .select()
+          .single();
+
+        if (insertErr) {
+          console.error("Fehler beim Anlegen des Benutzer-Eintrags:", insertErr);
+          alert("Fehler beim Anlegen des Benutzers. Bitte Admin kontaktieren.");
+          await supabase.auth.signOut();
+          return;
+        }
+
+        userEntry = newUser;
       }
 
       // -------------------------------
@@ -151,8 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const status = (userEntry.status || "").toLowerCase();
       if (status !== "aktiv") {
         alert("Zugang verweigert – Benutzer ist nicht aktiv. Bitte Admin kontaktieren.");
-        // Log user out to be safe
-        await window.supabaseClient.auth.signOut();
+        await supabase.auth.signOut();
         return;
       }
 
@@ -162,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
       alert(`Willkommen zurück, ${userEntry.username || name}!`);
       window.location.href = "dashboard.html";
     } catch (err) {
-      console.error("Unbekannter Fehler beim Login:", err);
+      console.error("❌ Unbekannter Fehler beim Login:", err);
       alert("Unbekannter Fehler beim Login. Siehe Konsole.");
     }
   });
