@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
           } catch (err) {
             console.error("Fehler beim Anlegen des Benutzer-Eintrags:", err);
             alert("Fehler beim Anlegen des Benutzers. Bitte Admin kontaktieren.");
-            await window.supabase.auth.signOut();
+            await window.supabaseClient.auth.signOut();
             return;
           }
         }
