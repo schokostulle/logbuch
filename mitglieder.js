@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const showDeletedCheckbox = document.getElementById("showDeleted");
 
   // 🔒 Aktuellen Benutzer prüfen
-  const { data: sessionData, error: sessionError } = await window.supabase.auth.getUser();
+  const { data: sessionData, error: sessionError } = await window.supabaseClient.auth.getUser();
   if (sessionError || !sessionData?.user) {
     alert("Zugang verweigert – keine gültige Sitzung.");
     window.location.href = "login.html";
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const authUser = sessionData.user;
 
   // Benutzer aus Tabelle laden
-  const { data: currentUserData, error: currentUserError } = await window.supabase
+  const { data: currentUserData, error: currentUserError } = await window.supabaseClient
     .from("users")
     .select("id, username, role, status")
     .eq("id", authUser.id)
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Alle Benutzer laden
-  const { data: allUsers, error: loadError } = await window.supabase
+  const { data: allUsers, error: loadError } = await window.supabaseClient
     .from("users")
     .select("id, username, role, status, deleted")
     .order("username", { ascending: true });
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Gründer-Admin = erster registrierter Benutzer (ältester Eintrag)
-  const { data: founderData } = await window.supabase
+  const { data: founderData } = await window.supabaseClient
     .from("users")
     .select("id, username")
     .order("created_at", { ascending: true })
@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!u || isProtected(u)) return;
 
     const newRole = u.role === "admin" ? "member" : "admin";
-    const { error } = await window.supabase.from("users").update({ role: newRole }).eq("id", userId);
+    const { error } = await window.supabaseClient.from("users").update({ role: newRole }).eq("id", userId);
 
     if (error) {
       alert("Fehler beim Ändern der Rolle.");
@@ -173,7 +173,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!u || isProtected(u)) return;
 
     const newStatus = u.status === "aktiv" ? "geblockt" : "aktiv";
-    const { error } = await window.supabase.from("users").update({ status: newStatus }).eq("id", userId);
+    const { error } = await window.supabaseClient.from("users").update({ status: newStatus }).eq("id", userId);
 
     if (error) {
       alert("Fehler beim Ändern des Status.");
@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (u.deleted) return alert("Benutzer ist bereits als gelöscht markiert.");
     if (!confirm(`Soll der Benutzer "${u.username}" wirklich entfernt werden?`)) return;
 
-    const { error } = await window.supabase.from("users").update({ deleted: true }).eq("id", userId);
+    const { error } = await window.supabaseClient.from("users").update({ deleted: true }).eq("id", userId);
     if (error) {
       alert("Fehler beim Entfernen des Benutzers.");
       return;
@@ -208,7 +208,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!confirm(`"${u.username}" wieder an Bord holen?`)) return;
 
-    const { error } = await window.supabase.from("users").update({ deleted: false }).eq("id", userId);
+    const { error } = await window.supabaseClient.from("users").update({ deleted: false }).eq("id", userId);
     if (error) {
       alert("Fehler beim Reaktivieren des Benutzers.");
       return;
