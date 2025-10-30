@@ -10,7 +10,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     // 🧭 1. Aktive Supabase-Session prüfen
-    const { data: sessionData, error: sessionError } = await window.supabase.auth.getUser();
+    const { data: sessionData, error: sessionError } = await window.supabaseClient.auth.getUser();
     if (sessionError) throw sessionError;
 
     const authUser = sessionData?.user;
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // 🧭 2. Benutzerdetails aus users-Tabelle laden
-    const { data: userData, error: userError } = await window.supabase
+    const { data: userData, error: userError } = await window.supabaseClient
       .from("users")
       .select("id, username, role, status")
       .eq("id", authUser.id)
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (userError || !userData) {
       console.error("❌ Benutzer nicht in users-Tabelle gefunden:", userError);
-      await window.supabase.auth.signOut();
+      await window.supabaseClient.auth.signOut();
       window.location.href = "gate.html";
       return;
     }
