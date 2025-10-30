@@ -5,6 +5,10 @@
 // Intern: Fake-E-Mail "<name>@bullfrog.fake"
 // Erstregistrierung = Admin/aktiv, danach Member/geblockt
 // =============================================================
+if (!window.supabase) {
+  alert("Supabase ist nicht initialisiert. Bitte Seite neu laden.");
+  throw new Error("Supabase client not available");
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("registerForm");
