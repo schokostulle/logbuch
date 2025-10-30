@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setTimeout(async () => {
     try {
       // 1️⃣ Session prüfen
-      const { data: sessionData, error: sessionError } = await window.supabase.auth.getUser();
+      const { data: sessionData, error: sessionError } = await window.supabaseClient.auth.getUser();
       if (sessionError) throw sessionError;
 
       const authUser = sessionData?.user;
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       // 2️⃣ Benutzerinformationen laden
-      const { data: userData, error: userError } = await window.supabase
+      const { data: userData, error: userError } = await window.supabaseClient
         .from("users")
         .select("id, username, role, status")
         .eq("id", authUser.id)
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (userError || !userData) {
         console.warn("Benutzer konnte nicht in der users-Tabelle gefunden werden:", userError);
         showMessage("🚫 Kein gültiger Benutzer gefunden. Weiterleitung...");
-        await window.supabase.auth.signOut();
+        await window.supabaseClient.auth.signOut();
         redirect("login.html");
         return;
       }
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         showMessage(
           `🚫 Zugang verweigert – Benutzer <strong>${userData.username}</strong> ist geblockt oder inaktiv.`
         );
-        await window.supabase.auth.signOut();
+        await window.supabaseClient.auth.signOut();
         redirect("login.html");
         return;
       }
