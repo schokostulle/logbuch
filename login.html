@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anmeldung – Logbuch</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-page">
+  <main class="login-container">
+    <h1>⚓ Logbuch Anmeldung</h1>
+    <p>Melde dich mit deinem Benutzerkonto an.</p>
+
+    <form id="loginForm">
+      <label for="loginName">Name</label>
+      <input type="text" id="loginName" required>
+
+      <label for="loginPass">Passwort</label>
+      <input type="password" id="loginPass" required>
+
+      <button type="submit">Anmelden</button>
+    </form>
+
+    <p class="hint">
+      <a href="register.html">Neuen Benutzer registrieren</a>
+    </p>
+  </main>
+
+  <script type="module" src="login.js"></script>
+</body>
+</html>

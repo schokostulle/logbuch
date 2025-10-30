@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kampfberichte – Logbuch</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside>
+    <header>⚓ Logbuch</header>
+    <nav>
+      <ul></ul>
+  </nav>
+</aside>
+
+  <main>
+    <header class="topbar">
+      <h1>Kampfberichte</h1>
+      <div class="user-status">Kapitän Ahab – 🟢 Online</div>
+    </header>
+
+    <section class="content">
+      <h2>Neuer Bericht</h2>
+      <p>Füge hier den vollständigen Kampfbericht ein. Das System analysiert ihn automatisch.</p>
+
+      <form id="berichtForm">
+        <textarea id="berichtText" rows="10" placeholder="Kampfbericht hier einfügen..."></textarea>
+        <button type="submit">Analysieren & Speichern</button>
+      </form>
+
+      <h3>Logbuch-Einträge</h3>
+      <div id="berichteLogs">
+        <table id="berichteTable">
+          <thead>
+            <tr>
+              <th>Datum</th>
+              <th>Benutzer</th>
+              <th>Rolle</th>
+              <th>Oz</th>
+              <th>Ig</th>
+              <th>In</th>
+
+              <!-- Einheiten -->
+              <th>Steinschleuderer</th>
+              <th>Lanzenträger</th>
+              <th>Langbogenschütze</th>
+              <th>Kanonen</th>
+              <th>Fregatte</th>
+              <th>Handelskogge</th>
+              <th>Kolonialschiff</th>
+              <th>Spähschiff</th>
+
+              <!-- Verluste -->
+              <th>V-Stein</th>
+              <th>V-Lanze</th>
+              <th>V-Bogen</th>
+              <th>V-Kanonen</th>
+              <th>V-Fregatte</th>
+              <th>V-Kogge</th>
+              <th>V-Kolonial</th>
+              <th>V-Späh</th>
+
+              <!-- Gebäude vor / neu -->
+              <th>Hauptgebäude vor</th>
+              <th>Hauptgebäude neu</th>
+              <th>Goldbergwerk vor</th>
+              <th>Goldbergwerk neu</th>
+              <th>Steinbruch vor</th>
+              <th>Steinbruch neu</th>
+              <th>Holzfällerhütte vor</th>
+              <th>Holzfällerhütte neu</th>
+              <th>Universität vor</th>
+              <th>Universität neu</th>
+              <th>Baracke vor</th>
+              <th>Baracke neu</th>
+              <th>Werft vor</th>
+              <th>Werft neu</th>
+              <th>Lagerhaus vor</th>
+              <th>Lagerhaus neu</th>
+              <th>Steinwall vor</th>
+              <th>Steinwall neu</th>
+              <th>Wachturm vor</th>
+              <th>Wachturm neu</th>
+              <th>Ruhestätte vor</th>
+              <th>Ruhestätte neu</th>
+
+              <!-- Forschung -->
+              <th>Lanze</th>
+              <th>Schild</th>
+              <th>Langbogen</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="navigation.js"></script>
+  <script type="module" src="access-guard.js"></script> <!-- 🔒 Neu -->
+  <script type="module" src="logbuch.js"></script>
+  <script type="module" src="kampfberichte.js"></script>
+</body>
+</html>

@@ -1,0 +1,456 @@
+/* =========================================================
+   Logbuch – Projekt
+   style.css – Version 1.7
+   Autor: Kapitän
+   Datum: 31.10.2025
+   Beschreibung:
+   Dynamische Seitenleiste: Max. 20 % Breite, symbolbasiert auf
+   schmalen Geräten. Maritime, ruhige Desktop-Ansicht.
+   ========================================================= */
+
+/* ---------- Allgemeine Grundformate ---------- */
+
+body {
+  margin: 0;
+  display: flex;
+  height: 100vh;
+  background-color: #0b1d2a;
+  color: #d9cba0;
+  font-family: "Courier New", Courier, monospace;
+}
+
+/* ---------- Seitenlayout ---------- */
+
+aside {
+  flex: 0 0 20%;
+  max-width: 20%;
+  min-width: 250px;
+  background-color: #2a2f33;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-right: 1px solid #444;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+/* ---------- Kopfbereich ---------- */
+
+aside header {
+  text-align: center;
+  padding: 1.5rem 0;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #d9cba0;
+  border-bottom: 1px solid #444;
+}
+
+/* ---------- Navigation ---------- */
+
+nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding-top: 0.5rem;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+nav ul li { margin: 0; }
+
+nav ul li a {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.9rem 1rem;
+  color: #d9cba0;
+  text-decoration: none;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, padding 0.3s ease;
+  white-space: nowrap;
+}
+
+nav ul li a:hover {
+  background-color: #3b4247;
+}
+/* Aktiver Menüpunkt */
+nav ul li a.active {
+  background-color: #3f4a50;
+  color: #f0d9a0;
+  box-shadow: inset 0 0 8px rgba(255, 235, 180, 0.2);
+  font-weight: bold;
+}
+
+nav ul li:last-child {
+  margin-top: auto;
+}
+
+/* ---------- Symbolmodus für schmale Geräte ---------- */
+@media (max-width: 900px) {
+  aside {
+    flex: 0 0 15%;
+    max-width: 15%;
+    min-width: 80px;
+  }
+
+  aside header {
+    font-size: 1rem;
+    padding: 1rem 0;
+    letter-spacing: 1px;
+  }
+
+  nav ul li a {
+    justify-content: center;
+    font-size: 0.8rem;
+    padding: 0.8rem 0.5rem;
+  }
+
+  nav ul li a span.text {
+    display: none; /* Text verschwindet, nur Symbol bleibt */
+  }
+
+  nav ul li a::before {
+    font-size: 1.3rem;
+    margin-right: 0;
+  }
+}
+
+/* ---------- Extra kompakter Symbolmodus ---------- */
+@media (max-width: 600px) {
+  aside {
+    flex: 0 0 12%;
+    max-width: 12%;
+    min-width: 60px;
+  }
+
+  aside header {
+    font-size: 0.8rem;
+    padding: 0.8rem 0;
+  }
+
+  nav ul li a {
+    justify-content: center;
+    padding: 0.7rem 0.3rem;
+  }
+
+  nav ul li a::before {
+    font-size: 1.2rem;
+  }
+}
+
+/* ---------- Hauptbereich ---------- */
+
+main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #0b1d2a;
+  overflow-y: auto;
+}
+
+/* ---------- Kopfzeile ---------- */
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: #0b1d2a;
+  color: #d9cba0;
+  font-weight: bold;
+  border-bottom: 1px solid #444;
+}
+
+.topbar h1 {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.user-status {
+  font-size: 0.95rem;
+  font-weight: normal;
+}
+
+/* ---------- Inhaltsbereich ---------- */
+
+.content {
+  padding: 1.5rem;
+}
+
+.content h2 {
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #d9cba0;
+  margin-top: 0;
+  border-bottom: 1px solid #555;
+  padding-bottom: 0.5rem;
+}
+
+/* ---------- Tabellen ---------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  background-color: #141a1f;
+  color: #d9cba0;
+  border: 1px solid #444;
+}
+
+table th, table td {
+  border: 1px solid #444;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+}
+
+table th {
+  background-color: #1d242a;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+table tr:nth-child(even) {
+  background-color: #1a1f23;
+}
+
+/* ---------- Buttons ---------- */
+
+button, .btn {
+  background-color: #2f363b;
+  color: #d9cba0;
+  border: 1px solid #555;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover, .btn:hover {
+  background-color: #3b444a;
+}
+
+/* ---------- Eingabefelder ---------- */
+
+input[type="text"], textarea, select {
+  width: 100%;
+  background-color: #1a2025;
+  color: #d9cba0;
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* ---------- Karten-/Grafikbereich ---------- */
+
+.canvas-ocean {
+  margin-top: 2rem;
+  background-color: #10161c;
+  border: 1px solid #444;
+  border-radius: 6px;
+  height: 300px;
+}
+
+/* ---------- Feine Details ---------- */
+
+hr {
+  border: 0;
+  border-top: 1px solid #444;
+  margin: 1rem 0;
+}
+
+em { color: #bba86f; }
+strong { color: #e0d5a0; }
+
+/* =========================================================
+   Login / Logout / Gate
+   ========================================================= */
+
+body.login-page {
+  background-color: #0b1d2a;
+  color: #e0cfa2;
+  font-family: "Courier New", monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.login-container {
+  background-color: rgba(30, 40, 50, 0.85);
+  border: 1px solid #5a5a5a;
+  border-radius: 12px;
+  padding: 2rem 3rem;
+  text-align: center;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.login-container h1 {
+  color: #e0cfa2;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+.login-container p {
+  color: #d9d4c2;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.login-container label {
+  text-align: left;
+  color: #d9d4c2;
+  font-size: 0.9rem;
+  margin-bottom: -0.2rem;
+}
+
+.login-container input {
+  background-color: #162630;
+  border: 1px solid #555;
+  border-radius: 6px;
+  padding: 0.5rem;
+  color: #e0cfa2;
+  font-family: "Courier New", monospace;
+}
+
+.login-container input:focus {
+  outline: none;
+  border-color: #c7b37e;
+  background-color: #1c2e3a;
+}
+
+.login-container button {
+  background-color: #2b3c49;
+  border: 1px solid #c7b37e;
+  color: #e0cfa2;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 0.6rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.login-container button:hover {
+  background-color: #364958;
+  transform: translateY(-1px);
+}
+
+.login-container .hint {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #c0b598;
+}
+
+.login-container .hint a {
+  color: #e0cfa2;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.login-container .hint a:hover {
+  text-decoration: underline;
+}
+
+#statusMessage p {
+  color: #e0cfa2;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.login-container p { animation: pulse 2s infinite; }
+
+/* =========================================================
+   Logbuch-Darstellung – Dashboard v1.3
+   ========================================================= */
+
+.log-entry {
+  background-color: #141a1f;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.log-title {
+  color: #cc5b5b; /* maritimes Rot für Titel */
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.log-message {
+  color: #d9cba0;
+  line-height: 1.4;
+  margin: 0.3rem 0 0.6rem 0;
+}
+
+.log-footer {
+  font-size: 0.85rem;
+  color: #bba86f;
+  border-top: 1px solid #333;
+  padding-top: 0.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Löschbutton für Admins */
+.log-footer .delete-btn {
+  background-color: #3b2b2b;
+  color: #e0cfa2;
+  border: 1px solid #665;
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.log-footer .delete-btn:hover {
+  background-color: #5b2e2e;
+  color: #f8e7bb;
+}

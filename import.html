@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSV-Import – Logbuch</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- =========================================================
+       CSV-Import – Version 1.0
+       Funktion:
+       - CSV ohne Kopfzeile einlesen
+       - Daten als Tabelle mit sticky Header darstellen
+       - CSV dauerhaft im Local Storage speichern
+       - Nur Admins dürfen importieren oder löschen
+       ========================================================= -->
+</head>
+
+<body>
+  <aside>
+    <header>⚓ Logbuch</header>
+    <nav>
+      <ul></ul>
+    </nav>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <h1>CSV-Import</h1>
+      <div class="user-status">Lade Benutzer …</div>
+    </header>
+
+    <section class="content">
+      <h2>CSV-Datenbasis</h2>
+      <p>Hier kannst du eine CSV-Datei importieren, die als Grundlage für alle Tools dient.</p>
+
+      <div id="adminImportSection" style="display:none;">
+        <input type="file" id="csvFile" accept=".csv">
+        <button id="importButton">Import starten</button>
+        <button id="clearButton">Daten löschen</button>
+        <hr>
+      </div>
+
+      <div id="csvTableContainer">
+        <table id="csvTable">
+          <thead>
+            <tr>
+              <th>Ozean</th>
+              <th>Inselgruppe</th>
+              <th>Insel</th>
+              <th>Inselname</th>
+              <th>Spieler ID</th>
+              <th>Spielername</th>
+              <th>Allianz ID</th>
+              <th>AKürzel</th>
+              <th>Allianzname</th>
+              <th>Punkte</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="navigation.js"></script>
+  <script type="module" src="access-guard.js"></script>
+  <script type="module" src="logbuch.js"></script>
+  <script type="module" src="import.js"></script>
+</body>
+</html>

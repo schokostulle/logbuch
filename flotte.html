@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flotte – Logbuch</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside>
+    <header>⚓ Logbuch</header>
+    <nav>
+      <ul></ul>
+  </nav>
+</aside>
+
+  <main>
+    <header class="topbar">
+      <h1>Flottenübersicht</h1>
+      <div class="user-status">Kapitän Ahab – 🟢 Online</div>
+    </header>
+
+    <section class="content">
+      <h2>Flottenauswertung</h2>
+      <p>
+        Füge hier den Flottenbericht ein. Das System erkennt automatisch, ob es sich um eine Inselübersicht oder eine Gesamtflotte handelt.
+      </p>
+
+      <!-- Formular für neue Analyse -->
+      <form id="flottenForm">
+        <label for="flottenText">Flottenbericht:</label>
+        <textarea id="flottenText" rows="8" placeholder="Textblock der Flotte hier einfügen..."></textarea>
+        <button type="submit">Analysieren & Speichern</button>
+      </form>
+
+      <h3>Logbuch-Einträge</h3>
+      <div id="flottenLogs">
+        <!-- Hier fügt flotte.js alle analysierten Einträge mit Zeitstempel ein -->
+        <table id="flottenTable">
+          <thead>
+            <tr>
+              <th>Insel</th>
+              <th>Steinschleuderer</th>
+              <th>Lanzenträger</th>
+              <th>Langbogenschütze</th>
+              <th>Kanonen</th>
+              <th>Fregatte</th>
+              <th>Handelskogge</th>
+              <th>Kolonialschiff</th>
+              <th>Spähschiff</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="navigation.js"></script>
+  <script type="module" src="access-guard.js"></script> <!-- 🔒 Neu -->
+  <script type="module" src="logbuch.js"></script>
+  <script type="module" src="flotte.js"></script>
+</body>
+</html>

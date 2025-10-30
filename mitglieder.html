@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mitglieder – Logbuch</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside>
+    <header>⚓ Logbuch</header>
+    <nav>
+      <ul></ul>
+    </nav>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <h1>Mitglieder</h1>
+      <div class="user-status">Kapitän Ahab – 🟢 Online</div>
+    </header>
+
+    <section class="content">
+      <h2>Besatzung</h2>
+      <p>Hier verwaltest du alle registrierten Benutzer. Nur Administratoren können Rollen und Status ändern oder Mitglieder entfernen.</p>
+
+      <div class="controls">
+        <label>
+          <input type="checkbox" id="showDeleted"> Gelöschte anzeigen
+        </label>
+      </div>
+
+      <table id="membersTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Rolle</th>
+            <th>Status</th>
+            <th>Gelöscht</th>
+            <th>Aktionen</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS füllt Einträge hier automatisch ein -->
+        </tbody>
+      </table>
+
+      <p class="hint">
+        <em>Ein „Entfernen“ ist ein Soft-Delete – Benutzer kann sich danach nicht mehr einloggen, bleibt aber im System erhalten.</em>
+      </p>
+    </section>
+  </main>
+
+  <script type="module" src="navigation.js"></script>
+  <script type="module" src="access-guard.js"></script> <!-- 🔒 Neu -->
+  <script type="module" src="logbuch.js"></script> 
+  <script type="module" src="mitglieder.js"></script>
+</body>
+</html>
