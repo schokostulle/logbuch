@@ -1,6 +1,6 @@
 // ============================================================
 // audit.js – Supabase Audit-Viewer
-// Version: 1.0 – 03.11.2025
+// Version: 1.1 – 03.11.2025
 // Autor: Kapitän ⚓
 // Beschreibung:
 //   Zeigt die letzten Audit-Einträge aus audit_log
@@ -13,7 +13,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   const tableBody = document.querySelector("#auditTable tbody");
 
   // --- Authentifizierung prüfen ---
-  const { data: sessionData, error: sessionError } = await window.supabaseClient.auth.getUser();
+  if (!window.supabase) {
+    console.error("❌ Supabase nicht initialisiert. logbuch.js fehlt oder wurde zu spät geladen.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const supabase = window.supabase;
+
+  const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
   if (sessionError || !sessionData?.user) {
     alert("Zugang verweigert – keine gültige Sitzung.");
     window.location.href = "login.html";
@@ -23,7 +31,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const authUser = sessionData.user;
 
   // --- Benutzer laden ---
-  const { data: currentUser, error: userError } = await window.supabaseClient
+  const { data: currentUser, error: userError } = await supabase
     .from("users")
     .select("id, username, role")
     .eq("id", authUser.id)
@@ -42,7 +50,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // --- Auditdaten laden ---
-  const { data: logs, error: loadError } = await window.supabaseClient
+  const { data: logs, error: loadError } = await supabase
     .from("audit_log")
     .select("*")
     .order("created_at", { ascending: false })
@@ -110,5 +118,5 @@ document.addEventListener("DOMContentLoaded", async () => {
       .replace(/>/g, "&gt;");
   }
 
-  Logbuch.log("Audit.js v1.0 geladen – Admin-Protokoll aktiv ⚓");
+  Logbuch.log("Audit.js v1.1 geladen – Admin-Protokoll aktiv ⚓");
 });
