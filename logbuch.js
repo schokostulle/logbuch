@@ -1,23 +1,21 @@
 // =============================================================
-// logbuch.js – Supabase Initialisierung (v2.1-fix)
+// logbuch.js – Supabase-Initialisierung (final)
 // =============================================================
 
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-// Stelle sicher, dass das Supabase SDK geladen ist
-if (!window.supabase || !window.supabase.createClient) {
-  console.error("❌ Supabase SDK wurde nicht geladen!");
-}
-
-// Supabase-Client erzeugen
+// Supabase-Konfiguration
 const SUPABASE_URL = "https://bbeczprdumbeqcutqopr.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiZWN6cHJkdW1iZXFjdXRxb3ByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3NjMzMTgsImV4cCI6MjA3NzMzOTMxOH0.j2DiRK_40cSiFOM8KdA9DzjLklC9hXH_Es6mHPOvPQk"; // ← hier dein echter anon key
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiZWN6cHJkdW1iZXFjdXRxb3ByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3NjMzMTgsImV4cCI6MjA3NzMzOTMxOH0.j2DiRK_40cSiFOM8KdA9DzjLklC9hXH_Es6mHPOvPQk"; // <– bitte echten anon key einsetzen!
 
-// Global verfügbar machen
-window.supabaseClient = supabaseClient;
-export const supabase = supabaseClient;
-// =============================================================
+// Supabase-Client erstellen
+export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Optional global machen (falls du in HTML darauf zugreifst)
+window.supabase = supabase;
+
+// Testausgabe in der Konsole
+console.log("✅ Supabase verbunden:", SUPABASE_URL); =============================================================
 // ⚓ Zentrale Logbuch-API
 // =============================================================
 
