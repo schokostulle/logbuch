@@ -1,35 +1,74 @@
 // =============================================================
-// Mitgliederverwaltung – v1.3 (Build 30.10.2025)
-// Neue Funktion: Wiederherstellen gelöschter Mitglieder
+// mitglieder.js – Supabase-only Mitgliederverwaltung
+// Version: 2.0 – 02.11.2025
+// Keine Nutzung von localStorage. Alle Daten aus Supabase.
 // =============================================================
-
-const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
-if (!currentUser || currentUser.status !== "aktiv") {
-  window.location.href = "gate.html";
-}
 
 import { Logbuch } from "./logbuch.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const tableBody = document.querySelector("#membersTable tbody");
   const showDeletedCheckbox = document.getElementById("showDeleted");
 
-  // Zugriff prüfen
-  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
-  if (!currentUser || currentUser.status !== "aktiv" || currentUser.role !== "Admin") {
+  // 🔒 Aktuellen Benutzer prüfen
+  const { data: sessionData, error: sessionError } = await window.supabase.auth.getUser();
+  if (sessionError || !sessionData?.user) {
+    alert("Zugang verweigert – keine gültige Sitzung.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const authUser = sessionData.user;
+
+  // Benutzer aus Tabelle laden
+  const { data: currentUserData, error: currentUserError } = await window.supabase
+    .from("users")
+    .select("id, username, role, status")
+    .eq("id", authUser.id)
+    .single();
+
+  if (currentUserError || !currentUserData) {
+    alert("Benutzer konnte nicht geladen werden. Bitte erneut anmelden.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  if (currentUserData.role.toLowerCase() !== "admin") {
     alert("Zugriff verweigert – nur Administratoren dürfen diese Seite aufrufen.");
     window.location.href = "dashboard.html";
     return;
   }
 
-  let users = JSON.parse(localStorage.getItem("logbuch_users")) || [];
-  const founder = users.length > 0 ? users[0].name : null;
+  // Alle Benutzer laden
+  const { data: allUsers, error: loadError } = await window.supabase
+    .from("users")
+    .select("id, username, role, status, deleted")
+    .order("username", { ascending: true });
+
+  if (loadError) {
+    console.error("Fehler beim Laden der Benutzer:", loadError);
+    alert("Fehler beim Laden der Benutzerliste.");
+    return;
+  }
+
+  // Gründer-Admin = erster registrierter Benutzer (ältester Eintrag)
+  const { data: founderData } = await window.supabase
+    .from("users")
+    .select("id, username")
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .single();
+
+  const founderId = founderData?.id || null;
+  let users = allUsers || [];
 
   renderTable();
 
   showDeletedCheckbox.addEventListener("change", renderTable);
 
-  // -------------------- Tabellenaufbau --------------------
+  // =========================================================
+  // Tabellenaufbau
+  // =========================================================
   function renderTable() {
     tableBody.innerHTML = "";
 
@@ -43,20 +82,17 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    visibleUsers.forEach((user, index) => {
-      const isFounder = user.name === founder;
-      const isSelf = user.name === currentUser.name;
-      const isDeleted = user.deleted;
+    visibleUsers.forEach(user => {
+      const isFounder = user.id === founderId;
+      const isSelf = user.id === currentUserData.id;
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td>${user.name}${isFounder ? " ⭐" : ""}</td>
-        <td>${user.role}</td>
-        <td>${user.status}</td>
-        <td>${isDeleted ? "Ja" : "Nein"}</td>
-        <td>
-          ${renderActions(user, index, isFounder, isSelf)}
-        </td>
+        <td>${user.username}${isFounder ? " ⭐" : ""}</td>
+        <td>${capitalize(user.role)}</td>
+        <td>${capitalize(user.status)}</td>
+        <td>${user.deleted ? "Ja" : "Nein"}</td>
+        <td>${renderActions(user, isFounder, isSelf)}</td>
       `;
       tableBody.appendChild(tr);
     });
@@ -64,89 +100,148 @@ document.addEventListener("DOMContentLoaded", () => {
     activateButtons();
   }
 
-  // -------------------- Aktionen generieren --------------------
-  function renderActions(user, index, isFounder, isSelf) {
+  // =========================================================
+  // Aktionen für jeden Benutzer
+  // =========================================================
+  function renderActions(user, isFounder, isSelf) {
     if (isFounder || isSelf) {
       return `<em style="color:#888;">geschützt</em>`;
     }
 
     if (user.deleted) {
-      return `<button class="btn-restore" data-index="${index}">Reaktivieren</button>`;
+      return `<button class="btn-restore" data-id="${user.id}">Reaktivieren</button>`;
     }
 
     return `
-      <button class="btn-role" data-index="${index}">Rolle</button>
-      <button class="btn-status" data-index="${index}">Status</button>
-      <button class="btn-delete" data-index="${index}">Entfernen</button>
+      <button class="btn-role" data-id="${user.id}">Rolle</button>
+      <button class="btn-status" data-id="${user.id}">Status</button>
+      <button class="btn-delete" data-id="${user.id}">Entfernen</button>
     `;
   }
 
-  // -------------------- Buttons aktivieren --------------------
+  // =========================================================
+  // Buttons aktivieren
+  // =========================================================
   function activateButtons() {
     document.querySelectorAll(".btn-role").forEach(btn => {
-      btn.addEventListener("click", e => toggleRole(e.target.dataset.index));
+      btn.addEventListener("click", async e => {
+        const userId = e.target.dataset.id;
+        await toggleRole(userId);
+      });
     });
     document.querySelectorAll(".btn-status").forEach(btn => {
-      btn.addEventListener("click", e => toggleStatus(e.target.dataset.index));
+      btn.addEventListener("click", async e => {
+        const userId = e.target.dataset.id;
+        await toggleStatus(userId);
+      });
     });
     document.querySelectorAll(".btn-delete").forEach(btn => {
-      btn.addEventListener("click", e => softDelete(e.target.dataset.index));
+      btn.addEventListener("click", async e => {
+        const userId = e.target.dataset.id;
+        await softDelete(userId);
+      });
     });
     document.querySelectorAll(".btn-restore").forEach(btn => {
-      btn.addEventListener("click", e => restoreUser(e.target.dataset.index));
+      btn.addEventListener("click", async e => {
+        const userId = e.target.dataset.id;
+        await restoreUser(userId);
+      });
     });
   }
 
-  // -------------------- Logik --------------------
-  function toggleRole(i) {
-    const u = users[i];
-    if (isProtected(u)) return;
-    u.role = u.role === "Admin" ? "Member" : "Admin";
-    saveUsers();
+  // =========================================================
+  // Logik: Änderungen über Supabase-API
+  // =========================================================
+  async function toggleRole(userId) {
+    const u = users.find(x => x.id === userId);
+    if (!u || isProtected(u)) return;
+
+    const newRole = u.role === "admin" ? "member" : "admin";
+    const { error } = await window.supabase.from("users").update({ role: newRole }).eq("id", userId);
+
+    if (error) {
+      alert("Fehler beim Ändern der Rolle.");
+      return;
+    }
+
+    u.role = newRole;
+    renderTable();
   }
 
-  function toggleStatus(i) {
-    const u = users[i];
-    if (isProtected(u)) return;
-    u.status = u.status === "aktiv" ? "geblockt" : "aktiv";
-    saveUsers();
+  async function toggleStatus(userId) {
+    const u = users.find(x => x.id === userId);
+    if (!u || isProtected(u)) return;
+
+    const newStatus = u.status === "aktiv" ? "geblockt" : "aktiv";
+    const { error } = await window.supabase.from("users").update({ status: newStatus }).eq("id", userId);
+
+    if (error) {
+      alert("Fehler beim Ändern des Status.");
+      return;
+    }
+
+    u.status = newStatus;
+    renderTable();
   }
 
-  function softDelete(i) {
-    const u = users[i];
-    if (isProtected(u)) return;
+  async function softDelete(userId) {
+    const u = users.find(x => x.id === userId);
+    if (!u || isProtected(u)) return;
+
     if (u.deleted) return alert("Benutzer ist bereits als gelöscht markiert.");
-    if (!confirm(`Soll der Benutzer "${u.name}" wirklich entfernt werden?`)) return;
+    if (!confirm(`Soll der Benutzer "${u.username}" wirklich entfernt werden?`)) return;
+
+    const { error } = await window.supabase.from("users").update({ deleted: true }).eq("id", userId);
+    if (error) {
+      alert("Fehler beim Entfernen des Benutzers.");
+      return;
+    }
+
     u.deleted = true;
-    saveUsers();
+    renderTable();
   }
 
-  function restoreUser(i) {
-    const u = users[i];
+  async function restoreUser(userId) {
+    const u = users.find(x => x.id === userId);
+    if (!u) return alert("Benutzer nicht gefunden.");
     if (!u.deleted) return alert("Dieser Benutzer ist nicht gelöscht.");
-    if (!confirm(`"${u.name}" wieder an Bord holen?`)) return;
+
+    if (!confirm(`"${u.username}" wieder an Bord holen?`)) return;
+
+    const { error } = await window.supabase.from("users").update({ deleted: false }).eq("id", userId);
+    if (error) {
+      alert("Fehler beim Reaktivieren des Benutzers.");
+      return;
+    }
+
     u.deleted = false;
-    saveUsers();
+    renderTable();
   }
 
-  // -------------------- Schutzregeln --------------------
+  // =========================================================
+  // Schutzregeln
+  // =========================================================
   function isProtected(user) {
-    if (user.name === founder) {
+    if (user.id === founderId) {
       alert("Dieser Benutzer ist der Gründer-Admin und kann nicht geändert werden.");
       return true;
     }
-    if (user.name === currentUser.name) {
+    if (user.id === currentUserData.id) {
       alert("Du kannst dich nicht selbst ändern, Kapitän!");
+      return true;
+    }
+    if (user.role === "admin" && currentUserData.role === "admin") {
+      alert("Ein Admin kann keinen anderen Admin ändern.");
       return true;
     }
     return false;
   }
 
-  // -------------------- Speicherung --------------------
-  function saveUsers() {
-    localStorage.setItem("logbuch_users", JSON.stringify(users));
-    renderTable();
+  // Hilfsfunktion
+  function capitalize(str) {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   }
 
-  Logbuch.log("Mitgliederverwaltung v1.3 geladen – Reaktivierung aktiv.");
+  Logbuch.log("Mitgliederverwaltung v2.0 geladen – Supabase aktiv ⚓");
 });
