@@ -2,6 +2,8 @@
 // logbuch.js – Supabase Initialisierung (v2.1-fix)
 // =============================================================
 
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
 // Stelle sicher, dass das Supabase SDK geladen ist
 if (!window.supabase || !window.supabase.createClient) {
   console.error("❌ Supabase SDK wurde nicht geladen!");
