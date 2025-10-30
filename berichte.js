@@ -1,6 +1,7 @@
 // =============================================================
-// berichte.js – v2.5 (Build 03.11.2025)
-// Ausgabe exakt passend zur HTML-Tabelle
+// berichte.js – v3.1 (Build 04.11.2025)
+// Zwei Einträge je Bericht (Angreifer + Verteidiger)
+// + visuelle Trennung per Rolle (rot/blau)
 // =============================================================
 
 import { supabase } from "./logbuch.js";
@@ -26,35 +27,51 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    const entry = {
+    // 1️⃣ Eintrag für den Angreifer
+    const attackerEntry = {
       user: username,
-      oz: parsed.coords?.oz ?? null,
-      ig: parsed.coords?.ig ?? null,
-      i: parsed.coords?.i ?? null,
+      role: "Angreifer",
+      oz: parsed.attackerCoords?.oz ?? null,
+      ig: parsed.attackerCoords?.ig ?? null,
+      i: parsed.attackerCoords?.i ?? null,
       attacker_units: parsed.attackerUnits,
+      defender_units: null,
+      destroyed_buildings: "n.a.",
+      research_changes: "n.a.",
+      created_at: new Date().toISOString(),
+    };
+
+    // 2️⃣ Eintrag für den Verteidiger
+    const defenderEntry = {
+      user: username,
+      role: "Verteidiger",
+      oz: parsed.defenderCoords?.oz ?? null,
+      ig: parsed.defenderCoords?.ig ?? null,
+      i: parsed.defenderCoords?.i ?? null,
+      attacker_units: null,
       defender_units: parsed.defenderUnits,
       destroyed_buildings: parsed.destroyedBuildings,
       research_changes: parsed.researchChanges,
       created_at: new Date().toISOString(),
     };
 
-    const { error } = await supabase.from("battle_reports").insert([entry]);
+    const { error } = await supabase.from("battle_reports").insert([attackerEntry, defenderEntry]);
     if (error) {
       console.error("SUPABASE INSERT ERROR:", error);
       alert("Fehler beim Speichern des Kampfberichts!");
       return;
     }
 
-    alert("Kampfbericht erfolgreich gespeichert ⚔️");
+    alert("Kampfbericht gespeichert – Angreifer & Verteidiger ⚔️");
     textarea.value = "";
     await renderLogs();
   });
 
   // =============================================================
-  // Tabellen-Rendering (passend zu Kopfstruktur)
+  // Tabellen-Rendering (mit Rollen-Spalte & Farben)
   // =============================================================
   async function renderLogs() {
-    tbody.innerHTML = "<tr><td colspan='50'><em>Lade Berichte...</em></td></tr>";
+    tbody.innerHTML = "<tr><td colspan='60'><em>Lade Berichte...</em></td></tr>";
 
     const { data, error } = await supabase
       .from("battle_reports")
@@ -63,49 +80,51 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (error) {
       console.error("SUPABASE LOAD ERROR:", error);
-      tbody.innerHTML = "<tr><td colspan='50'><em>Fehler beim Laden.</em></td></tr>";
+      tbody.innerHTML = "<tr><td colspan='60'><em>Fehler beim Laden.</em></td></tr>";
       return;
     }
 
     if (!data || data.length === 0) {
-      tbody.innerHTML = "<tr><td colspan='50'><em>Keine Berichte vorhanden.</em></td></tr>";
+      tbody.innerHTML = "<tr><td colspan='60'><em>Keine Berichte vorhanden.</em></td></tr>";
       return;
     }
 
     tbody.innerHTML = "";
     data.forEach((r) => {
-      const u = r.attacker_units || {};
-      const v = r.defender_units || {};
-      const b = r.destroyed_buildings || {};
-      const f = r.research_changes || {};
+      const units = r.attacker_units || r.defender_units || {};
+      const b = typeof r.destroyed_buildings === "object" ? r.destroyed_buildings : {};
+      const f = typeof r.research_changes === "object" ? r.research_changes : {};
 
       const tr = document.createElement("tr");
+      tr.classList.add(r.role === "Angreifer" ? "attacker-row" : "defender-row");
+
       tr.innerHTML = `
         <td>${new Date(r.created_at).toLocaleString("de-DE")}</td>
         <td>${r.user || "?"}</td>
+        <td>${r.role || ""}</td>
         <td>${r.oz ?? ""}</td>
         <td>${r.ig ?? ""}</td>
         <td>${r.i ?? ""}</td>
 
         <!-- Einheiten -->
-        <td>${u.Steinschleuderer?.total ?? 0}</td>
-        <td>${u.Lanzenträger?.total ?? 0}</td>
-        <td>${u.Langbogenschütze?.total ?? 0}</td>
-        <td>${u.Kanonen?.total ?? 0}</td>
-        <td>${u.Fregatte?.total ?? 0}</td>
-        <td>${u.Handelskogge?.total ?? 0}</td>
-        <td>${u.Kolonialschiff?.total ?? 0}</td>
-        <td>${u.Spähschiff?.total ?? 0}</td>
+        <td>${units.Steinschleuderer?.total ?? 0}</td>
+        <td>${units.Lanzenträger?.total ?? 0}</td>
+        <td>${units.Langbogenschütze?.total ?? 0}</td>
+        <td>${units.Kanonen?.total ?? 0}</td>
+        <td>${units.Fregatte?.total ?? 0}</td>
+        <td>${units.Handelskogge?.total ?? 0}</td>
+        <td>${units.Kolonialschiff?.total ?? 0}</td>
+        <td>${units.Spähschiff?.total ?? 0}</td>
 
         <!-- Verluste -->
-        <td>${u.Steinschleuderer?.losses ?? 0}</td>
-        <td>${u.Lanzenträger?.losses ?? 0}</td>
-        <td>${u.Langbogenschütze?.losses ?? 0}</td>
-        <td>${u.Kanonen?.losses ?? 0}</td>
-        <td>${u.Fregatte?.losses ?? 0}</td>
-        <td>${u.Handelskogge?.losses ?? 0}</td>
-        <td>${u.Kolonialschiff?.losses ?? 0}</td>
-        <td>${u.Spähschiff?.losses ?? 0}</td>
+        <td>${units.Steinschleuderer?.losses ?? 0}</td>
+        <td>${units.Lanzenträger?.losses ?? 0}</td>
+        <td>${units.Langbogenschütze?.losses ?? 0}</td>
+        <td>${units.Kanonen?.losses ?? 0}</td>
+        <td>${units.Fregatte?.losses ?? 0}</td>
+        <td>${units.Handelskogge?.losses ?? 0}</td>
+        <td>${units.Kolonialschiff?.losses ?? 0}</td>
+        <td>${units.Spähschiff?.losses ?? 0}</td>
 
         <!-- Gebäude -->
         ${renderBuilding(b, "Hauptgebäude")}
@@ -121,10 +140,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         ${renderBuilding(b, "Ruhestätte")}
 
         <!-- Forschungen -->
-        <td>${f.Lanze ?? 0}</td>
-        <td>${f.Schild ?? 0}</td>
-        <td>${f.Langbogen ?? 0}</td>
-        <td>${f.Kanone ?? 0}</td>
+        <td>${f.Lanze ?? "n.a."}</td>
+        <td>${f.Schild ?? "n.a."}</td>
+        <td>${f.Langbogen ?? "n.a."}</td>
+        <td>${f.Kanone ?? "n.a."}</td>
       `;
       tbody.appendChild(tr);
     });
@@ -132,12 +151,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function renderBuilding(obj, name) {
     const v = obj[name] || {};
-    return `<td>${v.vor ?? ""}</td><td>${v.neu ?? ""}</td>`;
+    return `<td>${v.vor ?? "n.a."}</td><td>${v.neu ?? "n.a."}</td>`;
   }
 });
 
 // =============================================================
-// Parser v2.5 – erkennt Einheiten, Gebäude, Forschungen etc.
+// Parser v3.1 – erkennt Angreifer + Verteidiger separat
 // =============================================================
 function parseReport(text) {
   const lines = text
@@ -171,34 +190,33 @@ function parseReport(text) {
   ];
   const RESEARCH_KEYS = ["Lanze", "Schild", "Langbogen", "Kanone"];
 
-  let coords = null;
-  let attackerUnits = {};
-  let defenderUnits = {};
-  let destroyedBuildings = {};
-  let researchChanges = {};
+  const coords = [...text.matchAll(/\((\d+):(\d+):(\d+)\)/g)].map((m) => ({
+    oz: +m[1],
+    ig: +m[2],
+    i: +m[3],
+  }));
+  const attackerCoords = coords[0] || null;
+  const defenderCoords = coords[1] || null;
 
-  // --- Koordinaten ---
-  const coordMatch = text.match(/\((\d+):(\d+):(\d+)\)/);
-  if (coordMatch) coords = { oz: +coordMatch[1], ig: +coordMatch[2], i: +coordMatch[3] };
-
-  // --- Einheiten ---
   const attackerStart = lines.findIndex((l) => /Einheiten des Angreifers/i.test(l));
   const defenderStart = lines.findIndex((l) => /Einheiten des Verteidigers/i.test(l));
-  if (attackerStart !== -1)
-    attackerUnits = parseUnits(lines.slice(attackerStart + 1, defenderStart === -1 ? lines.length : defenderStart), UNIT_KEYS);
-  if (defenderStart !== -1)
-    defenderUnits = parseUnits(lines.slice(defenderStart + 1), UNIT_KEYS);
 
-  // --- Zerstörung / Kollateralschaden ---
-  lines.forEach((l, i) => {
+  const attackerUnits =
+    attackerStart !== -1
+      ? parseUnits(lines.slice(attackerStart + 1, defenderStart === -1 ? lines.length : defenderStart), UNIT_KEYS)
+      : {};
+  const defenderUnits =
+    defenderStart !== -1 ? parseUnits(lines.slice(defenderStart + 1), UNIT_KEYS) : {};
+
+  const destroyedBuildings = {};
+  lines.forEach((l) => {
     const m = l.match(/(Zerstörung|Kollateralschaden)\s+(.+?)\s*\((\d+)\s*auf\s*(\d+)\)/i);
     if (m) {
-      const geb = m[2].trim();
-      destroyedBuildings[geb] = { vor: +m[3], neu: +m[4] };
+      const b = m[2].trim();
+      destroyedBuildings[b] = { vor: +m[3], neu: +m[4] };
     }
   });
 
-  // --- Spähbericht: Gebäude-Level ---
   const spyStart = lines.findIndex((l) => /^Spähbericht$/i.test(l));
   if (spyStart !== -1) {
     for (let i = spyStart + 1; i < lines.length; i++) {
@@ -212,7 +230,7 @@ function parseReport(text) {
     }
   }
 
-  // --- Forschungen ---
+  const researchChanges = {};
   const resStart = lines.findIndex((l) => /^Forschungen$/i.test(l));
   if (resStart !== -1) {
     for (let i = resStart + 1; i < lines.length; i++) {
@@ -222,7 +240,14 @@ function parseReport(text) {
   }
   RESEARCH_KEYS.forEach((k) => (researchChanges[k] = researchChanges[k] ?? 0));
 
-  return { coords, attackerUnits, defenderUnits, destroyedBuildings, researchChanges };
+  return {
+    attackerCoords,
+    defenderCoords,
+    attackerUnits,
+    defenderUnits,
+    destroyedBuildings,
+    researchChanges,
+  };
 }
 
 function parseUnits(lines, keys) {
