@@ -1,14 +1,18 @@
 // =============================================================
-// flotte.js – v2.0 (Supabase)
-// Nur Gesamtwerte – speichert & lädt direkt aus Supabase
+// flotte.js – v2.0 (Build 03.11.2025)
+// Supabase-Version (keine localStorage-Nutzung mehr)
+// Speichert nur Gesamtflotten-Daten pro Benutzer + Zeitstempel
 // =============================================================
 
 import { Logbuch } from "./logbuch.js";
 
-// Zugriff prüfen
+// -------------------------------------------------------------
+// Zugriffskontrolle
+// -------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", async () => {
-  const { data: currentUser } = await Logbuch.getCurrentUser();
-  if (!currentUser || currentUser.status !== "aktiv") {
+  const user = await Logbuch.getCurrentUser();
+  if (!user) {
+    alert("Zugang verweigert – bitte neu anmelden.");
     window.location.href = "gate.html";
     return;
   }
@@ -28,66 +32,47 @@ document.addEventListener("DOMContentLoaded", async () => {
     "Spähschiff"
   ];
 
-  // ------------------------------------------------------------
-  // Log-Einträge laden
-  // ------------------------------------------------------------
-  const { data: flotteLogs, error: loadError } = await Logbuch.load("flotten_logs");
-  if (loadError) console.error("Fehler beim Laden:", loadError);
-  renderLogs(flotteLogs || []);
+  // -----------------------------------------------------------
+  // Bestehende Flotteneinträge aus Supabase laden
+  // -----------------------------------------------------------
+  const flotteLogs = await Logbuch.load("fleet_logs");
+  renderLogs(flotteLogs);
 
-  // ------------------------------------------------------------
-  // Formular absenden → Analyse durchführen & speichern
-  // ------------------------------------------------------------
-  form.addEventListener("submit", async e => {
+  // -----------------------------------------------------------
+  // Formular absenden → Textblock analysieren und speichern
+  // -----------------------------------------------------------
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const text = textarea.value.trim();
     if (!text) return;
 
     const gesamt = parseGesamtOderInselFlotte(text);
+    const timestamp = new Date().toISOString();
 
-    const timestamp = new Date().toLocaleString("de-DE", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit"
-    });
-
-    // Benutzername aus Supabase Session
-    const username = currentUser.username || "Unbekannt";
-
-    // Datensatz aufbauen
-    const entry = {
-      datum: timestamp,
-      benutzer: username,
-      ...gesamt
+    const newEntry = {
+      created_at: timestamp,
+      user_name: user.name || "Unbekannt",
+      user_role: user.role || "Member",
+      fleet_data: gesamt
     };
 
-    const { error } = await Logbuch.save("flotten_logs", entry);
-    if (error) {
-      console.error("Fehler beim Speichern:", error);
-      alert("Fehler beim Speichern des Eintrags.");
-      return;
-    }
+    await Logbuch.save("fleet_logs", newEntry);
 
+    const updated = await Logbuch.load("fleet_logs");
+    renderLogs(updated);
     textarea.value = "";
-    alert("Flotteneintrag erfolgreich gespeichert!");
-
-    // Tabelle neu laden
-    const { data: updatedLogs } = await Logbuch.load("flotten_logs");
-    renderLogs(updatedLogs || []);
   });
 
-  // ------------------------------------------------------------
-  // Parser erkennt automatisch: Gesamt oder Inselweise
-  // ------------------------------------------------------------
+  // -----------------------------------------------------------
+  // Parser erkennt automatisch Gesamt- oder Inselweise
+  // -----------------------------------------------------------
   function parseGesamtOderInselFlotte(text) {
-    const lines = text.split("\n").map(l => l.trim()).filter(l => l !== "");
+    const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
     if (lines[0].toLowerCase().includes("im hafen") || lines[0].toLowerCase().includes("gesamt")) {
       return parseGesamtflotte(lines)[0];
     }
-    // Inselweise Summierung
+
+    // Inselweise summieren
     const daten = parseInselflotte(lines);
     const summe = {};
     keys.forEach(k => (summe[k] = daten.reduce((a, r) => a + (r[k] || 0), 0)));
@@ -96,8 +81,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function parseInselflotte(lines) {
     const ergebnis = [];
-    for (let line of lines) {
-      const parts = line.split("\t").map(p => p.trim()).filter(p => p !== "");
+    for (const line of lines) {
+      const parts = line.split("\t").map(p => p.trim()).filter(Boolean);
       if (parts.length < 9) continue;
       const [insel, sw, lt, bs, kk, fr, hs, ko, ss] = parts;
       const values = [sw, lt, bs, kk, fr, hs, ko, ss].map(v => parseInt(v, 10) || 0);
@@ -121,7 +106,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const row = {};
     const dataLines = lines.slice(1);
     dataLines.forEach(line => {
-      const parts = line.split(/\t| {2,}/).map(p => p.trim()).filter(p => p !== "");
+      const parts = line.split(/\t| {2,}/).map(p => p.trim()).filter(Boolean);
       if (parts.length < 2) return;
       const name = parts[0];
       const value = parseInt(parts[parts.length - 1], 10) || 0;
@@ -131,13 +116,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     return [row];
   }
 
-  // ------------------------------------------------------------
-  // Darstellung
-  // ------------------------------------------------------------
+  // -----------------------------------------------------------
+  // Tabellen-Darstellung
+  // -----------------------------------------------------------
   function renderLogs(logs) {
     tableContainer.innerHTML = "";
+
     if (!logs || logs.length === 0) {
-      tableContainer.innerHTML = "<p><em>Keine Flotteneinträge vorhanden.</em></p>";
+      tableContainer.innerHTML = "<p><em>Keine Flotteneinträge im Logbuch vorhanden.</em></p>";
       return;
     }
 
@@ -151,18 +137,24 @@ document.addEventListener("DOMContentLoaded", async () => {
           ${keys.map(k => `<th>${k}</th>`).join("")}
         </tr>
       </thead>
-      <tbody>
-        ${logs.map(r => `
-          <tr>
-            <td>${r.datum}</td>
-            <td>${r.benutzer}</td>
-            ${keys.map(k => `<td>${r[k] ?? 0}</td>`).join("")}
-          </tr>
-        `).join("")}
-      </tbody>
+      <tbody></tbody>
     `;
+
+    const tbody = table.querySelector("tbody");
+    logs.forEach(entry => {
+      const d = new Date(entry.created_at).toLocaleString("de-DE");
+      const row = entry.fleet_data || {};
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${d}</td>
+        <td>${entry.user_name}</td>
+        ${keys.map(k => `<td>${row[k] ?? 0}</td>`).join("")}
+      `;
+      tbody.appendChild(tr);
+    });
+
     tableContainer.appendChild(table);
   }
 
-  Logbuch.log("Flottenmodul v2.0 (Supabase) aktiv.");
+  Logbuch.log("Flottenmodul v2.0 aktiv – Supabase-Kompatibilität vollständig.");
 });
