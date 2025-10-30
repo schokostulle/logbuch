@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const postMessage = document.getElementById("postMessage");
 
   // 🔐 Aktuellen Benutzer prüfen
-  const { data: sessionData, error: sessionError } = await window.supabase.auth.getUser();
+  const { data: sessionData, error: sessionError } = await window.supabaseClient.auth.getUser();
   if (sessionError || !sessionData?.user) {
     alert("Keine gültige Sitzung – bitte erneut anmelden.");
     window.location.href = "login.html";
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const authUser = sessionData.user;
 
   // 🔎 Benutzerrolle ermitteln
-  const { data: currentUser, error: userError } = await window.supabase
+  const { data: currentUser, error: userError } = await window.supabaseClient
     .from("users")
     .select("id, username, role, status")
     .eq("id", authUser.id)
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (!title || !message) return alert("Titel und Nachricht erforderlich.");
 
-      const { error } = await window.supabase.from("dashboard_entries").insert([
+      const { error } = await window.supabaseClient.from("dashboard_entries").insert([
         {
           user_id: currentUser.id,
           title,
@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     dashboardLogs.innerHTML = "";
 
     // Benutzer-Namen für Zuordnung laden
-    const { data: allUsers } = await window.supabase
+    const { data: allUsers } = await window.supabaseClient
       .from("users")
       .select("id, username");
 
