@@ -1,23 +1,22 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kampfberichte – Logbuch</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <aside>
     <header>⚓ Logbuch</header>
-    <nav>
-      <ul></ul>
-  </nav>
-</aside>
+    <nav><ul></ul></nav>
+  </aside>
 
   <main>
     <header class="topbar">
       <h1>Kampfberichte</h1>
-      <div class="user-status">Kapitän Ahab – 🟢 Online</div>
+      <div class="user-status">Nicht angemeldet</div>
     </header>
 
     <section class="content">
@@ -26,12 +25,12 @@
 
       <form id="berichtForm">
         <textarea id="berichtText" rows="10" placeholder="Kampfbericht hier einfügen..."></textarea>
-        <button type="submit">Analysieren & Speichern</button>
+        <button type="submit">Analysieren &amp; Speichern</button>
       </form>
 
       <h3>Logbuch-Einträge</h3>
       <div id="berichteLogs">
-        <table id="berichteTable">
+        <table id="berichteTable" class="berichte-tabelle">
           <thead>
             <tr>
               <th>Datum</th>
@@ -61,7 +60,7 @@
               <th>V-Kolonial</th>
               <th>V-Späh</th>
 
-              <!-- Gebäude vor / neu -->
+              <!-- Gebäude -->
               <th>Hauptgebäude vor</th>
               <th>Hauptgebäude neu</th>
               <th>Goldbergwerk vor</th>
@@ -89,6 +88,7 @@
               <th>Lanze</th>
               <th>Schild</th>
               <th>Langbogen</th>
+              <th>Kanone</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -97,9 +97,10 @@
     </section>
   </main>
 
-  <script type="module" src="navigation.js"></script>
-  <script type="module" src="access-guard.js"></script> <!-- 🔒 Neu -->
+  <!-- Reihenfolge: zuerst Basisskripte, dann Seitenlogik -->
   <script type="module" src="logbuch.js"></script>
+  <script type="module" src="access-guard.js"></script>
+  <script type="module" src="navigation.js"></script>
   <script type="module" src="berichte.js"></script>
 </body>
 </html>
