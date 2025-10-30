@@ -23,7 +23,7 @@ export const Logbuch = {
   // 📦 Eintrag speichern
   async save(table, data) {
     try {
-      const { error } = await supabase.from(table).insert(data);
+      const { error } = await supabaseClient.from(table).insert(data);
       if (error) throw error;
       console.log(`✅ Gespeichert in ${table}`, data);
     } catch (err) {
@@ -63,7 +63,7 @@ export const Logbuch = {
   // ⚙️ Datensatz aktualisieren
   async update(table, filter, values) {
     try {
-      const { error } = await supabase.from(table).update(values).match(filter);
+      const { error } = await supabaseClient.from(table).update(values).match(filter);
       if (error) throw error;
       console.log(`🧭 ${table} aktualisiert:`, filter);
     } catch (err) {
@@ -77,7 +77,7 @@ export const Logbuch = {
 
   async getCurrentUser() {
     try {
-      const { data, error } = await supabase.auth.getUser();
+      const { data, error } = await supabaseClient.auth.getUser();
       if (error) throw error;
       return data?.user || null;
     } catch (err) {
@@ -88,7 +88,7 @@ export const Logbuch = {
 
   async signIn(email, password) {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
         email,
         password,
       });
@@ -103,7 +103,7 @@ export const Logbuch = {
 
   async signOut() {
     try {
-      const { error } = await supabase.auth.signOut();
+      const { error } = await supabaseClient.auth.signOut();
       if (error) throw error;
       console.log("👋 Abgemeldet");
     } catch (err) {
@@ -113,7 +113,7 @@ export const Logbuch = {
 
   async register(email, password) {
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error } = await supabaseClient.auth.signUp({
         email,
         password,
       });
@@ -132,7 +132,7 @@ export const Logbuch = {
 
   async testConnection() {
     try {
-      const { data, error } = await supabase.from("users").select("id").limit(1);
+      const { data, error } = await supabaseClient.from("users").select("id").limit(1);
       if (error) throw error;
       console.log("✅ Supabase-Verbindung aktiv");
       return true;
@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!userBox) return;
 
   try {
-    const { data } = await supabase.auth.getUser();
+    const { data } = await supabaseClient.auth.getUser();
     const user = data?.user;
 
     if (!user) {
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Benutzerrolle aus users-Tabelle laden (falls vorhanden)
-    const { data: userInfo } = await supabase
+    const { data: userInfo } = await supabaseClient
       .from("users")
       .select("username, role")
       .eq("id", user.id)
