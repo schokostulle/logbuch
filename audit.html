@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audit-Log – Logbuch</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside>
+    <header>⚓ Logbuch</header>
+    <nav>
+      <ul></ul>
+    </nav>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <h1>Audit-Log</h1>
+      <div class="user-status">–</div>
+    </header>
+
+    <section class="content">
+      <h2>Änderungsprotokoll</h2>
+      <p>Hier kannst du nachvollziehen, welche Aktionen in der Datenbank durchgeführt wurden. 
+         Jeder Eintrag zeigt Tabelle, Aktion, Benutzer und Zeitpunkt.</p>
+
+      <div id="auditLogs">
+        <table id="auditTable">
+          <thead>
+            <tr>
+              <th>Zeit</th>
+              <th>Tabelle</th>
+              <th>Aktion</th>
+              <th>Benutzer</th>
+              <th>Datensatz-ID</th>
+              <th>Änderung</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="navigation.js"></script>
+  <script type="module" src="access-guard.js"></script>
+  <script type="module" src="audit.js"></script>
+</body>
+</html>
