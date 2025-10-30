@@ -68,6 +68,7 @@ const navItems = [
   { href: "mitglieder.html", icon: "⚓", text: "Mitglieder", adminOnly: true },
   { href: "diplomatie.html", icon: "🕊️", text: "Diplomatie", adminOnly: true },
   { href: "import.html", icon: "📂", text: "CSV", adminOnly: true },
+  { href: "audit.html", icon: "🗃️", text: "auditlog", adminOnly: true },
   // Logout immer am Ende
   { href: "logout.html", icon: "⛩️", text: "Logout", logout: true }
 ];
