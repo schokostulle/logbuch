@@ -1,101 +1,175 @@
-/* ==========================================================
-   LOGBUCH – Datenmodul (v1.0)
-   Unterstützt localStorage – Supabase-ready Architektur
-   ========================================================== */
+// =============================================================
+// logbuch.js – Supabase-only Daten- und Nutzerverwaltung
+// Version 2.0 (02.11.2025)
+// =============================================================
 
-// Toggle: false = localStorage aktiv, true = Supabase aktiv
-const USE_SUPABASE = true;
+// --- Supabase Setup ---
+const SUPABASE_URL = "https://bbeczprdumbeqcutqopr.supabase.co";
+const SUPABASE_KEY = "anon_key"; // ⚠️ Anpassen bei Bedarf
+export const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// --- Supabase Setup (nur relevant, wenn USE_SUPABASE = true) ---
-let supabase = null;
-if (USE_SUPABASE) {
-  const SUPABASE_URL = "https://bbeczprdumbeqcutqopr.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiZWN6cHJkdW1iZXFjdXRxb3ByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3NjMzMTgsImV4cCI6MjA3NzMzOTMxOH0.j2DiRK_40cSiFOM8KdA9DzjLklC9hXH_Es6mHPOvPQk";
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-}
+// =============================================================
+// ⚓ Zentrale Logbuch-API
+// =============================================================
 
-// -------------------------------------------------------------
-// Zentrale Logbuch-API (egal ob lokal oder Supabase)
-// -------------------------------------------------------------
 export const Logbuch = {
-  // 📦 Daten speichern
-  async save(key, data) {
-    if (USE_SUPABASE) {
-      // --- Supabase: Tabelle = key, data = Array oder Objekt ---
-      const { error } = await supabase.from(key).insert(data);
-      if (error) console.error("SUPABASE SAVE ERROR:", error);
-    } else {
-      // --- localStorage ---
-      localStorage.setItem(key, JSON.stringify(data));
+  // 📦 Eintrag speichern
+  async save(table, data) {
+    try {
+      const { error } = await supabase.from(table).insert(data);
+      if (error) throw error;
+      console.log(`✅ Gespeichert in ${table}`, data);
+    } catch (err) {
+      console.error(`❌ Fehler beim Speichern in ${table}:`, err.message);
     }
   },
 
   // 📦 Daten laden
-  async load(key) {
-    if (USE_SUPABASE) {
-      const { data, error } = await supabase.from(key).select("*");
-      if (error) {
-        console.error("SUPABASE LOAD ERROR:", error);
-        return [];
-      }
+  async load(table, filter = null) {
+    try {
+      let query = supabase.from(table).select("*");
+      if (filter) query = query.match(filter);
+
+      const { data, error } = await query;
+      if (error) throw error;
       return data || [];
-    } else {
-      const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : [];
+    } catch (err) {
+      console.error(`❌ Fehler beim Laden aus ${table}:`, err.message);
+      return [];
     }
   },
 
   // 🗑️ Daten löschen
-  async remove(key) {
-    if (USE_SUPABASE) {
-      const { error } = await supabase.from(key).delete().neq("id", 0);
-      if (error) console.error("SUPABASE DELETE ERROR:", error);
-    } else {
-      localStorage.removeItem(key);
+  async remove(table, filter = null) {
+    try {
+      let query = supabase.from(table).delete();
+      if (filter) query = query.match(filter);
+
+      const { error } = await query;
+      if (error) throw error;
+      console.log(`🗑️ Daten aus ${table} gelöscht`);
+    } catch (err) {
+      console.error(`❌ Fehler beim Löschen aus ${table}:`, err.message);
     }
   },
 
-  // 🧭 Userstatus / Session (optional)
-  getCurrentUser() {
-    if (USE_SUPABASE && supabase.auth) {
-      const user = supabase.auth.getUser();
-      return user?.email || "Unbekannt";
-    } else {
-      return localStorage.getItem("user") || "Gast";
+  // ⚙️ Datensatz aktualisieren
+  async update(table, filter, values) {
+    try {
+      const { error } = await supabase.from(table).update(values).match(filter);
+      if (error) throw error;
+      console.log(`🧭 ${table} aktualisiert:`, filter);
+    } catch (err) {
+      console.error(`❌ Fehler beim Update in ${table}:`, err.message);
     }
   },
 
-  setCurrentUser(name) {
-    if (!USE_SUPABASE) {
-      localStorage.setItem("user", name);
+  // =============================================================
+  // 👤 Benutzerfunktionen
+  // =============================================================
+
+  async getCurrentUser() {
+    try {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) throw error;
+      return data?.user || null;
+    } catch (err) {
+      console.error("❌ Fehler beim Abrufen des Benutzers:", err.message);
+      return null;
     }
   },
 
-  // 🔄 Utility: Debug-Log
+  async signIn(email, password) {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      console.log("✅ Angemeldet als:", data.user.email);
+      return data.user;
+    } catch (err) {
+      console.error("❌ Anmeldung fehlgeschlagen:", err.message);
+      return null;
+    }
+  },
+
+  async signOut() {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      console.log("👋 Abgemeldet");
+    } catch (err) {
+      console.error("❌ Fehler beim Abmelden:", err.message);
+    }
+  },
+
+  async register(email, password) {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      if (error) throw error;
+      console.log("✅ Registrierung erfolgreich:", data.user.email);
+      return data.user;
+    } catch (err) {
+      console.error("❌ Registrierung fehlgeschlagen:", err.message);
+      return null;
+    }
+  },
+
+  // =============================================================
+  // 🔍 Debugging / Kontrolle
+  // =============================================================
+
+  async testConnection() {
+    try {
+      const { data, error } = await supabase.from("users").select("id").limit(1);
+      if (error) throw error;
+      console.log("✅ Supabase-Verbindung aktiv");
+      return true;
+    } catch (err) {
+      console.error("⚠️ Keine Verbindung zu Supabase:", err.message);
+      return false;
+    }
+  },
+
   log(...args) {
     console.log("[Logbuch]", ...args);
-  }
+  },
 };
 
 // =============================================================
-// Benutzeranzeige – v11.6 (Build 30.10.2025)
-// Zeigt auf allen Seiten den aktuellen Benutzer und seine Rolle
+// 👁️ Benutzeranzeige – zeigt Name & Rolle (Supabase only)
 // =============================================================
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const userBox = document.querySelector(".user-status");
-  if (!userBox) return; // Falls Seite keinen Bereich hat
+  if (!userBox) return;
 
-  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+  try {
+    const { data } = await supabase.auth.getUser();
+    const user = data?.user;
 
-  if (!currentUser) {
-    userBox.textContent = "Nicht angemeldet";
-    return;
+    if (!user) {
+      userBox.textContent = "Nicht angemeldet";
+      return;
+    }
+
+    // Benutzerrolle aus users-Tabelle laden (falls vorhanden)
+    const { data: userInfo } = await supabase
+      .from("users")
+      .select("username, role")
+      .eq("id", user.id)
+      .single();
+
+    const name = userInfo?.username || user.email;
+    const role = userInfo?.role || "member";
+    const roleSymbol = role === "admin" ? "⚓" : "👤";
+
+    userBox.textContent = `${roleSymbol} ${name} – ${role}`;
+  } catch (err) {
+    console.error("❌ Benutzeranzeige fehlgeschlagen:", err.message);
+    userBox.textContent = "Fehler bei Benutzeranzeige";
   }
-
-  // Symbol abhängig von Rolle
-  const roleSymbol = currentUser.role === "Admin" ? "⚓" : "👤";
-
-  // Formatierte Ausgabe
-  userBox.textContent = `${roleSymbol} ${currentUser.name} – ${currentUser.role}`;
 });
