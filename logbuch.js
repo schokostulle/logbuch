@@ -3,6 +3,8 @@
    Unterstützt localStorage – Supabase-ready Architektur
    ========================================================== */
 
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
 // Toggle: false = localStorage aktiv, true = Supabase aktiv
 const USE_SUPABASE = true;
 
