@@ -1,6 +1,6 @@
 // ===========================================================
 // import.js – Logbuch-Projekt (Supabase-only)
-// Version: 2.0 – 03.11.2025
+// Version: 2.1 – 03.11.2025
 // Autor: Kapitän 🦑
 // Beschreibung:
 // - CSV ohne Kopfzeile importieren
@@ -10,7 +10,7 @@
 // - Nur Admins dürfen importieren oder löschen
 // ===========================================================
 
-import { Logbuch } from "./logbuch.js";
+import { Logbuch, supabase } from "./logbuch.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const importSection = document.getElementById("adminImportSection");
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const tableBody = document.querySelector("#csvTable tbody");
 
   // --- Benutzerprüfung -----------------------------------------------------
-  const { data: sessionData, error: sessionError } = await window.supabaseClient.auth.getUser();
+  const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
   if (sessionError || !sessionData?.user) {
     alert("Zugang verweigert – keine gültige Sitzung.");
     window.location.href = "login.html";
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const authUser = sessionData.user;
 
-  const { data: currentUser, error: userError } = await window.supabaseClient
+  const { data: currentUser, error: userError } = await supabase
     .from("users")
     .select("id, username, role")
     .eq("id", authUser.id)
@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       // Bestehende CSV-Daten löschen (vollständiger Ersatz)
-      await window.supabaseClient.from("csv_base").delete().neq("id", 0);
+      await supabase.from("csv_base").delete().neq("id", 0);
 
       // CSV in Supabase speichern
       const formattedRows = rows.map((r) => ({
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         punkte: parseInt(r[9]) || 0,
       }));
 
-      const { error: insertError } = await window.supabaseClient.from("csv_base").insert(formattedRows);
+      const { error: insertError } = await supabase.from("csv_base").insert(formattedRows);
       if (insertError) {
         console.error("SUPABASE IMPORT ERROR:", insertError);
         alert("Fehler beim Speichern der CSV in Supabase.");
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   clearButton.addEventListener("click", async () => {
     if (!confirm("Gesamte CSV löschen, Kapitän?")) return;
 
-    const { error } = await window.supabaseClient.from("csv_base").delete().neq("id", 0);
+    const { error } = await supabase.from("csv_base").delete().neq("id", 0);
     if (error) {
       console.error("SUPABASE DELETE ERROR:", error);
       alert("Fehler beim Löschen der CSV-Daten.");
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function renderTable() {
     tableBody.innerHTML = "";
 
-    const { data, error } = await window.supabaseClient
+    const { data, error } = await supabase
       .from("csv_base")
       .select("*")
       .order("oz", { ascending: true });
@@ -178,5 +178,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  Logbuch.log("Import.js v2.0 geladen – Supabase aktiv ⚓");
+  Logbuch.log("Import.js v2.1 geladen – Supabase aktiv ⚓");
 });
