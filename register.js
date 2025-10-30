@@ -1,14 +1,12 @@
 // =============================================================
-// register.js – Supabase-only Registrierung
-// Version: 2.0 – 02.11.2025
+// register.js – Supabase-only Registrierung (final)
+// Version: 2.1 – 03.11.2025
 // Registrierung mit Nutzername & Passwort
 // Intern: Fake-E-Mail "<name>@bullfrog.fake"
 // Erstregistrierung = Admin/aktiv, danach Member/geblockt
 // =============================================================
-if (!window.supabase) {
-  alert("Supabase ist nicht initialisiert. Bitte Seite neu laden.");
-  throw new Error("Supabase client not available");
-}
+
+import { supabase } from "./logbuch.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("registerForm");
@@ -25,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const name = nameInput.value.trim();
     const pass = passInput.value.trim();
+
     if (!name || !pass) {
       alert("Bitte Name und Passwort eingeben.");
       return;
@@ -33,8 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const email = `${name.toLowerCase()}@bullfrog.fake`;
 
     try {
-      // 1️⃣ Prüfen, ob es bereits Benutzer in der users-Tabelle gibt
-      const { data: allUsers, error: countError } = await window.supabaseClient
+      // 1️⃣ Prüfen, ob es bereits Benutzer gibt (Erstregistrierung = Admin)
+      const { data: allUsers, error: countError } = await supabase
         .from("users")
         .select("id", { count: "exact" });
 
@@ -42,8 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const isFirstUser = !allUsers || allUsers.length === 0;
 
-      // 2️⃣ Registrierung im Supabase Auth-System
-      const { data: signUpData, error: signUpError } = await window.supabaseClient.auth.signUp({
+      // 2️⃣ Benutzer in Supabase Auth registrieren
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password: pass,
       });
@@ -56,15 +55,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const authUser = signUpData?.user;
       if (!authUser) {
-        alert("Registrierung fehlgeschlagen. Kein Benutzerobjekt empfangen.");
+        alert("Registrierung fehlgeschlagen – kein Benutzerobjekt empfangen.");
         return;
       }
 
-      // 3️⃣ Benutzer in users-Tabelle eintragen
+      // 3️⃣ Benutzer in 'users'-Tabelle anlegen
       const role = isFirstUser ? "admin" : "member";
       const status = isFirstUser ? "aktiv" : "geblockt";
 
-      const { error: insertError } = await window.supabaseClient.from("users").insert([
+      const { error: insertError } = await supabase.from("users").insert([
         {
           id: authUser.id,
           username: name,
@@ -79,13 +78,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // 4️⃣ Erfolgsmeldung und Weiterleitung
+      // 4️⃣ Erfolg & Weiterleitung
       if (isFirstUser) {
         alert(`Erster Benutzer registriert. Willkommen, Admiral ${name}!`);
       } else {
-        alert(
-          `Registrierung erfolgreich! Dein Konto ist derzeit blockiert. Bitte kontaktiere einen Admin, um Zugriff zu erhalten.`
-        );
+        alert(`Registrierung erfolgreich! Dein Konto ist blockiert, bis ein Admin dich freischaltet.`);
       }
 
       window.location.href = "login.html";
