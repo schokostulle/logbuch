@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (userData.status?.toLowerCase() !== "aktiv") {
       console.warn(`Benutzer "${userData.username}" ist inaktiv.`);
       alert("Zugang verweigert – dein Account ist nicht aktiv.");
-      await window.supabase.auth.signOut();
+      await window.supabaseClient.auth.signOut();
       window.location.href = "login.html";
       return;
     }
