@@ -26,13 +26,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const { attacker, defender } = parseReport(text);
     attacker.Benutzer = defender.Benutzer = username;
 
-    // ✅ Supabase-kompatible Struktur für battle_reports
+    // ✅ Supabase-kompatible Struktur
     const entry = {
       attacker: attacker.Benutzer,
       defender: defender.Benutzer,
-      oz: defender.Oz || null,
-      ig: defender.Ig || null,
-      i: defender.In || null,
+      oz: defender.Oz || defender.oz || null,
+      ig: defender.Ig || defender.ig || null,
+      i: defender.In || defender.i || null,
       attacker_units: {
         Steinschleuderer: attacker.Steinschleuderer,
         Lanzenträger: attacker.Lanzenträger,
@@ -65,7 +65,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       created_at: new Date().toISOString()
     };
 
-    await Logbuch.save("battle_reports", entry);
+    // ⚙️ Speichern (Supabase erwartet ein Array)
+    await Logbuch.save("battle_reports", [entry]);
+
     textarea.value = "";
     alert("Kampfbericht erfolgreich gespeichert ⚔️");
 
@@ -78,9 +80,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const m = text.match(/vom\s+(\d{1,2}\.\d{1,2}\.\d{4})\s+(\d{1,2}:\d{2})/);
     return m ? `${m[1]} ${m[2]}` : new Date().toLocaleString("de-DE");
   }
-
-  // (parseReport, parseUnits, parseBuildings, parseResearch etc. bleiben unverändert)
-  // ... nur renderLogs unten minimal angepasst, um battle_reports anzuzeigen:
 
   function renderLogs(entries) {
     tbody.innerHTML = "";
