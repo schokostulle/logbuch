@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // 1️⃣ Prüfen, ob es bereits Benutzer in der users-Tabelle gibt
-      const { data: allUsers, error: countError } = await window.supabase
+      const { data: allUsers, error: countError } = await window.supabaseClient
         .from("users")
         .select("id", { count: "exact" });
 
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const isFirstUser = !allUsers || allUsers.length === 0;
 
       // 2️⃣ Registrierung im Supabase Auth-System
-      const { data: signUpData, error: signUpError } = await window.supabase.auth.signUp({
+      const { data: signUpData, error: signUpError } = await window.supabaseClient.auth.signUp({
         email,
         password: pass,
       });
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const role = isFirstUser ? "admin" : "member";
       const status = isFirstUser ? "aktiv" : "geblockt";
 
-      const { error: insertError } = await window.supabase.from("users").insert([
+      const { error: insertError } = await window.supabaseClient.from("users").insert([
         {
           id: authUser.id,
           username: name,
