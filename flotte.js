@@ -1,5 +1,5 @@
 // =============================================================
-// Flotte.js – v2.0 (Supabase Integration)
+// flotte.js – v2.1 (Supabase Integration, finalisiert)
 // Nutzt Tabelle: fleet_logs (user_id, date, total_fleet, per_island)
 // =============================================================
 import { supabase } from "./logbuch.js";
@@ -18,13 +18,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Daten aus Supabase laden
   // ------------------------------------------------------------
   async function loadFleetLogs() {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from("fleet_logs")
       .select("*")
       .order("date", { ascending: false });
 
     if (error) {
-      console.error("SUPABASE LOAD ERROR:", error);
+      console.error("❌ SUPABASE LOAD ERROR:", error);
       return [];
     }
     return data || [];
@@ -39,25 +39,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!text) return;
 
     const totalFleet = parseFleetText(text);
-    const user = await supabaseClient.auth.getUser();
-    const userId = user?.data?.user?.id || null;
 
-    const { error } = await supabaseClient.from("fleet_logs").insert([
+    // Benutzer-ID aus Supabase-Session holen
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData?.user) {
+      alert("Fehler: Keine aktive Sitzung gefunden.");
+      console.error("❌ AUTH ERROR:", userError);
+      return;
+    }
+
+    const userId = userData.user.id;
+
+    const { error } = await supabase.from("fleet_logs").insert([
       {
         user_id: userId,
         date: new Date().toISOString(),
         total_fleet: totalFleet,
-        per_island: null
-      }
+        per_island: null,
+      },
     ]);
 
     if (error) {
-      console.error("SUPABASE INSERT ERROR:", error);
+      console.error("❌ SUPABASE INSERT ERROR:", error);
       alert("Fehler beim Speichern des Flotteneintrags!");
     } else {
-      alert("Flotteneintrag erfolgreich gespeichert!");
-      renderLogs(await loadFleetLogs());
+      alert("✅ Flotteneintrag erfolgreich gespeichert!");
       textarea.value = "";
+      renderLogs(await loadFleetLogs());
     }
   });
 
@@ -115,5 +123,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     tableContainer.appendChild(table);
   }
 
+  // Beim Laden direkt Flotten anzeigen
   renderLogs(await loadFleetLogs());
 });
