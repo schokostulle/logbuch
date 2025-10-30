@@ -1,22 +1,16 @@
 // =============================================================
-// berichte.js – Kampfberichte v2.0 (Supabase Integration)
-// Build: 03.11.2025
-// Beschreibung:
-//  - Speichert Berichte direkt in "battle_reports"
-//  - Erkennt Angreifer / Verteidiger / Koordinaten / Einheiten
-//  - Extrahiert Gebäudeänderungen und Forschung
+// Kampfberichte.js – v2.3  (Build 03.11.2025)
+// Unterstützt beide Formate (Markdown + Tab-getrennt)
 // =============================================================
 
-import { Logbuch } from "./logbuch.js";
+import { supabase } from "./logbuch.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById("berichtForm");
   const textarea = document.getElementById("berichtText");
   const tbody = document.querySelector("#berichteTable tbody");
 
-  // --- Vorhandene Einträge laden ---
-  const logs = await Logbuch.load("battle_reports");
-  renderLogs(logs);
+  await renderLogs();
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -25,141 +19,68 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const userElem = document.querySelector(".user-status");
     const username = userElem ? userElem.textContent.split("–")[0].trim() : "Unbekannt";
-    const datum = extractDate(text);
 
-    const { attacker, defender } = parseReport(text);
-    attacker.Benutzer = defender.Benutzer = username;
-
-    // ✅ Supabase-kompatible Struktur
-    const entry = {
-      attacker: attacker.Benutzer,
-      defender: defender.Benutzer,
-      oz: defender.Oz || defender.oz || null,
-      ig: defender.Ig || defender.ig || null,
-      i: defender.In || defender.i || null,
-      attacker_units: {
-        Steinschleuderer: attacker.Steinschleuderer || 0,
-        Lanzenträger: attacker.Lanzenträger || 0,
-        Langbogenschütze: attacker.Langbogenschütze || 0,
-        Kanonen: attacker.Kanonen || 0,
-        Fregatte: attacker.Fregatte || 0,
-        Handelskogge: attacker.Handelskogge || 0,
-        Kolonialschiff: attacker.Kolonialschiff || 0,
-        Spähschiff: attacker.Spähschiff || 0,
-      },
-      defender_units: {
-        Steinschleuderer: defender.Steinschleuderer || 0,
-        Lanzenträger: defender.Lanzenträger || 0,
-        Langbogenschütze: defender.Langbogenschütze || 0,
-        Kanonen: defender.Kanonen || 0,
-        Fregatte: defender.Fregatte || 0,
-        Handelskogge: defender.Handelskogge || 0,
-        Kolonialschiff: defender.Kolonialschiff || 0,
-        Spähschiff: defender.Spähschiff || 0,
-      },
-      destroyed_buildings: defender.destroyed_buildings || {},
-      research_changes: defender.research_changes || {},
-      created_at: new Date().toISOString(),
-    };
-
-    await Logbuch.save("battle_reports", [entry]);
-    textarea.value = "";
-    alert("Kampfbericht erfolgreich gespeichert ⚔️");
-
-    const updated = await Logbuch.load("battle_reports");
-    renderLogs(updated);
-  });
-
-  // =============================================================
-  // Berichtstext parsen
-  // =============================================================
-  function parseReport(text) {
-    const attacker = {};
-    const defender = {
-      destroyed_buildings: {},
-      research_changes: {},
-    };
-
-    const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
-    let current = null;
-
-    for (const line of lines) {
-      if (/^Angreifer/i.test(line)) {
-        current = "attacker";
-        continue;
-      }
-      if (/^Verteidiger/i.test(line)) {
-        current = "defender";
-        continue;
-      }
-
-      // Einheitenzeilen erkennen (z. B. "Steinschleuderer: 200")
-      const unitMatch = line.match(/^([\wäöüÄÖÜß]+)\s*[:\-]?\s*(\d+)/);
-      if (unitMatch) {
-        const key = unitMatch[1];
-        const val = parseInt(unitMatch[2]);
-        if (current === "attacker") attacker[key] = val;
-        if (current === "defender") defender[key] = val;
-        continue;
-      }
-
-      // Koordinaten: "12:34:5" oder "Insel: 12:34:5"
-      const coordMatch = line.match(/(\d{1,2}):(\d{1,2}):(\d{1,2})/);
-      if (coordMatch) {
-        defender.Oz = coordMatch[1];
-        defender.Ig = coordMatch[2];
-        defender.In = coordMatch[3];
-        continue;
-      }
-
-      // Gebäudeänderungen: "Hafen vor: 5 neu: 3"
-      const buildingMatch = line.match(/^([\wäöüÄÖÜß]+)\s+vor[:\-]?\s*(\d+)\s+neu[:\-]?\s*(\d+)/i);
-      if (buildingMatch) {
-        const name = buildingMatch[1];
-        defender.destroyed_buildings[name] = {
-          vor: parseInt(buildingMatch[2]),
-          neu: parseInt(buildingMatch[3]),
-        };
-        continue;
-      }
-
-      // Forschung: "Lanze: 3", "Schild: 2" usw.
-      const researchMatch = line.match(/(Lanze|Schild|Langbogen|Kanone)\s*[:\-]?\s*(\d+)/i);
-      if (researchMatch) {
-        const name = researchMatch[1];
-        defender.research_changes[name] = parseInt(researchMatch[2]);
-        continue;
-      }
-    }
-
-    return { attacker, defender };
-  }
-
-  // =============================================================
-  // Datum extrahieren
-  // =============================================================
-  function extractDate(text) {
-    const m = text.match(/vom\s+(\d{1,2}\.\d{1,2}\.\d{4})\s+(\d{1,2}:\d{2})/);
-    return m ? `${m[1]} ${m[2]}` : new Date().toLocaleString("de-DE");
-  }
-
-  // =============================================================
-  // Tabellenanzeige
-  // =============================================================
-  function renderLogs(entries) {
-    tbody.innerHTML = "";
-    if (!entries || entries.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8"><em>Keine Berichte vorhanden.</em></td></tr>';
+    const parsed = parseReport(text);
+    if (!parsed) {
+      alert("Fehler beim Parsen des Berichts.");
       return;
     }
 
-    entries.forEach((r) => {
+    const entry = {
+      attacker: parsed.attackerName || `Angreifer (${username})`,
+      defender: parsed.defenderName || "Verteidiger",
+      oz: parsed.coords?.oz ?? null,
+      ig: parsed.coords?.ig ?? null,
+      i: parsed.coords?.i ?? null,
+      attacker_units: parsed.attackerUnits,
+      defender_units: parsed.defenderUnits,
+      destroyed_buildings: parsed.destroyedBuildings,
+      research_changes: parsed.researchChanges,
+      created_at: new Date().toISOString(),
+    };
+
+    const { error } = await supabase.from("battle_reports").insert([entry]);
+    if (error) {
+      console.error("SUPABASE INSERT ERROR:", error);
+      alert("Fehler beim Speichern des Kampfberichts!");
+      return;
+    }
+
+    alert("Kampfbericht erfolgreich gespeichert ⚔️");
+    textarea.value = "";
+    await renderLogs();
+  });
+
+  // ------------------------------------------------------------
+  // Logs anzeigen
+  // ------------------------------------------------------------
+  async function renderLogs() {
+    tbody.innerHTML = "<tr><td colspan='8'><em>Lade Berichte...</em></td></tr>";
+
+    const { data, error } = await supabase
+      .from("battle_reports")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("SUPABASE LOAD ERROR:", error);
+      tbody.innerHTML = "<tr><td colspan='8'><em>Fehler beim Laden.</em></td></tr>";
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = "<tr><td colspan='8'><em>Keine Berichte vorhanden.</em></td></tr>";
+      return;
+    }
+
+    tbody.innerHTML = "";
+    data.forEach((r) => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td>${r.created_at ? new Date(r.created_at).toLocaleString("de-DE") : ""}</td>
-        <td>${r.attacker || ""}</td>
-        <td>${r.defender || ""}</td>
-        <td>${r.oz || ""}:${r.ig || ""}:${r.i || ""}</td>
+        <td>${new Date(r.created_at).toLocaleString("de-DE")}</td>
+        <td>${r.attacker}</td>
+        <td>${r.defender}</td>
+        <td>${r.oz}:${r.ig}:${r.i}</td>
         <td><pre>${JSON.stringify(r.attacker_units, null, 2)}</pre></td>
         <td><pre>${JSON.stringify(r.defender_units, null, 2)}</pre></td>
         <td><pre>${JSON.stringify(r.destroyed_buildings, null, 2)}</pre></td>
@@ -168,6 +89,152 @@ document.addEventListener("DOMContentLoaded", async () => {
       tbody.appendChild(tr);
     });
   }
-
-  Logbuch.log("Kampfberichte v2.0 – Parser & Supabase aktiv ⚔️");
 });
+
+// =============================================================
+// Parser (robust gegen Formatvarianten)
+// =============================================================
+function parseReport(text) {
+  const lines = text
+    .replace(/\r/g, "")
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+  const UNIT_KEYS = [
+    "Steinschleuderer",
+    "Lanzenträger",
+    "Langbogenschütze",
+    "Kanonen",
+    "Fregatte",
+    "Handelskogge",
+    "Kolonialschiff",
+    "Spähschiff",
+  ];
+  const BUILDING_KEYS = [
+    "Hauptgebäude",
+    "Goldbergwerk",
+    "Steinbruch",
+    "Holzfällerhütte",
+    "Universität",
+    "Baracke",
+    "Werft",
+    "Lagerhaus",
+    "Steinwall",
+    "Wachturm",
+  ];
+  const RESEARCH_KEYS = ["Lanze", "Schild", "Langbogen", "Kanone"];
+
+  let attackerName = "";
+  let defenderName = "";
+  let coords = null;
+  let attackerUnits = {};
+  let defenderUnits = {};
+  let destroyedBuildings = {};
+  let researchChanges = {};
+
+  // ---------------------------------------
+  // Namen & Koordinaten
+  // ---------------------------------------
+  for (const line of lines) {
+    if (/Angreifers/i.test(line)) {
+      attackerName = extractName(line);
+      coords = extractCoords(line);
+    } else if (/Verteidigers/i.test(line)) {
+      defenderName = extractName(line);
+      coords = extractCoords(line) || coords;
+    }
+  }
+
+  // ---------------------------------------
+  // Einheiten parsen
+  // ---------------------------------------
+  const attackerStart = lines.findIndex((l) => /Einheiten des Angreifers/i.test(l));
+  const defenderStart = lines.findIndex((l) => /Einheiten des Verteidigers/i.test(l));
+
+  if (attackerStart !== -1) {
+    attackerUnits = parseUnits(lines.slice(attackerStart + 1, defenderStart === -1 ? lines.length : defenderStart), UNIT_KEYS);
+  }
+  if (defenderStart !== -1) {
+    defenderUnits = parseUnits(lines.slice(defenderStart + 1), UNIT_KEYS);
+  }
+
+  // ---------------------------------------
+  // Zerstörung & Kollateralschaden
+  // ---------------------------------------
+  lines.forEach((l, i) => {
+    const m = l.match(/(Zerstörung|Kollateralschaden)\s+(.+?)\s*\((\d+)\s*auf\s*(\d+)\)/i);
+    if (m) {
+      const geb = m[2].trim();
+      destroyedBuildings[geb] = { vor: parseInt(m[3]), neu: parseInt(m[4]) };
+    } else if (/^(Zerstörung|Kollateralschaden)$/i.test(l)) {
+      const geb = lines[i + 1];
+      const s = lines[i + 2]?.match(/\((\d+)\s*auf\s*(\d+)\)/);
+      if (geb && s) destroyedBuildings[geb] = { vor: parseInt(s[1]), neu: parseInt(s[2]) };
+    }
+  });
+
+  // ---------------------------------------
+  // Gebäude aus Spähbericht
+  // ---------------------------------------
+  const spyStart = lines.findIndex((l) => /^Spähbericht$/i.test(l));
+  if (spyStart !== -1) {
+    for (let i = spyStart + 1; i < lines.length; i++) {
+      const m = lines[i].match(/^([A-Za-zÄÖÜäöüß\s]+)\s*\(Stufe\s*(\d+)\)/i);
+      if (m) {
+        const b = m[1].trim();
+        const lvl = parseInt(m[2]);
+        if (!destroyedBuildings[b] && BUILDING_KEYS.includes(b))
+          destroyedBuildings[b] = { vor: lvl, neu: lvl };
+      }
+    }
+  }
+
+  // ---------------------------------------
+  // Forschungen (Lanze, Schild, Langbogen, Kanone)
+  // ---------------------------------------
+  const resStart = lines.findIndex((l) => /^Forschungen$/i.test(l));
+  if (resStart !== -1) {
+    for (let i = resStart + 1; i < lines.length; i++) {
+      const m = lines[i].match(/^(Lanze|Schild|Langbogen|Kanone)\s*\(Stufe\s*(\d+)\)/i);
+      if (m) researchChanges[m[1]] = parseInt(m[2]);
+      if (/^Rohstoffe$/i.test(lines[i])) break;
+    }
+  }
+  // Fehlende Forschungen auf 0 setzen
+  RESEARCH_KEYS.forEach((k) => {
+    if (!researchChanges[k]) researchChanges[k] = 0;
+  });
+
+  return { attackerName, defenderName, coords, attackerUnits, defenderUnits, destroyedBuildings, researchChanges };
+}
+
+// =============================================================
+// Hilfsfunktionen
+// =============================================================
+function extractName(line) {
+  const m = line.match(/([A-Z0-9-]+)\s*\((\d+:\d+:\d+)\)/);
+  return m ? m[1] : "";
+}
+
+function extractCoords(line) {
+  const m = line.match(/\((\d+):(\d+):(\d+)\)/);
+  return m ? { oz: parseInt(m[1]), ig: parseInt(m[2]), i: parseInt(m[3]) } : null;
+}
+
+function parseUnits(lines, UNIT_KEYS) {
+  const result = {};
+  for (const l of lines) {
+    const parts = l.split(/\s+/).filter(Boolean);
+    const name = parts[0];
+    if (UNIT_KEYS.includes(name) && parts.length >= 3) {
+      const total = parseInt(parts[1]) || 0;
+      const losses = parseInt(parts[2]) || 0;
+      result[name] = { total, losses };
+    }
+  }
+  UNIT_KEYS.forEach((u) => {
+    if (!result[u]) result[u] = { total: 0, losses: 0 };
+  });
+  return result;
+}
