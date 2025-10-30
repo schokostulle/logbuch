@@ -1,39 +1,74 @@
 // =============================================================
-// gate.js – v1.0 (Build 29.10.2025)
-// Türsteherseite: prüft Session, Rolle & Status
+// gate.js – Supabase-only Türsteherseite
+// Version: 2.0 – 02.11.2025
+// Prüft Supabase-Session, Rolle & Status
 // Weiterleitung zu Dashboard oder Login
 // =============================================================
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const statusBox = document.getElementById("statusMessage");
 
-  // Kleine Verzögerung für Authentizität (Ladegefühl)
-  setTimeout(() => {
-    const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+  function showMessage(msg) {
+    if (statusBox) statusBox.innerHTML = `<p>${msg}</p>`;
+  }
 
-    // Kein Benutzer angemeldet
-    if (!currentUser) {
-      statusBox.innerHTML = "<p>Zugang verweigert – du bist nicht angemeldet.</p>";
-      redirect("login.html");
-      return;
-    }
-
-    // Gelöschter oder gesperrter Benutzer
-    if (currentUser.status !== "aktiv") {
-      statusBox.innerHTML = `<p>Zugang verweigert – Benutzer "${currentUser.name}" ist geblockt oder inaktiv.</p>`;
-      localStorage.removeItem("currentUser");
-      redirect("login.html");
-      return;
-    }
-
-    // Erfolgreich
-    statusBox.innerHTML = `<p>Willkommen, ${currentUser.name}! Deine Daten sind gültig. Du wirst eingelassen...</p>`;
-    redirect("dashboard.html");
-  }, 1000);
-
-  function redirect(target) {
+  function redirect(target, delay = 1500) {
     setTimeout(() => {
       window.location.href = target;
-    }, 1500);
+    }, delay);
   }
+
+  // Kleine Verzögerung für "Ladegefühl"
+  showMessage("⏳ Zugangskontrolle wird überprüft...");
+
+  setTimeout(async () => {
+    try {
+      // 1️⃣ Session prüfen
+      const { data: sessionData, error: sessionError } = await window.supabase.auth.getUser();
+      if (sessionError) throw sessionError;
+
+      const authUser = sessionData?.user;
+      if (!authUser) {
+        showMessage("🚫 Kein Benutzer angemeldet. Weiterleitung zur Anmeldung...");
+        redirect("login.html");
+        return;
+      }
+
+      // 2️⃣ Benutzerinformationen laden
+      const { data: userData, error: userError } = await window.supabase
+        .from("users")
+        .select("id, username, role, status")
+        .eq("id", authUser.id)
+        .single();
+
+      if (userError || !userData) {
+        console.warn("Benutzer konnte nicht in der users-Tabelle gefunden werden:", userError);
+        showMessage("🚫 Kein gültiger Benutzer gefunden. Weiterleitung...");
+        await window.supabase.auth.signOut();
+        redirect("login.html");
+        return;
+      }
+
+      // 3️⃣ Status prüfen
+      const status = userData.status?.toLowerCase();
+      if (status !== "aktiv") {
+        showMessage(
+          `🚫 Zugang verweigert – Benutzer <strong>${userData.username}</strong> ist geblockt oder inaktiv.`
+        );
+        await window.supabase.auth.signOut();
+        redirect("login.html");
+        return;
+      }
+
+      // 4️⃣ Erfolg – Zugang gewährt
+      showMessage(
+        `✅ Willkommen, <strong>${userData.username}</strong>! Deine Daten sind gültig. Du wirst eingelassen...`
+      );
+      redirect("dashboard.html");
+    } catch (err) {
+      console.error("❌ Fehler bei der Zugangskontrolle:", err);
+      showMessage("🚫 Fehler bei der Authentifizierung. Bitte melde dich erneut an.");
+      redirect("login.html");
+    }
+  }, 1000);
 });
