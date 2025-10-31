@@ -24,12 +24,14 @@
       <p>Füge hier den vollständigen Kampfbericht ein. Das System analysiert ihn automatisch.</p>
 
       <form id="berichtForm">
-        <textarea id="berichtText" rows="10" placeholder="Kampfbericht hier einfügen..."></textarea>
+        <textarea id="berichtText" rows="10" placeholder="Kampfbericht hier einfügen …"></textarea>
         <button type="submit">Analysieren &amp; Speichern</button>
       </form>
 
       <h3>Logbuch-Einträge</h3>
-      <div id="berichteLogs">
+
+      <!-- ✅ Wrapper für Scroll + Sticky Header -->
+      <div class="table-wrapper">
         <table id="berichteTable" class="berichte-tabelle">
           <thead>
             <tr>
@@ -61,28 +63,17 @@
               <th>V-SS</th>
 
               <!-- Gebäude -->
-              <th>HH vor</th>
-              <th>HH neu</th>
-              <th>G vor</th>
-              <th>G neu</th>
-              <th>S vor</th>
-              <th>S neu</th>
-              <th>H vor</th>
-              <th>H neu</th>
-              <th>U vor</th>
-              <th>U neu</th>
-              <th>B vor</th>
-              <th>B neu</th>
-              <th>W vor</th>
-              <th>W neu</th>
-              <th>L vor</th>
-              <th>L neu</th>
-              <th>SW vor</th>
-              <th>SW neu</th>
-              <th>WT vor</th>
-              <th>WT neu</th>
-              <th>RS vor</th>
-              <th>RS neu</th>
+              <th>HH vor</th><th>HH neu</th>
+              <th>G vor</th><th>G neu</th>
+              <th>S vor</th><th>S neu</th>
+              <th>H vor</th><th>H neu</th>
+              <th>U vor</th><th>U neu</th>
+              <th>B vor</th><th>B neu</th>
+              <th>W vor</th><th>W neu</th>
+              <th>L vor</th><th>L neu</th>
+              <th>SW vor</th><th>SW neu</th>
+              <th>WT vor</th><th>WT neu</th>
+              <th>RS vor</th><th>RS neu</th>
 
               <!-- Forschung -->
               <th>Lz</th>
@@ -97,7 +88,7 @@
     </section>
   </main>
 
-  <!-- Reihenfolge: zuerst Basisskripte, dann Seitenlogik -->
+  <!-- Skript-Reihenfolge -->
   <script type="module" src="logbuch.js"></script>
   <script type="module" src="access-guard.js"></script>
   <script type="module" src="navigation.js"></script>
