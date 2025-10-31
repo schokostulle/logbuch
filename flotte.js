@@ -10,8 +10,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const tableContainer = document.querySelector("#flottenTable").parentElement;
 
   const keys = [
-    "Steinschleuderer", "Lanzenträger", "Langbogenschütze", "Kanonen",
-    "Fregatte", "Handelskogge", "Kolonialschiff", "Spähschiff"
+    Steinschleuderer: "ST", Lanzenträger: "LT", Langbogenschütze: "BS", Kanonen: "KK",
+    Fregatte: "KS", Handelskogge: "HS", Kolonialschiff: "Ko", Spähschiff: "SS"
   ];
 
   // ------------------------------------------------------------
