@@ -637,15 +637,28 @@ body.login-page {
   align-content: start;
 }
 
+.map-grid {
+  display: grid;
+  background-color: #0b1d2a;
+  justify-content: start;
+  align-content: start;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 5px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.4);
+  overflow: auto;
+  max-height: 75vh;
+}
+
 .map-cell {
   width: 6px;
   height: 6px;
   border-radius: 1px;
-  transition: transform 0.1s ease;
+  transition: transform 0.1s ease, background-color 0.2s ease;
 }
 
 .map-cell:hover {
-  transform: scale(1.8);
-  z-index: 10;
-  box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+  transform: scale(1.6);
+  z-index: 5;
+  box-shadow: 0 0 3px rgba(255,255,255,0.6);
 }
