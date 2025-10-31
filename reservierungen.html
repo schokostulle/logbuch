@@ -6,24 +6,20 @@
   <title>Reservierungen – Logbuch</title>
   <link rel="stylesheet" href="style.css">
   <!-- =========================================================
-       Reservierungen – Version 1.0
-       Stand: 31.10.2025
+       Reservierungen – Version 1.1
+       Stand: 04.11.2025
        Änderungen:
-       - leeres Seitentemplate
-       - Struktur kompatibel mit aktueller navigation.js (mit späterer Revision Versionsnummer nachtragen)
+       - Tabelle mit CSV-Daten
+       - Filterfunktion + Reservierungsstatus + Berichtsvorschau
        ========================================================= -->
 </head>
 
 <body>
-  <!-- Navigation (dynamisch über navigation.js) -->
   <aside>
     <header>⚓ Logbuch</header>
-    <nav>
-      <ul></ul>
-    </nav>
+    <nav><ul></ul></nav>
   </aside>
 
-  <!-- Hauptbereich -->
   <main>
     <header class="topbar">
       <h1>Reservierungen</h1>
@@ -31,6 +27,43 @@
     </header>
 
     <section class="content">
+
+      <div class="panel">
+        <h2>Inselübersicht & Reservierungen</h2>
+
+        <!-- Filter -->
+        <div class="filter-bar">
+          <input type="text" id="filterInput" placeholder="Filter nach Spieler, Allianz oder Insel…" />
+          <select id="statusFilter">
+            <option value="alle">Alle Status</option>
+            <option value="frei">Frei</option>
+            <option value="reserviert">Reserviert</option>
+            <option value="angenommen">Angenommen</option>
+            <option value="abgelehnt">Abgelehnt</option>
+          </select>
+        </div>
+
+        <!-- Tabelle -->
+        <div class="table-wrapper">
+          <table id="reservierungenTable" class="table">
+            <thead>
+              <tr>
+                <th>+</th>
+                <th>Oz</th>
+                <th>Ig</th>
+                <th>In</th>
+                <th>Spieler</th>
+                <th>Allianz</th>
+                <th>Punkte</th>
+                <th>Reservierung</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="8"><em>Lade CSV-Daten…</em></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
     </section>
   </main>
