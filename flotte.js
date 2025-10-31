@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const row = `
         <tr>
           <td>${new Date(entry.date).toLocaleString("de-DE")}</td>
-          <td>${entry.user || "?"}</td>
+          <td>${entry.username || "?"}</td>
           ${unitNames.map((k) => `<td>${fleet[k] ?? 0}</td>`).join("")}
         </tr>
       `;
