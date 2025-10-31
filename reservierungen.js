@@ -1,90 +1,195 @@
 // ============================================================
-// reservierungen.js – Logbuch Reservierungsverwaltung
-// Version: 1.0 – 04.11.2025
+// reservierungen.js – Logbuch-Reservierungen
+// Version: 1.1 – 04.11.2025
 // Autor: Kapitän ⚓
 // Beschreibung:
-//   - Verwaltung von Insel-Reservierungen
-//   - Admins/Offiziere können neue anlegen
-//   - Später via Supabase-Table 'reservations'
+//  - Zeigt CSV-Daten aller nicht-freundlichen Spieler
+//  - Reservierungen mit Status (frei, reserviert, angenommen, abgelehnt)
+//  - Admin kann Reservierungen annehmen/ablehnen
+//  - Kämpfe (Berichte) der Spieler einblendbar (max. 5)
 // ============================================================
 
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("reservationForm");
-  const tableBody = document.querySelector("#reservierungenTable tbody");
+import { supabase } from "./logbuch.js";
 
-  // Temporärer Speicher (wird später aus Supabase gelesen)
+document.addEventListener("DOMContentLoaded", async () => {
+  const tableBody = document.querySelector("#reservierungenTable tbody");
+  const filterInput = document.getElementById("filterInput");
+  const statusFilter = document.getElementById("statusFilter");
+
+  let csvData = [];
   let reservations = [];
 
-  // ------------------------------------------------------------
-  // Formular absenden
-  // ------------------------------------------------------------
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
+  const { data: userData } = await supabase.auth.getUser();
+  const currentUser = userData?.user?.email || "Unbekannt";
+  const isAdmin = (await getUserRole()) === "admin";
 
-    const insel = document.getElementById("inselName").value.trim();
-    const spieler = document.getElementById("spielerName").value.trim();
-    const allianz = document.getElementById("allianz").value.trim() || "-";
-    const frist = document.getElementById("frist").value;
-    const status = document.getElementById("status").value;
+  // ------------------------------------------------------------
+  // CSV-Daten laden
+  // ------------------------------------------------------------
+  async function loadCSV() {
+    const { data, error } = await supabase.from("csv_base").select("*").order("oz, ig, i");
+    if (error) {
+      console.error("❌ CSV LOAD ERROR:", error);
+      tableBody.innerHTML = `<tr><td colspan="8"><em>Fehler beim Laden der CSV.</em></td></tr>`;
+      return [];
+    }
+    return data;
+  }
 
-    if (!insel || !spieler || !frist) {
-      alert("Bitte alle Pflichtfelder ausfüllen!");
-      return;
+  // Dummy: Diplomatie-Filter (hier: alles außer Allianz "ALLY")
+  async function getNonFriendlyPlayers(data) {
+    return data.filter((r) => r.akuerzel !== "ALLY");
+  }
+
+  // ------------------------------------------------------------
+  // Tabellenrendering
+  // ------------------------------------------------------------
+  async function renderTable() {
+    let filtered = csvData;
+
+    const search = filterInput.value.toLowerCase();
+    if (search) {
+      filtered = filtered.filter(
+        (r) =>
+          r.spielername.toLowerCase().includes(search) ||
+          r.akuerzel.toLowerCase().includes(search) ||
+          r.inselname?.toLowerCase().includes(search)
+      );
     }
 
-    const entry = {
-      id: Date.now(),
-      insel,
-      spieler,
-      allianz,
-      status,
-      frist,
-      erstellt: new Date().toISOString(),
-    };
+    const statusSel = statusFilter.value;
+    if (statusSel !== "alle") {
+      filtered = filtered.filter((r) => getReservationStatus(r) === statusSel);
+    }
 
-    reservations.unshift(entry);
-    form.reset();
-    renderTable();
-  });
-
-  // ------------------------------------------------------------
-  // Tabelle aktualisieren
-  // ------------------------------------------------------------
-  function renderTable() {
     tableBody.innerHTML = "";
 
-    if (reservations.length === 0) {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="8"><em>Keine Reservierungen vorhanden.</em></td>`;
-      tableBody.appendChild(tr);
+    if (filtered.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="8"><em>Keine passenden Einträge gefunden.</em></td></tr>`;
       return;
     }
 
-    reservations.forEach((res, idx) => {
+    for (const row of filtered) {
+      const status = getReservationStatus(row);
+      const reservBy = reservations.find((res) => res.key === keyOf(row))?.user;
       const tr = document.createElement("tr");
+      tr.className = `status-${status}`;
+
       tr.innerHTML = `
-        <td>${idx + 1}</td>
-        <td>${res.insel}</td>
-        <td>${res.spieler}</td>
-        <td>${res.allianz}</td>
-        <td>
-          <span class="badge ${statusClass(res.status)}">${res.status}</span>
-        </td>
-        <td>${formatDate(res.frist)}</td>
-        <td>${formatDateTime(res.erstellt)}</td>
-        <td>
-          <button class="btn btn--danger btn-sm" data-id="${res.id}">Löschen</button>
-        </td>
+        <td><button class="btn btn--small btn-expand" data-key="${keyOf(row)}">＋</button></td>
+        <td>${row.oz}</td>
+        <td>${row.ig}</td>
+        <td>${row.i}</td>
+        <td>${row.spielername}</td>
+        <td>${row.akuerzel}</td>
+        <td>${row.punkte.toLocaleString("de-DE")}</td>
+        <td class="reserv-cell">${renderReservationCell(row, reservBy, status)}</td>
       `;
       tableBody.appendChild(tr);
+    }
+
+    attachExpandHandlers();
+    attachReservationHandlers();
+  }
+
+  // ------------------------------------------------------------
+  // Reservierungs-Buttons
+  // ------------------------------------------------------------
+  function renderReservationCell(row, reservBy, status) {
+    if (status === "frei") {
+      return `<button class="btn btn--primary btn-reserve" data-key="${keyOf(row)}">Reservieren</button>`;
+    }
+    if (status === "reserviert" || status === "angenommen" || status === "abgelehnt") {
+      const name = reservBy || "Unbekannt";
+      let adminButtons = "";
+      if (isAdmin && status === "reserviert") {
+        adminButtons = `
+          <button class="btn btn--ok btn-small" data-accept="${keyOf(row)}">✓</button>
+          <button class="btn btn--danger btn-small" data-deny="${keyOf(row)}">✗</button>
+        `;
+      }
+      return `<span>${name}</span> ${adminButtons}`;
+    }
+  }
+
+  // ------------------------------------------------------------
+  // Eventhandler für Reservierungen
+  // ------------------------------------------------------------
+  function attachReservationHandlers() {
+    document.querySelectorAll(".btn-reserve").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const key = e.target.dataset.key;
+        reservations.push({ key, user: currentUser, status: "reserviert" });
+        renderTable();
+      });
     });
 
-    // Aktionen
-    document.querySelectorAll("[data-id]").forEach((btn) => {
+    document.querySelectorAll("[data-accept]").forEach((btn) => {
       btn.addEventListener("click", (e) => {
-        const id = parseInt(e.target.dataset.id);
-        reservations = reservations.filter((r) => r.id !== id);
+        const key = e.target.dataset.accept;
+        const r = reservations.find((r) => r.key === key);
+        if (r) r.status = "angenommen";
         renderTable();
+      });
+    });
+
+    document.querySelectorAll("[data-deny]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const key = e.target.dataset.deny;
+        const r = reservations.find((r) => r.key === key);
+        if (r) r.status = "abgelehnt";
+        renderTable();
+      });
+    });
+  }
+
+  // ------------------------------------------------------------
+  // Expand-Funktion → letzte Kampfberichte
+  // ------------------------------------------------------------
+  function attachExpandHandlers() {
+    document.querySelectorAll(".btn-expand").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        const key = e.target.dataset.key;
+        const tr = e.target.closest("tr");
+        const next = tr.nextElementSibling;
+        if (next && next.classList.contains("subtable")) {
+          next.remove();
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from("battle_reports")
+          .select("*")
+          .or(`attacker.eq.${key},defender.eq.${key}`)
+          .order("created_at", { ascending: false })
+          .limit(5);
+
+        const subTr = document.createElement("tr");
+        subTr.className = "subtable";
+        const td = document.createElement("td");
+        td.colSpan = 8;
+
+        if (error || !data?.length) {
+          td.innerHTML = `<em>Keine Kampfberichte vorhanden.</em>`;
+        } else {
+          const innerTable = `
+            <table class="sub-inner">
+              ${data
+                .map(
+                  (b) => `
+                <tr>
+                  <td>${new Date(b.created_at).toLocaleString("de-DE")}</td>
+                  <td>${b.attacker} vs ${b.defender}</td>
+                  <td>${b.oz}:${b.ig}:${b.i}</td>
+                </tr>`
+                )
+                .join("")}
+            </table>`;
+          td.innerHTML = innerTable;
+        }
+
+        subTr.appendChild(td);
+        tr.after(subTr);
       });
     });
   }
@@ -92,34 +197,30 @@ document.addEventListener("DOMContentLoaded", () => {
   // ------------------------------------------------------------
   // Hilfsfunktionen
   // ------------------------------------------------------------
-  function formatDate(dateStr) {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString("de-DE", { year: "numeric", month: "2-digit", day: "2-digit" });
+  function keyOf(row) {
+    return `${row.oz}:${row.ig}:${row.i}`;
   }
 
-  function formatDateTime(dateStr) {
-    const d = new Date(dateStr);
-    return d.toLocaleString("de-DE", {
-      year: "2-digit",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  function getReservationStatus(row) {
+    const r = reservations.find((r) => r.key === keyOf(row));
+    return r ? r.status : "frei";
   }
 
-  function statusClass(status) {
-    switch (status.toLowerCase()) {
-      case "offen": return "badge--warn";
-      case "bestätigt": return "badge--ok";
-      case "erledigt": return "badge--ok";
-      case "abgelehnt": return "badge--danger";
-      default: return "";
-    }
+  async function getUserRole() {
+    const { data, error } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", userData.user.id)
+      .single();
+    return error ? "member" : data.role.toLowerCase();
   }
 
   // ------------------------------------------------------------
-  // Initial rendern (leer)
+  // Initial laden
   // ------------------------------------------------------------
+  csvData = await getNonFriendlyPlayers(await loadCSV());
   renderTable();
+
+  filterInput.addEventListener("input", renderTable);
+  statusFilter.addEventListener("change", renderTable);
 });
