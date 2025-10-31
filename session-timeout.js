@@ -1,80 +1,126 @@
 // =============================================================
-// session-timeout.js – Globale Sitzungsüberwachung
-// Version: 1.0 – 04.11.2025
+// session-timeout.js – Sitzungsüberwachung mit Countdown
+// Version: 2.0 – 05.11.2025
 // Autor: Kapitän ⚓
 //
 // Funktionen:
-// - automatische Abmeldung bei Inaktivität
-// - Vorwarnung 2 Minuten vor Ablauf
-// - vollständiger Logout über Supabase
-// - Reset bei Maus, Tastatur oder Scrollaktivität
+// - Countdown-Anzeige im Header neben Benutzername
+// - Reset bei Maus-/Tastatur-/Scrollaktivität
+// - Warnung 2 Minuten vor Ablauf
+// - Automatischer Logout bei Inaktivität
 // =============================================================
 
 import { supabase } from "./logbuch.js";
 
-const TIMEOUT_MINUTES = 30;     // Gesamtzeit bis Auto-Logout (Inaktivität)
-const WARNING_MINUTES = 2;      // Vorwarnzeit in Minuten
+const TIMEOUT_MINUTES = 30;     // Inaktivität bis Logout
+const WARNING_MINUTES = 2;      // Vorwarnzeit
+let remainingSeconds = TIMEOUT_MINUTES * 60;
 
 let inactivityTimer;
-let warningTimer;
-let warned = false;
+let countdownTimer;
+let warningActive = false;
 
 // -------------------------------------------------------------
-// Sitzung zurücksetzen bei Benutzeraktivität
+// DOM-Element für Countdown vorbereiten
+// -------------------------------------------------------------
+function setupCountdownDisplay() {
+  let header = document.querySelector(".user-status");
+  if (!header) return;
+
+  const countdownEl = document.createElement("span");
+  countdownEl.id = "session-countdown";
+  countdownEl.style.marginLeft = "1rem";
+  countdownEl.style.fontSize = "0.9rem";
+  countdownEl.style.color = "#c7b37e";
+  countdownEl.style.opacity = "0.9";
+  countdownEl.textContent = formatTime(remainingSeconds);
+
+  header.appendChild(countdownEl);
+}
+
+// -------------------------------------------------------------
+// Countdown-Ticker
+// -------------------------------------------------------------
+function startCountdown() {
+  clearInterval(countdownTimer);
+  countdownTimer = setInterval(() => {
+    remainingSeconds--;
+
+    const countdownEl = document.getElementById("session-countdown");
+    if (countdownEl) {
+      countdownEl.textContent = formatTime(remainingSeconds);
+
+      // Farbänderung bei Warnung
+      if (remainingSeconds <= WARNING_MINUTES * 60 && !warningActive) {
+        warningActive = true;
+        countdownEl.style.color = "#ff6961";
+        showWarning();
+      }
+
+      // Wenn Zeit abgelaufen → Logout
+      if (remainingSeconds <= 0) {
+        performLogout();
+      }
+    }
+  }, 1000);
+}
+
+// -------------------------------------------------------------
+// Aktivität -> Reset Timer & Countdown
 // -------------------------------------------------------------
 function resetSessionTimer() {
   clearTimeout(inactivityTimer);
-  clearTimeout(warningTimer);
+  remainingSeconds = TIMEOUT_MINUTES * 60;
+  warningActive = false;
 
-  warned = false;
+  const countdownEl = document.getElementById("session-countdown");
+  if (countdownEl) countdownEl.style.color = "#c7b37e";
 
-  // Vorwarnung anzeigen 2 Minuten vor Timeout
-  warningTimer = setTimeout(() => {
-    warned = true;
-    showWarning();
-  }, (TIMEOUT_MINUTES - WARNING_MINUTES) * 60 * 1000);
-
-  // Nach Ablauf automatisch abmelden
   inactivityTimer = setTimeout(() => {
     performLogout();
   }, TIMEOUT_MINUTES * 60 * 1000);
 }
 
 // -------------------------------------------------------------
-// Warnung anzeigen (sanft, nicht störend)
+// Warnung unten rechts anzeigen
 // -------------------------------------------------------------
 function showWarning() {
   const existing = document.querySelector("#session-warning");
-  if (existing) return; // Doppelte Warnungen vermeiden
+  if (existing) return;
 
-  const warning = document.createElement("div");
-  warning.id = "session-warning";
-  warning.textContent = `⚠️ Deine Sitzung läuft in ${WARNING_MINUTES} Minuten ab.`;
-  warning.style.position = "fixed";
-  warning.style.bottom = "20px";
-  warning.style.right = "20px";
-  warning.style.backgroundColor = "#3b2b2b";
-  warning.style.color = "#f0d9a0";
-  warning.style.border = "1px solid #665";
-  warning.style.borderRadius = "6px";
-  warning.style.padding = "0.6rem 1rem";
-  warning.style.fontFamily = "Courier New, monospace";
-  warning.style.fontSize = "0.9rem";
-  warning.style.boxShadow = "0 0 10px rgba(0,0,0,0.4)";
-  warning.style.zIndex = "9999";
-  warning.style.transition = "opacity 0.5s ease";
-  document.body.appendChild(warning);
+  const div = document.createElement("div");
+  div.id = "session-warning";
+  div.textContent = `⚠️ Inaktivität – Sitzung läuft in ${WARNING_MINUTES} Minuten ab!`;
+  Object.assign(div.style, {
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    backgroundColor: "#3b2b2b",
+    color: "#f0d9a0",
+    border: "1px solid #665",
+    borderRadius: "6px",
+    padding: "0.6rem 1rem",
+    fontFamily: "Courier New, monospace",
+    fontSize: "0.9rem",
+    boxShadow: "0 0 10px rgba(0,0,0,0.4)",
+    zIndex: "9999",
+    transition: "opacity 0.5s ease"
+  });
+  document.body.appendChild(div);
 
-  // Nach 1 Minute entfernen, wenn Benutzer wieder aktiv wird
   setTimeout(() => {
-    if (warning && !warned) warning.remove();
-  }, WARNING_MINUTES * 60 * 1000);
+    div.style.opacity = "0";
+    setTimeout(() => div.remove(), 500);
+  }, 60 * 1000);
 }
 
 // -------------------------------------------------------------
-// Automatischer Logout
+// Logout
 // -------------------------------------------------------------
 async function performLogout() {
+  clearInterval(countdownTimer);
+  clearTimeout(inactivityTimer);
+
   const warning = document.querySelector("#session-warning");
   if (warning) warning.remove();
 
@@ -84,16 +130,27 @@ async function performLogout() {
 }
 
 // -------------------------------------------------------------
-// Listener für Benutzeraktivität
+// Hilfsfunktionen
+// -------------------------------------------------------------
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+}
+
+// -------------------------------------------------------------
+// Aktivitätsüberwachung
 // -------------------------------------------------------------
 ["mousemove", "keydown", "click", "scroll", "touchstart"].forEach(event => {
   document.addEventListener(event, resetSessionTimer, { passive: true });
 });
 
 // -------------------------------------------------------------
-// Starten, sobald DOM geladen ist
+// Start, wenn DOM geladen
 // -------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
+  setupCountdownDisplay();
   resetSessionTimer();
-  console.log("⚓ Session Timeout gestartet (", TIMEOUT_MINUTES, "min )");
+  startCountdown();
+  console.log(`⚓ Session Timeout aktiv (${TIMEOUT_MINUTES}min, Warnung bei ${WARNING_MINUTES}min)`);
 });
