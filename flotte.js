@@ -1,5 +1,5 @@
 // =============================================================
-// flotte.js – v2.2 (Supabase Integration, kompakte Ansicht)
+// flotte.js – v2.3 (Supabase Integration, kompakte Ansicht)
 // Tabelle: fleet_logs (user_id, date, total_fleet, per_island)
 // =============================================================
 import { supabase } from "./logbuch.js";
@@ -9,7 +9,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const textarea = document.getElementById("flottenText");
   const tableContainer = document.querySelector("#flottenTable").parentElement;
 
+  // ------------------------------------------------------------
   // Einheiten + Kürzel
+  // ------------------------------------------------------------
   const unitNames = [
     "Steinschleuderer",
     "Lanzenträger",
@@ -18,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     "Fregatte",
     "Handelskogge",
     "Kolonialschiff",
-    "Spähschiff"
+    "Spähschiff",
   ];
 
   const shortLabels = {
@@ -29,7 +31,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     Fregatte: "KS",
     Handelskogge: "HS",
     Kolonialschiff: "Ko",
-    Spähschiff: "SS"
+    Spähschiff: "SS",
   };
 
   // ------------------------------------------------------------
@@ -58,11 +60,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const totalFleet = parseFleetText(text);
 
-    // Aktiver Benutzer
+    // Aktiver Benutzer prüfen
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (userError || !userData?.user) {
-      alert("Fehler: Keine aktive Sitzung gefunden.");
-      console.error("❌ AUTH ERROR:", userError);
+      alert("❌ Keine aktive Sitzung gefunden.");
+      console.error("AUTH ERROR:", userError);
       return;
     }
 
@@ -88,28 +90,29 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // ------------------------------------------------------------
-  // Parser erkennt Gesamtflotte oder Inselweise
+  // Parser: erkennt Gesamtflotte oder Inselweise
   // ------------------------------------------------------------
   function parseFleetText(text) {
-    const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
+    const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
     const result = {};
 
-    lines.forEach(line => {
-      unitNames.forEach(name => {
-        if (line.toLowerCase().startsWith(name.toLowerCase())) {
-          const num = parseInt(line.replace(/\D/g, "")) || 0;
-          result[name] = num;
+    lines.forEach((line) => {
+      unitNames.forEach((name) => {
+        const regex = new RegExp(`^${name}\\s*(\\d+)`, "i");
+        const m = line.match(regex);
+        if (m) {
+          result[name] = parseInt(m[1]) || 0;
         }
       });
     });
 
-    // Fehlende Einheiten mit 0 ergänzen
-    unitNames.forEach(k => (result[k] = result[k] || 0));
+    // Fehlende Einheiten ergänzen
+    unitNames.forEach((u) => (result[u] = result[u] || 0));
     return result;
   }
 
   // ------------------------------------------------------------
-  // Tabellenansicht (kompakt, scrollbar, sticky)
+  // Tabellenansicht (kompakt, scrollbar, sticky Header)
   // ------------------------------------------------------------
   async function renderLogs(logs) {
     tableContainer.innerHTML = "";
@@ -119,9 +122,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    // Wrapper für horizontales Scrollen
     const wrapper = document.createElement("div");
-    wrapper.className = "table-wrapper";
+    wrapper.className = "table-wrapper"; // scrollbarer Bereich
 
     const table = document.createElement("table");
     table.className = "flotten-tabelle";
@@ -129,22 +131,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       <thead>
         <tr>
           <th>Datum</th>
-          ${unitNames.map(u => `<th title="${u}">${shortLabels[u]}</th>`).join("")}
+          ${unitNames.map((u) => `<th title="${u}">${shortLabels[u]}</th>`).join("")}
         </tr>
       </thead>
       <tbody></tbody>
     `;
 
     const tbody = table.querySelector("tbody");
-    logs.forEach(entry => {
+
+    logs.forEach((entry) => {
       const fleet = entry.total_fleet || {};
-      const row = `
-        <tr>
-          <td>${new Date(entry.date).toLocaleString("de-DE")}</td>
-          ${unitNames.map(k => `<td>${fleet[k] ?? 0}</td>`).join("")}
-        </tr>
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${new Date(entry.date).toLocaleString("de-DE")}</td>
+        ${unitNames.map((u) => `<td>${fleet[u] ?? 0}</td>`).join("")}
       `;
-      tbody.insertAdjacentHTML("beforeend", row);
+      tbody.appendChild(tr);
     });
 
     wrapper.appendChild(table);
@@ -152,7 +154,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ------------------------------------------------------------
-  // Initial laden
+  // Initiale Anzeige
   // ------------------------------------------------------------
   renderLogs(await loadFleetLogs());
 });
