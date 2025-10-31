@@ -1,0 +1,19 @@
+.btn {
+  background-color: #2f363b;
+  border: 1px solid #555;
+  border-radius: var(--radius);
+  color: var(--color-accent);
+  padding: 0.4rem 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn:hover {
+  background-color: var(--color-hover);
+}
+
+.btn-danger { background-color: var(--color-red); }
+.btn-success { background-color: var(--color-green); }
+.btn-info { background-color: var(--color-blue); }
