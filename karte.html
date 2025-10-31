@@ -6,6 +6,7 @@
   <title>Weltkarte – Logbuch</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <aside>
     <header>⚓ Logbuch</header>
@@ -19,37 +20,26 @@
     </header>
 
     <section class="content">
-      <h2>Weltkarte</h2>
-      <p>
-        Zeigt die Weltstruktur: Ozeane → Inselgruppen → Inseln<br />
-        Farben:
-        <span style="color:#74b9ff;">🟦 Ozean</span>,
-        <span style="color:#4caf50;">🟩 Insel</span>,
-        <span style="color:#ff55ff;">🟪 Allianzlos</span>,
-        <span style="color:#ffcc00;">🟨 Allianzfarben</span>
-      </p>
+      <h2>Kartenübersicht</h2>
+      <p>Zeigt alle bekannten Inseln aus der CSV-Datenbank (csv_base). Farben entsprechen Allianzzugehörigkeiten.</p>
 
-      <!-- Adminsteuerung -->
-      <div id="adminControls" class="admin-controls">
-        <label>Weltweite Ozeane (X×X):
-          <input type="number" id="worldSizeInput" value="2" min="1" max="5" />
-        </label>
-        <label>Gruppen pro Ozean:
-          <input type="number" id="groupsInput" value="4" min="1" max="20" />
-        </label>
-        <label>Inseln pro Gruppe:
-          <input type="number" id="islandsInput" value="10" min="5" max="50" />
-        </label>
+      <!-- Admin-Steuerung -->
+      <div class="karte-steuerung">
+        <label>Ozeane (x): <input type="number" id="worldSizeInput" value="2" min="1"></label>
+        <label>Gruppen pro Ozean (y): <input type="number" id="groupsInput" value="15" min="1"></label>
+        <label>Inseln pro Gruppe (z): <input type="number" id="islandsInput" value="4" min="1"></label>
         <button id="refreshButton">Aktualisieren</button>
       </div>
 
-      <div id="mapContainer" class="map-container"></div>
+      <div id="mapContainer" class="map-grid">
+        <p><em>Karte wird geladen …</em></p>
+      </div>
     </section>
   </main>
 
-  <script type="module" src="navigation.js"></script>
-  <script type="module" src="access-guard.js"></script>
   <script type="module" src="logbuch.js"></script>
+  <script type="module" src="access-guard.js"></script>
+  <script type="module" src="navigation.js"></script>
   <script type="module" src="karte.js"></script>
 </body>
 </html>
