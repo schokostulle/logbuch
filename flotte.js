@@ -1,6 +1,6 @@
 // =============================================================
-// flotte.js – v2.1 (Supabase Integration, finalisiert)
-// Nutzt Tabelle: fleet_logs (user_id, date, total_fleet, per_island)
+// flotte.js – v2.2 (Supabase Integration, kompakte Ansicht)
+// Tabelle: fleet_logs (user_id, date, total_fleet, per_island)
 // =============================================================
 import { supabase } from "./logbuch.js";
 
@@ -9,10 +9,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   const textarea = document.getElementById("flottenText");
   const tableContainer = document.querySelector("#flottenTable").parentElement;
 
-  const keys = [
-    Steinschleuderer: "ST", Lanzenträger: "LT", Langbogenschütze: "BS", Kanonen: "KK",
-    Fregatte: "KS", Handelskogge: "HS", Kolonialschiff: "Ko", Spähschiff: "SS"
+  // Einheiten + Kürzel
+  const unitNames = [
+    "Steinschleuderer",
+    "Lanzenträger",
+    "Langbogenschütze",
+    "Kanonen",
+    "Fregatte",
+    "Handelskogge",
+    "Kolonialschiff",
+    "Spähschiff"
   ];
+
+  const shortLabels = {
+    Steinschleuderer: "SW",
+    Lanzenträger: "LT",
+    Langbogenschütze: "BS",
+    Kanonen: "KK",
+    Fregatte: "KS",
+    Handelskogge: "HS",
+    Kolonialschiff: "Ko",
+    Spähschiff: "SS"
+  };
 
   // ------------------------------------------------------------
   // Daten aus Supabase laden
@@ -40,7 +58,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const totalFleet = parseFleetText(text);
 
-    // Benutzer-ID aus Supabase-Session holen
+    // Aktiver Benutzer
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (userError || !userData?.user) {
       alert("Fehler: Keine aktive Sitzung gefunden.");
@@ -75,18 +93,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   function parseFleetText(text) {
     const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
     const result = {};
+
     lines.forEach(line => {
-      const [unit, value] = line.split(/\s+/);
-      if (keys.includes(unit)) {
-        result[unit] = parseInt(value) || 0;
-      }
+      unitNames.forEach(name => {
+        if (line.toLowerCase().startsWith(name.toLowerCase())) {
+          const num = parseInt(line.replace(/\D/g, "")) || 0;
+          result[name] = num;
+        }
+      });
     });
-    keys.forEach(k => result[k] = result[k] || 0);
+
+    // Fehlende Einheiten mit 0 ergänzen
+    unitNames.forEach(k => (result[k] = result[k] || 0));
     return result;
   }
 
   // ------------------------------------------------------------
-  // Tabellenansicht
+  // Tabellenansicht (kompakt, scrollbar, sticky)
   // ------------------------------------------------------------
   async function renderLogs(logs) {
     tableContainer.innerHTML = "";
@@ -96,13 +119,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+    // Wrapper für horizontales Scrollen
+    const wrapper = document.createElement("div");
+    wrapper.className = "table-wrapper";
+
     const table = document.createElement("table");
     table.className = "flotten-tabelle";
     table.innerHTML = `
       <thead>
         <tr>
           <th>Datum</th>
-          ${keys.map(k => `<th>${k}</th>`).join("")}
+          ${unitNames.map(u => `<th title="${u}">${shortLabels[u]}</th>`).join("")}
         </tr>
       </thead>
       <tbody></tbody>
@@ -114,15 +141,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       const row = `
         <tr>
           <td>${new Date(entry.date).toLocaleString("de-DE")}</td>
-          ${keys.map(k => `<td>${fleet[k] ?? 0}</td>`).join("")}
+          ${unitNames.map(k => `<td>${fleet[k] ?? 0}</td>`).join("")}
         </tr>
       `;
       tbody.insertAdjacentHTML("beforeend", row);
     });
 
-    tableContainer.appendChild(table);
+    wrapper.appendChild(table);
+    tableContainer.appendChild(wrapper);
   }
 
-  // Beim Laden direkt Flotten anzeigen
+  // ------------------------------------------------------------
+  // Initial laden
+  // ------------------------------------------------------------
   renderLogs(await loadFleetLogs());
 });
