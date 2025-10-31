@@ -166,29 +166,29 @@ function parseReport(text) {
     .filter(Boolean);
 
   const UNIT_KEYS = [
-    "Steinschleuderer",
-    "Lanzenträger",
-    "Langbogenschütze",
-    "Kanonen",
-    "Fregatte",
-    "Handelskogge",
-    "Kolonialschiff",
-    "Spähschiff",
+    Steinschleuderer: "ST",
+    Lanzenträger: "LT",
+    Langbogenschütze: "BS",
+    Kanonen: "KK",
+    Fregatte: "KS",
+    Handelskogge: "HS",
+    Kolonialschiff: "Ko",
+    Spähschiff: "SS",
   ];
   const BUILDING_KEYS = [
-    "Hauptgebäude",
-    "Goldbergwerk",
-    "Steinbruch",
-    "Holzfällerhütte",
-    "Universität",
-    "Baracke",
-    "Werft",
-    "Lagerhaus",
-    "Steinwall",
-    "Wachturm",
-    "Ruhestätte",
+    Hauptgebäude: "HH",
+    Goldbergwerk: "G",
+    Steinbruch: "S",
+    Holzfällerhütte: "H",
+    Universität: "U",
+    Baracke: "B",
+    Werft: "W",
+    Lagerhaus: "L",
+    Steinwall: "SW",
+    Wachturm: "WT",
+    Ruhestätte: "RS",
   ];
-  const RESEARCH_KEYS = ["Lanze", "Schild", "Langbogen", "Kanone"];
+  const RESEARCH_KEYS = ["Lt", "Sd", "Lb", "Ka"];
 
   const coords = [...text.matchAll(/\((\d+):(\d+):(\d+)\)/g)].map((m) => ({
     oz: +m[1],
