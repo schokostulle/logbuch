@@ -1,95 +1,44 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reservierungen – Logbuch</title>
-  <link rel="stylesheet" href="style.css" />
-  <script type="module" src="reservierungen.js" defer></script>
+  <link rel="stylesheet" href="style.css">
+  <!-- =========================================================
+       Reservierungen – Version 1.0
+       Stand: 31.10.2025
+       Änderungen:
+       - leeres Seitentemplate
+       - Struktur kompatibel mit aktueller navigation.js (mit späterer Revision Versionsnummer nachtragen)
+       ========================================================= -->
 </head>
+
 <body>
-  <!-- Seitenlayout -->
+  <!-- Navigation (dynamisch über navigation.js) -->
   <aside>
     <header>⚓ Logbuch</header>
     <nav>
-      <ul>
-        <li><a href="dashboard.html"><span class="icon">🏠</span><span class="text">Dashboard</span></a></li>
-        <li><a href="flotte.html"><span class="icon">🚢</span><span class="text">Flotte</span></a></li>
-        <li><a href="karte.html"><span class="icon">🗺️</span><span class="text">Karte</span></a></li>
-        <li><a href="reservierungen.html" class="active"><span class="icon">📜</span><span class="text">Reservierungen</span></a></li>
-        <li><a href="import.html"><span class="icon">📂</span><span class="text">CSV Import</span></a></li>
-        <li><a href="audit.html"><span class="icon">🕵️</span><span class="text">Audit</span></a></li>
-        <li><a href="logout.html"><span class="icon">🚪</span><span class="text">Logout</span></a></li>
-      </ul>
+      <ul></ul>
     </nav>
   </aside>
 
+  <!-- Hauptbereich -->
   <main>
     <header class="topbar">
       <h1>Reservierungen</h1>
-      <div class="user-status">Kapitän – Admin</div>
+      <div class="user-status">Lade Benutzer …</div>
     </header>
 
     <section class="content">
 
-      <!-- Formular für neue Reservierungen (Admin / Officer) -->
-      <div class="panel" id="reserveFormPanel">
-        <h2>Neue Reservierung</h2>
-        <form id="reservationForm">
-          <div>
-            <label for="inselName">Insel / Ziel</label>
-            <input type="text" id="inselName" placeholder="z. B. A-046-04 (4:46:4)" required />
-          </div>
-          <div>
-            <label for="spielerName">Spieler</label>
-            <input type="text" id="spielerName" placeholder="Name des Spielers" required />
-          </div>
-          <div>
-            <label for="allianz">Allianz</label>
-            <input type="text" id="allianz" placeholder="Allianzkürzel oder -name" />
-          </div>
-          <div>
-            <label for="frist">Frist / Ablaufdatum</label>
-            <input type="date" id="frist" required />
-          </div>
-          <div>
-            <label for="status">Status</label>
-            <select id="status">
-              <option value="offen">Offen</option>
-              <option value="bestätigt">Bestätigt</option>
-              <option value="erledigt">Erledigt</option>
-              <option value="abgelehnt">Abgelehnt</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn--primary">Speichern</button>
-        </form>
-      </div>
-
-      <!-- Aktuelle Reservierungen -->
-      <div class="panel">
-        <h2>Aktuelle Reservierungen</h2>
-        <div class="table-wrapper">
-          <table class="table" id="reservierungenTable">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Insel</th>
-                <th>Spieler</th>
-                <th>Allianz</th>
-                <th>Status</th>
-                <th>Frist</th>
-                <th>Erstellt</th>
-                <th>Aktionen</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td colspan="8"><em>Keine Reservierungen vorhanden.</em></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
     </section>
   </main>
+
+  <!-- Skripte -->
+  <script type="module" src="navigation.js"></script>
+  <script type="module" src="access-guard.js"></script>
+  <script type="module" src="logbuch.js"></script>
+  <script type="module" src="reservierungen.js"></script>
 </body>
 </html>
