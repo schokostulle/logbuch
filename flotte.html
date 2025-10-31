@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flotte – Logbuch</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marine – Logbuch</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <aside>
     <header>⚓ Logbuch</header>
-    <nav>
-      <ul></ul>
-  </nav>
-</aside>
+    <nav><ul></ul></nav>
+  </aside>
 
   <main>
     <header class="topbar">
@@ -29,25 +28,30 @@
       <!-- Formular für neue Analyse -->
       <form id="flottenForm">
         <label for="flottenText">Flottenbericht:</label>
-        <textarea id="flottenText" rows="8" placeholder="Textblock der Flotte hier einfügen..."></textarea>
-        <button type="submit">Analysieren & Speichern</button>
+        <textarea
+          id="flottenText"
+          rows="8"
+          placeholder="Textblock der Flotte hier einfügen …"
+        ></textarea>
+        <button type="submit">Analysieren &amp; Speichern</button>
       </form>
 
       <h3>Logbuch-Einträge</h3>
-      <div id="flottenLogs">
-        <!-- Hier fügt flotte.js alle analysierten Einträge mit Zeitstempel ein -->
-        <table id="flottenTable">
+
+      <!-- ✅ Wrapper für Scroll und Sticky Header -->
+      <div class="table-wrapper">
+        <table id="flottenTable" class="flotten-tabelle">
           <thead>
             <tr>
-              <th>Insel</th>
-              <th>ST</th>
-              <th>LT</th>
-              <th>BS</th>
-              <th>KK</th>
-              <th>KS</th>
-              <th>HS</th>
-              <th>Ko</th>
-              <th>SS</th>
+              <th>Datum</th>
+              <th title="Steinschleuderer">SW</th>
+              <th title="Lanzenträger">LT</th>
+              <th title="Langbogenschütze">BS</th>
+              <th title="Kanonen">KK</th>
+              <th title="Fregatte">KS</th>
+              <th title="Handelskogge">HS</th>
+              <th title="Kolonialschiff">Ko</th>
+              <th title="Spähschiff">SS</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -56,9 +60,10 @@
     </section>
   </main>
 
-  <script type="module" src="navigation.js"></script>
-  <script type="module" src="access-guard.js"></script> <!-- 🔒 Neu -->
+  <!-- Skripte in empfohlener Reihenfolge -->
   <script type="module" src="logbuch.js"></script>
+  <script type="module" src="access-guard.js"></script>
+  <script type="module" src="navigation.js"></script>
   <script type="module" src="flotte.js"></script>
 </body>
 </html>
