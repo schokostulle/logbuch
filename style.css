@@ -163,97 +163,75 @@ main {
   padding-bottom: 0.5rem;
 }
 
-/* ---------- Tabellen ---------- */
-
 /* =========================================================
-   Tabellen – kompakt, scrollbar, sticky header
+   Kompakte Tabellen für Berichte & Flotten
    ========================================================= */
 
-/* Tabellencontainer: sorgt für horizontales und vertikales Scrollen */
 .table-wrapper {
-  width: 100%;
-  overflow-x: auto;
+  max-height: 70vh;            /* Scrollbereich begrenzen */
   overflow-y: auto;
-  max-height: 70vh; /* verhindert endlose Seiten */
+  overflow-x: auto;
   border: 1px solid #333;
-  border-radius: 8px;
+  border-radius: 6px;
   background-color: #141a1f;
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
-  margin-top: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
 }
 
-/* Tabelle an sich */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-  background-color: transparent;
-  color: #d9cba0;
-  min-width: max-content; /* verhindert Abschneiden bei vielen Spalten */
-}
-
-/* Tabellenkopf – sticky + leichter Glanz */
-thead th {
+/* Tabellenkopf fixieren */
+.table-wrapper table thead th {
   position: sticky;
   top: 0;
-  background: linear-gradient(180deg, #1e242a 0%, #141a1f 100%);
-  color: #e6dcb5;
+  background-color: #1d242a;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Kompaktere Zellen */
+.table-wrapper table th,
+.table-wrapper table td {
+  padding: 0.4rem 0.5rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Leicht abgesetzte Farben */
+.table-wrapper table tbody tr:nth-child(even) {
+  background-color: #161d22;
+}
+
+/* Hovereffekt für bessere Lesbarkeit */
+.table-wrapper table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Rollenfarben klarer sichtbar */
+.attacker-row {
+  background-color: rgba(255, 0, 0, 0.05);
+}
+.defender-row {
+  background-color: rgba(0, 100, 255, 0.05);
+}
+
+/* Tabellenüberschriften enger und klarer */
+.table-wrapper table th {
   font-weight: bold;
   text-transform: uppercase;
-  border-bottom: 1px solid #444;
-  padding: 6px 10px;
-  text-align: center;
-  z-index: 2;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
 }
 
-/* Tabellenzellen */
-tbody td {
-  border-bottom: 1px solid #2a2f33;
-  padding: 4px 8px;
-  text-align: center;
-  white-space: nowrap;
-  font-size: 0.85rem;
+/* Scrollbar-Styling (dezent) */
+.table-wrapper::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
 }
-
-/* Kompakter Stil für viele Spalten */
-table th,
-table td {
-  padding: 4px 6px;
-  min-width: 55px;
+.table-wrapper::-webkit-scrollbar-thumb {
+  background-color: #2f363b;
+  border-radius: 6px;
 }
-
-/* Abwechselnde Zeilenfarben */
-tbody tr:nth-child(even) {
-  background-color: rgba(255, 255, 255, 0.02);
-}
-tbody tr:nth-child(odd) {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-/* Hover-Effekt für bessere Lesbarkeit */
-tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  transition: background-color 0.2s ease;
-}
-
-/* Farbcode für Rollen */
-.attacker-row td {
-  background-color: rgba(255, 0, 0, 0.07);
-}
-.defender-row td {
-  background-color: rgba(0, 100, 255, 0.07);
-}
-
-/* Mobile Ansicht – horizontales Scrollen */
-@media (max-width: 900px) {
-  .table-wrapper {
-    max-height: 60vh;
-  }
-
-  table th, table td {
-    font-size: 0.75rem;
-    padding: 3px 5px;
-  }
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: #444;
 }
 
 /* ---------- Buttons ---------- */
