@@ -1,657 +1,469 @@
 /* =========================================================
-   Logbuch – Projekt
-   style.css – Version 1.8
+   Logbuch – Maritime UI (Neuaufbau)
+   Thema: dunkel, matt, ruhige Blau-/Grau-/Brauntöne
+   Typografie: Serif (Bronze/Gold-Töne)
    Autor: Kapitän
-   Datum: 02.11.2025
-   Beschreibung:
-   Maritime Desktop-Ansicht + Supabase Dashboard-Optimierung
    ========================================================= */
 
-/* ---------- Allgemeine Grundformate ---------- */
+/* ---------- Design-Variablen ---------- */
+:root {
+  /* Grundfarben */
+  --bg-deep: #0b1d2a;          /* tiefer Ozean */
+  --bg-panel: #131a21;         /* Paneele */
+  --bg-elev: #161f27;          /* erhöhte Flächen */
+  --bg-muted: #10161c;         /* abgesetzt */
+  --line: #384350;             /* Rahmen */
+  --line-soft: #2b3440;
+
+  /* Akzent/Typo (Bronze/Gold) */
+  --text: #d8c79a;
+  --text-soft: #bfae7f;
+  --text-dim: #9b8d69;
+  --heading: #e2d3a6;
+
+  /* Interaktion */
+  --focus: #c5b17a;
+  --accent: #a77a3a;           /* bronzen */
+  --accent-quiet: #7a5a2a;
+  --danger: #c45a5a;
+  --ok: #67a36e;
+  --warn: #c7a24a;
+
+  /* Tabellen */
+  --row-alt: #17222b;
+  --row-hover: rgba(255,255,255,0.05);
+  --th-bg: #1b242c;
+  --th-shadow: rgba(0,0,0,0.35);
+  --cell-sep: #2a3642;
+
+  /* Karte */
+  --ocean: #7fc3ff;            /* helles Blau (Ozean) */
+  --island-free: #a9d6a6;      /* mildes Grün (herrscherlos) */
+  --island-solo: #d46fb3;      /* Magenta (allianzlos, besetzt) */
+
+  /* Allianzfarben (freundlich/neutral/feindlich) */
+  --ally-friend: #6aa9ff;      /* ruhig */
+  --ally-neutral: #c3c3c3;     /* neutral grau */
+  --ally-enemy-1: #ff6a6a;     /* grell, unterscheidbar */
+  --ally-enemy-2: #ff9b4a;     /* grell, unterscheidbar */
+  --ally-enemy-3: #ffd34a;     /* grell, unterscheidbar */
+
+  /* Abmessungen */
+  --sidebar-max: 20vw;
+  --sidebar-min: 240px;
+  --sidebar-mobile: 78px;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --pad: 16px;
+  --gap: 12px;
+
+  /* Schrift */
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Schatten subtil */
+  --shadow: 0 0 12px rgba(0,0,0,0.28);
+}
+
+/* ---------- Reset & Grundlayout ---------- */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
 
 body {
   margin: 0;
   display: flex;
-  height: 100vh;
-  background-color: #0b1d2a;
-  color: #d9cba0;
-  font-family: "Courier New", Courier, monospace;
+  background: var(--bg-deep);
+  color: var(--text);
+  font-family: var(--font-serif);
+  line-height: 1.4;
 }
 
-/* ---------- Seitenlayout ---------- */
-
+/* ---------- Seitenrahmen ---------- */
 aside {
-  flex: 0 0 20%;
-  max-width: 20%;
-  min-width: 250px;
-  background-color: #2a2f33;
+  flex: 0 0 clamp(var(--sidebar-min), var(--sidebar-max), 20%);
+  max-width: clamp(var(--sidebar-min), var(--sidebar-max), 20%);
+  min-width: var(--sidebar-min);
+  background: #2a3137;
+  border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  border-right: 1px solid #444;
-  box-sizing: border-box;
-  transition: all 0.3s ease;
 }
 
 aside header {
-  text-align: center;
-  padding: 1.5rem 0;
-  font-size: 1.3rem;
+  padding: 1.2rem 1rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--heading);
   text-transform: uppercase;
-  font-weight: bold;
-  letter-spacing: 2px;
-  color: #d9cba0;
-  border-bottom: 1px solid #444;
+  letter-spacing: 0.08em;
+  font-weight: 700;
 }
 
-/* ---------- Navigation ---------- */
+nav { padding: .25rem; }
+nav ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 2px; }
 
-nav {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: stretch;
-  padding-top: 0.5rem;
-}
-
-nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-nav ul li a {
+nav a {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
-  padding: 0.9rem 1rem;
-  color: #d9cba0;
+  gap: .6rem;
+  padding: .7rem .8rem;
   text-decoration: none;
-  font-weight: bold;
-  text-transform: uppercase;
-  border-radius: 6px;
-  transition: background-color 0.2s ease, padding 0.3s ease;
-  white-space: nowrap;
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+}
+nav a:hover { background: #323a42; border-color: var(--line); }
+nav a.active {
+  background: #39424a;
+  color: var(--heading);
+  border-color: var(--line);
+  box-shadow: inset 0 0 8px rgba(255,235,180,0.15);
+  font-weight: 700;
 }
 
-nav ul li a:hover {
-  background-color: #3b4247;
-}
+nav a .icon { width: 1.4rem; text-align: center; }
+nav a .text { white-space: nowrap; }
 
-nav ul li a.active {
-  background-color: #3f4a50;
-  color: #f0d9a0;
-  box-shadow: inset 0 0 8px rgba(255, 235, 180, 0.2);
-  font-weight: bold;
-}
-
-nav ul li:last-child {
-  margin-top: auto;
-}
-
-/* ---------- Symbolmodus ---------- */
+/* ---------- Mobile Sidebar: nur Symbole ---------- */
 @media (max-width: 900px) {
   aside {
-    flex: 0 0 15%;
-    max-width: 15%;
-    min-width: 80px;
+    flex-basis: var(--sidebar-mobile);
+    max-width: var(--sidebar-mobile);
+    min-width: var(--sidebar-mobile);
   }
-
-  aside header {
-    font-size: 1rem;
-    padding: 1rem 0;
-    letter-spacing: 1px;
-  }
-
-  nav ul li a {
-    justify-content: center;
-    font-size: 0.8rem;
-    padding: 0.8rem 0.5rem;
-  }
-
-  nav ul li a span.text {
-    display: none;
-  }
+  nav a { justify-content: center; padding: .8rem .4rem; }
+  nav a .text { display: none; }
 }
 
-/* ---------- Hauptbereich ---------- */
-
 main {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  background-color: #0b1d2a;
-  overflow-y: auto;
 }
 
 /* ---------- Kopfzeile ---------- */
-
 .topbar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
-  background-color: #0b1d2a;
-  color: #d9cba0;
-  font-weight: bold;
-  border-bottom: 1px solid #444;
+  justify-content: space-between;
+  gap: var(--gap);
+  padding: .9rem 1.2rem;
+  background: var(--bg-deep);
+  border-bottom: 1px solid var(--line);
 }
 
 .topbar h1 {
-  text-transform: uppercase;
-  font-weight: bold;
-  font-size: 1.4rem;
   margin: 0;
+  font-size: 1.3rem;
+  color: var(--heading);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.user-status {
+  color: var(--text-soft);
+  font-weight: 600;
 }
 
 /* ---------- Inhaltsbereich ---------- */
-
 .content {
-  padding: 1.5rem;
+  padding: 1.2rem;
+  display: grid;
+  gap: 1rem;
 }
 
-.content h2 {
-  text-transform: uppercase;
-  font-weight: bold;
-  color: #d9cba0;
-  margin-top: 0;
-  border-bottom: 1px solid #555;
-  padding-bottom: 0.5rem;
-}
-
-/* =========================================================
-   Kompakte Tabellen für Berichte & Flotten
-   ========================================================= */
-
-.table-wrapper {
-  max-height: 70vh;            /* Scrollbereich begrenzen */
-  overflow-y: auto;
-  overflow-x: auto;
-  border: 1px solid #333;
-  border-radius: 6px;
-  background-color: #141a1f;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-}
-
-/* Tabellenkopf fixieren */
-.table-wrapper table thead th {
-  position: sticky;
-  top: 0;
-  background-color: #1d242a;
-  z-index: 10;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-
-/* Kompaktere Zellen */
-.table-wrapper table th,
-.table-wrapper table td {
-  padding: 0.4rem 0.5rem;
-  font-size: 0.85rem;
-  white-space: nowrap;
-  text-align: center;
-}
-
-/* Leicht abgesetzte Farben */
-.table-wrapper table tbody tr:nth-child(even) {
-  background-color: #161d22;
-}
-
-/* Hovereffekt für bessere Lesbarkeit */
-.table-wrapper table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-/* Rollenfarben klarer sichtbar */
-.attacker-row {
-  background-color: rgba(255, 0, 0, 0.05);
-}
-.defender-row {
-  background-color: rgba(0, 100, 255, 0.05);
-}
-
-/* Tabellenüberschriften enger und klarer */
-.table-wrapper table th {
-  font-weight: bold;
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 0.03em;
-}
-
-/* Scrollbar-Styling (dezent) */
-.table-wrapper::-webkit-scrollbar {
-  height: 10px;
-  width: 10px;
-}
-.table-wrapper::-webkit-scrollbar-thumb {
-  background-color: #2f363b;
-  border-radius: 6px;
-}
-.table-wrapper::-webkit-scrollbar-thumb:hover {
-  background-color: #444;
-}
-
-/* ---------- Buttons ---------- */
-
-button, .btn {
-  background-color: #2f363b;
-  color: #d9cba0;
-  border: 1px solid #555;
-  border-radius: 6px;
-  padding: 0.5rem 1rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-button:hover, .btn:hover {
-  background-color: #3b444a;
-}
-
-/* ---------- Eingabefelder ---------- */
-
-input[type="text"], textarea, select {
-  width: 100%;
-  background-color: #1a2025;
-  color: #d9cba0;
-  border: 1px solid #555;
-  border-radius: 4px;
-  padding: 0.5rem;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 0.95rem;
-  box-sizing: border-box;
-}
-
-/* ---------- Dashboard Logbuch ---------- */
-
-.log-entry {
-  background-color: #141a1f;
-  border: 1px solid #444;
-  border-radius: 6px;
-  padding: 1rem 1.2rem;
-  margin-bottom: 1.2rem;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
-  transition: transform 0.15s ease, box-shadow 0.3s ease;
-}
-
-.log-entry:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 12px rgba(255, 240, 180, 0.15);
-}
-
-.log-title {
-  color: #cc5b5b;
-  font-weight: bold;
-  text-transform: uppercase;
-  font-size: 1.1rem;
-  margin-bottom: 0.4rem;
-}
-
-.log-message {
-  color: #d9cba0;
-  line-height: 1.5;
-  margin: 0.3rem 0 0.8rem 0;
-  white-space: pre-wrap;
-}
-
-.log-footer {
-  font-size: 0.85rem;
-  color: #bba86f;
-  border-top: 1px solid #333;
-  padding-top: 0.4rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* Löschbutton */
-.log-footer .delete-btn {
-  background-color: #3b2b2b;
-  color: #e0cfa2;
-  border: 1px solid #665;
-  border-radius: 6px;
-  padding: 0.3rem 0.6rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.log-footer .delete-btn:hover {
-  background-color: #5b2e2e;
-  color: #f8e7bb;
-}
-
-/* ---------- Responsives Verhalten ---------- */
-
-@media (max-width: 700px) {
-  .log-entry {
-    padding: 0.8rem;
-  }
-  .log-title {
-    font-size: 1rem;
-  }
-  .log-message {
-    font-size: 0.9rem;
-  }
-  .log-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.3rem;
-  }
-}
-
-/* ---------- Karten-/Grafikbereich ---------- */
-
-.canvas-ocean {
-  margin-top: 2rem;
-  background-color: #10161c;
-  border: 1px solid #444;
-  border-radius: 6px;
-  height: 300px;
-}
-
-/* ---------- Feine Details ---------- */
-
-hr {
-  border: 0;
-  border-top: 1px solid #444;
-  margin: 1rem 0;
-}
-
-em { color: #bba86f; }
-strong { color: #e0d5a0; }
-
-/* =========================================================
-   Login / Logout / Gate
-   ========================================================= */
-
-body.login-page {
-  background-color: #0b1d2a;
-  color: #e0cfa2;
-  font-family: "Courier New", monospace;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
+h2 {
   margin: 0;
+  padding-bottom: .4rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--heading);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-size: 1.05rem;
+}
+h3 {
+  margin: .2rem 0 0 0;
+  color: var(--text-soft);
+  font-size: 1rem;
+  letter-spacing: .02em;
 }
 
-.login-container {
-  background-color: rgba(30, 40, 50, 0.85);
-  border: 1px solid #5a5a5a;
-  border-radius: 12px;
-  padding: 2rem 3rem;
-  text-align: center;
+/* ---------- Panels / Karten ---------- */
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem;
+}
+
+/* ---------- Formulare ---------- */
+form { display: grid; gap: .8rem; }
+
+label {
+  font-weight: 700;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  font-size: .85rem;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="file"],
+textarea,
+select {
   width: 100%;
-  max-width: 420px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: .55rem .6rem;
+  font-family: var(--font-serif);
+  font-size: .95rem;
 }
 
-.login-container h1 {
-  color: #e0cfa2;
-  font-weight: bold;
+textarea { min-height: 140px; resize: vertical; }
+
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+/* Buttons */
+button, .btn {
+  background: #2d363e;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: .5rem .9rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 1rem;
-}
-
-.login-container p {
-  color: #d9d4c2;
-  font-size: 0.95rem;
-  margin-bottom: 1rem;
-}
-
-.login-container form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  margin-top: 1rem;
-}
-
-.login-container label {
-  text-align: left;
-  color: #d9d4c2;
-  font-size: 0.9rem;
-  margin-bottom: -0.2rem;
-}
-
-.login-container input {
-  background-color: #162630;
-  border: 1px solid #555;
-  border-radius: 6px;
-  padding: 0.5rem;
-  color: #e0cfa2;
-  font-family: "Courier New", monospace;
-}
-
-.login-container input:focus {
-  outline: none;
-  border-color: #c7b37e;
-  background-color: #1c2e3a;
-}
-
-.login-container button {
-  background-color: #2b3c49;
-  border: 1px solid #c7b37e;
-  color: #e0cfa2;
-  font-weight: bold;
-  text-transform: uppercase;
-  padding: 0.6rem;
-  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+}
+button:hover, .btn:hover { background: #38424b; }
+.btn--primary { background: var(--accent); border-color: var(--accent-quiet); }
+.btn--primary:hover { filter: brightness(1.05); }
+.btn--danger { background: var(--danger); border-color: #8f3e3e; }
+.btn--ok { background: var(--ok); border-color: #4e7e54; }
+
+/* Badges / Hinweise */
+.badge { display: inline-block; padding: .1rem .4rem; border-radius: 999px; font-size: .8rem; border: 1px solid var(--line); }
+.badge--ok { background: rgba(103,163,110,0.15); color: #a3d1a8; }
+.badge--warn { background: rgba(199,162,74,0.15); color: #e3c980; }
+.badge--danger { background: rgba(196,90,90,0.15); color: #efb1b1; }
+
+/* Live-Meldungen / Feed */
+.live-feed {
+  display: grid; gap: .6rem;
+  padding: .7rem; background: var(--bg-panel);
+  border: 1px solid var(--line); border-radius: var(--radius);
+  max-height: 40vh; overflow: auto;
 }
 
-.login-container button:hover {
-  background-color: #364958;
-  transform: translateY(-1px);
+/* ---------- Tabellen (kompakt + sticky Header) ---------- */
+.table-wrapper {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: auto;
+  max-height: 70vh;
 }
 
-.login-container .hint {
-  margin-top: 1rem;
-  font-size: 0.85rem;
-  color: #c0b598;
-}
-
-.login-container .hint a {
-  color: #e0cfa2;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.login-container .hint a:hover {
-  text-decoration: underline;
-}
-
-#statusMessage p {
-  color: #e0cfa2;
-  margin-top: 1.5rem;
-  font-size: 0.95rem;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-
-.login-container p { animation: pulse 2s infinite; }
-
-/* =========================================================
-   CSV-Tabellenstil – harmoniert mit Flotten & Berichten
-   ========================================================= */
-.csv-tabelle {
+.table {
   width: 100%;
   border-collapse: collapse;
-  color: #d9cba0;
-  background-color: #141a1f;
+  min-width: max(720px, 100%);
 }
 
-.csv-tabelle thead th {
-  background-color: #1d242a;
-  position: sticky;
-  top: 0;
-  z-index: 5;
+.table thead th {
+  position: sticky; top: 0;
+  background: var(--th-bg);
+  color: var(--heading);
   text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 0.03em;
-  padding: 0.5rem 0.6rem;
-  border-bottom: 1px solid #333;
-}
-
-.csv-tabelle td {
-  padding: 0.4rem 0.6rem;
+  font-weight: 800;
+  font-size: .8rem;
+  letter-spacing: .04em;
+  padding: .5rem .6rem;
+  border-bottom: 1px solid var(--cell-sep);
+  box-shadow: 0 2px 4px var(--th-shadow);
   text-align: center;
-  font-size: 0.85rem;
   white-space: nowrap;
 }
 
-.csv-tabelle tbody tr:nth-child(even) {
-  background-color: #161d22;
-}
-
-.csv-tabelle tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  transition: background-color 0.2s ease;
-}
-
-/* =========================================================
-   Inselkarte – Welt / Ozean / Inselgruppe
-   ========================================================= */
-.map-container {
-  display: grid;
-  justify-content: start;
-  align-content: start;
-  gap: 1px;
-  border: 1px solid #333;
-  border-radius: 6px;
-  background-color: #0b1d2a;
-  margin-top: 1rem;
-  padding: 6px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.4);
-  width: fit-content;
-}
-
-.map-cell {
-  border-radius: 2px;
-  transition: transform 0.1s ease;
-}
-
-.map-cell:hover {
-  transform: scale(1.4);
-  z-index: 5;
-  box-shadow: 0 0 5px rgba(255,255,255,0.6);
-}
-
-.admin-controls {
-  background-color: #141a1f;
-  border: 1px solid #444;
-  padding: 0.8rem 1rem;
-  border-radius: 6px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-  margin-bottom: 1rem;
-  align-items: center;
-}
-
-.admin-controls label {
-  color: #d9cba0;
-  font-weight: bold;
-  text-transform: uppercase;
-  font-size: 0.9rem;
-}
-
-.admin-controls input {
-  width: 4rem;
+.table tbody td {
+  border-top: 1px solid var(--cell-sep);
+  padding: .45rem .6rem;
+  font-size: .9rem;
   text-align: center;
-  background-color: #1a2025;
-  color: #e0cfa2;
-  border: 1px solid #555;
-  border-radius: 4px;
-  padding: 0.2rem;
+  white-space: nowrap;
 }
 
-.admin-controls button {
-  background-color: #2f363b;
-  color: #d9cba0;
-  border: 1px solid #555;
-  border-radius: 6px;
-  padding: 0.4rem 0.8rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  cursor: pointer;
+.table tbody tr:nth-child(even) { background: var(--row-alt); }
+.table tbody tr:hover { background: var(--row-hover); }
+
+/* Spalten sanft einfärben (wechselnd) */
+.table thead th:nth-child(odd),
+.table tbody td:nth-child(odd) { background: rgba(255,255,255,0.01); }
+
+/* Rollenfarben (Berichte) */
+.attacker-row { background: rgba(196,90,90,0.08); }
+.defender-row { background: rgba(80,120,210,0.08); }
+
+/* ---------- CSV-spezifische Tabelle (Alias) ---------- */
+.csv-tabelle { composes: table; }  /* falls PostCSS nicht genutzt, einfach .table in HTML verwenden */
+
+/* ---------- Seekarte ---------- */
+/* Admin-Panel zur Kartenkonfiguration */
+.admin-controls {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .7rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: .7rem .9rem;
+}
+.admin-controls input {
+  width: 5rem; text-align: center;
 }
 
-.admin-controls button:hover {
-  background-color: #3b444a;
-}
-
-/* =========================================================
-   Weltkarte Layout – Ozeane, Gruppen, Inseln
-   ========================================================= */
-.world-grid {
-  display: grid;
-  justify-content: start;
-  align-content: start;
-  gap: 8px;
-}
-
-.ocean-block {
-  border: 1px solid #333;
-  background-color: #102030;
-  border-radius: 8px;
-  padding: 4px;
-  position: relative;
-}
-
-.ocean-label {
-  position: absolute;
-  top: 2px;
-  left: 4px;
-  font-size: 0.75rem;
-  color: #bba86f;
-}
-
-.group-grid {
-  display: grid;
-  gap: 4px;
-  margin-top: 1.2rem;
-}
-
-.group-block {
-  background-color: #0b1d2a;
-  border: 1px solid #222;
-  padding: 3px;
-  border-radius: 4px;
-}
-
-.island-grid {
-  display: grid;
-  gap: 1px;
-  justify-content: start;
-  align-content: start;
-}
-
+/* Kartengrid: Welt -> Inseln als Pixel */
 .map-grid {
   display: grid;
-  background-color: #0b1d2a;
-  justify-content: start;
-  align-content: start;
-  border: 1px solid #333;
-  border-radius: 6px;
-  padding: 5px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.4);
+  grid-template-columns: repeat(var(--map-cols, 120), 8px);
+  grid-auto-rows: 8px;
+  gap: 1px;
+  background: var(--bg-muted);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 6px;
+  box-shadow: var(--shadow);
   overflow: auto;
-  max-height: 75vh;
+  max-height: 74vh;
 }
 
+/* Zelle (Insel/Ozean) */
 .map-cell {
-  width: 6px;
-  height: 6px;
+  width: 8px; height: 8px;
   border-radius: 1px;
-  transition: transform 0
+  transition: transform .08s ease, box-shadow .12s ease, background-color .12s ease;
+}
+
+/* Zustände */
+.island--ocean    { background: var(--ocean); }
+.island--free     { background: var(--island-free); }
+.island--solo     { background: var(--island-solo); } /* allianzlos besetzt */
+
+/* Allianz-Status (Beispielklassen) */
+.island--ally     { background: var(--ally-friend); }
+.island--neutral  { background: var(--ally-neutral); }
+.island--enemy    { background: var(--ally-enemy-1); }
+.island--enemy-2  { background: var(--ally-enemy-2); }
+.island--enemy-3  { background: var(--ally-enemy-3); }
+
+.map-cell:hover {
+  transform: scale(1.8);
+  box-shadow: 0 0 6px rgba(255,255,255,0.6);
+  z-index: 5;
+}
+
+/* Tooltip-Platzhalter (für zukünftiges Hover-Info) */
+.tooltip {
+  position: absolute;
+  background: var(--bg-elev);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: .35rem .5rem;
+  font-size: .8rem;
+  pointer-events: none;
+  box-shadow: var(--shadow);
+}
+
+/* ---------- Auth-Seiten (Login/Logout/Gate) ---------- */
+body.auth {
+  display: grid;
+  place-items: center;
+  background: var(--bg-deep);
+}
+
+.auth-card {
+  width: min(420px, 92vw);
+  background: rgba(18,24,30,0.9);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.2rem 1.1rem;
+  text-align: center;
+}
+
+.auth-card h1 {
+  margin: 0 0 .6rem 0;
+  color: var(--heading);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: 1.2rem;
+}
+
+.auth-card p { color: var(--text-soft); margin: .3rem 0; }
+
+.auth-card form {
+  display: grid; gap: .7rem;
+  margin-top: .6rem;
+}
+
+.auth-hint {
+  margin-top: .7rem;
+  font-size: .85rem;
+  color: var(--text-dim);
+}
+.auth-hint a { color: var(--text); text-decoration: none; font-weight: 700; }
+.auth-hint a:hover { text-decoration: underline; }
+
+/* ---------- Utilities ---------- */
+.mono { font-family: var(--font-mono); }
+.center { text-align: center; }
+.right { text-align: right; }
+.m-0 { margin: 0; }
+.mt-0 { margin-top: 0; }
+.mb-0 { margin-bottom: 0; }
+.mt-1 { margin-top: .5rem; }
+.mb-1 { margin-bottom: .5rem; }
+.p-0 { padding: 0; }
+.p-1 { padding: .5rem; }
+.hidden { display: none !important; }
+
+hr {
+  border: 0; border-top: 1px solid var(--line);
+  margin: .8rem 0;
+}
+code, pre {
+  font-family: var(--font-mono);
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: .1rem .3rem;
+}
+
+/* Dezentere Scrollbars */
+.table-wrapper::-webkit-scrollbar,
+.map-grid::-webkit-scrollbar,
+.live-feed::-webkit-scrollbar {
+  height: 10px; width: 10px;
+}
+.table-wrapper::-webkit-scrollbar-thumb,
+.map-grid::-webkit-scrollbar-thumb,
+.live-feed::-webkit-scrollbar-thumb {
+  background: #2f363b; border-radius: 6px;
+}
+.table-wrapper::-webkit-scrollbar-thumb:hover,
+.map-grid::-webkit-scrollbar-thumb:hover,
+.live-feed::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* Fokus sichtbar für Tastatur-Nutzer */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
