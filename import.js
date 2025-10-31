@@ -1,12 +1,12 @@
 // ===========================================================
 // import.js – Logbuch-Projekt (Supabase-only)
-// Version: 2.1 – 03.11.2025
+// Version: 2.2 – 04.11.2025
 // Autor: Kapitän 🦑
 // Beschreibung:
 // - CSV ohne Kopfzeile importieren
 // - Quotes entfernen
 // - Daten dauerhaft in Supabase speichern (Tabelle: csv_base)
-// - Sticky Header-Tabelle mit allen Spalten
+// - Sticky Header + abgestimmtes Tabellenlayout
 // - Nur Admins dürfen importieren oder löschen
 // ===========================================================
 
@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const fileInput = document.getElementById("csvFile");
   const importButton = document.getElementById("importButton");
   const clearButton = document.getElementById("clearButton");
+  const tableContainer = document.querySelector("#csvTable").parentElement;
   const tableBody = document.querySelector("#csvTable tbody");
 
   // --- Benutzerprüfung -----------------------------------------------------
@@ -48,10 +49,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Admin darf importieren/löschen
   importSection.style.display = "block";
 
-  // --- CSV anzeigen -------------------------------------------------------
+  // --- Initiale Tabelle rendern -------------------------------------------
   await renderTable();
 
   // ===========================================================
@@ -72,8 +72,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         .split("\n")
         .map((line) =>
           line
-            .replace(/"/g, "") // Quotes entfernen
-            .split(/[;,]/) // Komma oder Semikolon
+            .replace(/"/g, "")
+            .split(/[;,]/)
             .map((val) => val.trim())
         );
 
@@ -82,10 +82,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      // Bestehende CSV-Daten löschen (vollständiger Ersatz)
+      // Alte CSV-Daten ersetzen
       await supabase.from("csv_base").delete().neq("id", 0);
 
-      // CSV in Supabase speichern
       const formattedRows = rows.map((r) => ({
         oz: r[0],
         ig: r[1],
@@ -106,7 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      alert(`CSV erfolgreich importiert (${rows.length} Zeilen).`);
+      alert(`✅ CSV erfolgreich importiert (${rows.length} Zeilen).`);
       await renderTable();
     };
 
@@ -126,57 +125,79 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    alert("CSV erfolgreich gelöscht.");
+    alert("🗑️ CSV erfolgreich gelöscht.");
     await renderTable();
   });
 
   // ===========================================================
-  // Tabelle rendern
+  // Tabelle rendern – maritim & scrollbar-kompatibel
   // ===========================================================
   async function renderTable() {
-    tableBody.innerHTML = "";
+    tableContainer.innerHTML = "";
 
     const { data, error } = await supabase
       .from("csv_base")
       .select("*")
       .order("oz", { ascending: true });
 
+    const wrapper = document.createElement("div");
+    wrapper.className = "table-wrapper";
+
+    const table = document.createElement("table");
+    table.className = "csv-tabelle";
+
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Ozean</th>
+          <th>IG</th>
+          <th>Insel</th>
+          <th>Inselname</th>
+          <th>Spieler-ID</th>
+          <th>Spielername</th>
+          <th>Allianz-ID</th>
+          <th>AKürzel</th>
+          <th>Allianzname</th>
+          <th>Punkte</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+
+    const tbody = table.querySelector("tbody");
+
     if (error) {
       console.error("SUPABASE LOAD ERROR:", error);
-      const row = document.createElement("tr");
-      row.innerHTML = `<td colspan="10" style="text-align:center;"><em>Fehler beim Laden der CSV-Daten.</em></td>`;
-      tableBody.appendChild(row);
-      return;
-    }
-
-    if (!data || data.length === 0) {
-      const row = document.createElement("tr");
-      row.innerHTML = `<td colspan="10" style="text-align:center;"><em>Keine CSV-Daten geladen.</em></td>`;
-      tableBody.appendChild(row);
-      return;
-    }
-
-    data.forEach((rowData) => {
-      const tr = document.createElement("tr");
-      [
-        rowData.oz,
-        rowData.ig,
-        rowData.i,
-        rowData.inselname,
-        rowData.spieler_id,
-        rowData.spielername,
-        rowData.allianz_id,
-        rowData.akuerzel,
-        rowData.allianzname,
-        rowData.punkte,
-      ].forEach((val) => {
-        const td = document.createElement("td");
-        td.textContent = val ?? "";
-        tr.appendChild(td);
+      tbody.innerHTML = `<tr><td colspan="10"><em>Fehler beim Laden der CSV-Daten.</em></td></tr>`;
+    } else if (!data || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="10"><em>Keine CSV-Daten vorhanden.</em></td></tr>`;
+    } else {
+      data.forEach((rowData) => {
+        const tr = document.createElement("tr");
+        [
+          rowData.oz,
+          rowData.ig,
+          rowData.i,
+          rowData.inselname,
+          rowData.spieler_id,
+          rowData.spielername,
+          rowData.allianz_id,
+          rowData.akuerzel,
+          rowData.allianzname,
+          rowData.punkte,
+        ].forEach((val) => {
+          const td = document.createElement("td");
+          td.textContent = val ?? "";
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
       });
-      tableBody.appendChild(tr);
-    });
+    }
+
+    table.appendChild(tbody);
+    wrapper.appendChild(table);
+    tableContainer.appendChild(wrapper);
   }
 
-  Logbuch.log("Import.js v2.1 geladen – Supabase aktiv ⚓");
+  Logbuch.log("Import.js v2.2 geladen – CSV Viewer aktiv ⚓");
 });
