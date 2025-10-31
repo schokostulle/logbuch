@@ -1,1 +1,45 @@
-123
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard – Logbuch</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- =========================================================
+       Angriffe – Version 1.0
+       Stand: 31.10.2025
+       Änderungen:
+       - template Grundgerüst für angriffe.html
+       - Struktur kompatibel mit aktueller navigation.js
+       ========================================================= -->
+</head>
+
+<body>
+  <!-- Navigation (dynamisch über navigation.js) -->
+  <aside>
+    <header>⚓ Logbuch</header>
+    <nav>
+      <ul></ul>
+    </nav>
+  </aside>
+
+  <!-- Hauptbereich -->
+
+  <main>
+    <header class="topbar">
+      <h1>Angriffe</h1>
+      <div class="user-status">Lade Benutzer …</div>
+    </header>
+
+    <section class="content">
+     
+    </section>
+  </main>
+
+  <!-- Skripte -->
+  <script type="module" src="navigation.js"></script>
+  <script type="module" src="access-guard.js"></script>
+  <script type="module" src="logbuch.js"></script>
+  <script type="module" src="angriffe.js"></script>
+</body>
+</html>
