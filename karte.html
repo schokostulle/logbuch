@@ -3,32 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Weltkarte</title>
+  <title>Inselkarte – Logbuch</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
   <aside>
-    <header>Einflussgebiet</header>
+    <header>⚓ Logbuch</header>
     <nav><ul></ul></nav>
   </aside>
 
   <main>
     <header class="topbar">
-      <h1>Karte</h1>
+      <h1>Weltkarte</h1>
       <div class="user-status">Lade Benutzer …</div>
     </header>
 
     <section class="content">
-      <h2>Inselkarte</h2>
+      <h2>Inselübersicht</h2>
+      <p>
+        Jede Zelle entspricht einer möglichen Inselposition.<br>
+        <span style="color:#55cc55;">🟩 Insel</span>,
+        <span style="color:#3399ff;">🟦 Ozean</span>,
+        <span style="color:#ff55ff;">🟪 Allianzlos</span>,
+        <span style="color:#ffd700;">🟨 Allianzfarben</span>,
+        <span style="color:#ff4444;">🟥 Feindlich</span>
+      </p>
 
+      <div id="mapContainer" class="map-container">
+        <!-- Raster wird dynamisch mit JS erzeugt -->
+      </div>
     </section>
   </main>
 
-  <!-- Skripte in empfohlener Reihenfolge -->
-  <script type="module" src="logbuch.js"></script>
-  <script type="module" src="access-guard.js"></script>
   <script type="module" src="navigation.js"></script>
+  <script type="module" src="access-guard.js"></script>
+  <script type="module" src="logbuch.js"></script>
   <script type="module" src="karte.js"></script>
 </body>
 </html>
