@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inselkarte – Logbuch</title>
+  <title>Weltkarte – Logbuch</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -19,19 +19,30 @@
     </header>
 
     <section class="content">
-      <h2>Inselübersicht</h2>
+      <h2>Inselkarte</h2>
       <p>
-        Jede Zelle entspricht einer möglichen Inselposition.<br>
+        Darstellung der Inselwelt aufgeteilt in Ozeane → Inselgruppen → Inseln.<br />
+        <span style="color:#88ccff;">🟦 Ozean</span>,
         <span style="color:#55cc55;">🟩 Insel</span>,
-        <span style="color:#3399ff;">🟦 Ozean</span>,
         <span style="color:#ff55ff;">🟪 Allianzlos</span>,
-        <span style="color:#ffd700;">🟨 Allianzfarben</span>,
-        <span style="color:#ff4444;">🟥 Feindlich</span>
+        <span style="color:#ffcc00;">🟨 Allianzfarben</span>
       </p>
 
-      <div id="mapContainer" class="map-container">
-        <!-- Raster wird dynamisch mit JS erzeugt -->
+      <!-- Adminsteuerung -->
+      <div id="adminControls" class="admin-controls">
+        <label>Ozean:
+          <input type="number" id="ozInput" value="1" min="1" />
+        </label>
+        <label>Inselgruppe:
+          <input type="number" id="igInput" value="1" min="1" />
+        </label>
+        <label>Zoom (Zellen pro Zeile):
+          <input type="number" id="zoomInput" value="10" min="5" max="50" />
+        </label>
+        <button id="refreshButton">Aktualisieren</button>
       </div>
+
+      <div id="mapContainer" class="map-container"></div>
     </section>
   </main>
 
