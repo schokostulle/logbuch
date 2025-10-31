@@ -1,8 +1,7 @@
 // =============================================================
-// karte.js – v1.2 (Build 06.11.2025)
-// Weltansicht: mehrere Ozeane mit Untergruppen und Inselraster
+// karte.js – v1.3 (Weltmodell x×y×z)
+// Build: 07.11.2025
 // =============================================================
-
 import { supabase } from "./logbuch.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -13,29 +12,29 @@ document.addEventListener("DOMContentLoaded", async () => {
   const refreshButton = document.getElementById("refreshButton");
 
   const COLORS = {
-    ocean: "#74b9ff",
+    ocean: "#a6d9ff", // helles Blau
     island: "#4caf50",
-    noAlliance: "#cc55cc",
+    noAlliance: "#ff66ff"
   };
 
   refreshButton.addEventListener("click", async () => {
-    const worldSize = parseInt(worldSizeInput.value);
-    const groups = parseInt(groupsInput.value);
-    const islands = parseInt(islandsInput.value);
-    await renderWorld(worldSize, groups, islands);
+    const x = parseInt(worldSizeInput.value);
+    const y = parseInt(groupsInput.value);
+    const z = parseInt(islandsInput.value);
+    await renderWorld(x, y, z);
   });
 
-  await renderWorld(2, 4, 10);
+  await renderWorld(2, 15, 4);
 
   // ------------------------------------------------------------
-  // Weltkarte rendern
+  // Weltkarte zeichnen
   // ------------------------------------------------------------
-  async function renderWorld(worldSize, groups, islands) {
+  async function renderWorld(x, y, z) {
     mapContainer.innerHTML = "<p><em>Lade Weltkarte...</em></p>";
 
     const { data, error } = await supabase
       .from("csv_base")
-      .select("oz, ig, i, inselname, spielername, akuerzel, allianzname");
+      .select("oz, ig, i, inselname, spielername, allianzname, akuerzel");
 
     if (error) {
       console.error("❌ SUPABASE LOAD ERROR:", error);
@@ -43,45 +42,29 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+    // Weltweite Inselanzahl berechnen
+    const worldCells = x * y * z;
     mapContainer.innerHTML = "";
-    mapContainer.classList.add("world-grid");
-    mapContainer.style.gridTemplateColumns = `repeat(${worldSize}, auto)`;
-    mapContainer.style.gridTemplateRows = `repeat(${worldSize}, auto)`;
-    mapContainer.style.gap = "8px";
+    mapContainer.className = "map-grid";
+    mapContainer.style.gridTemplateColumns = `repeat(${worldCells}, 6px)`;
+    mapContainer.style.gridTemplateRows = `repeat(${worldCells}, 6px)`;
+    mapContainer.style.gap = "1px";
 
-    for (let ozY = 1; ozY <= worldSize; ozY++) {
-      for (let ozX = 1; ozX <= worldSize; ozX++) {
-        const ozNum = (ozY - 1) * worldSize + ozX;
-        const oceanDiv = document.createElement("div");
-        oceanDiv.classList.add("ocean-block");
-        oceanDiv.innerHTML = `<div class="ocean-label">Ozean ${ozNum}</div>`;
+    // Index schneller abrufbar machen
+    const islandMap = new Map(data.map(r => `${r.oz}-${r.ig}-${r.i}`, r));
 
-        const groupGrid = document.createElement("div");
-        groupGrid.classList.add("group-grid");
-        groupGrid.style.gridTemplateColumns = `repeat(${groups}, auto)`;
-        groupGrid.style.gridTemplateRows = `repeat(${groups}, auto)`;
-
-        const oceanIslands = data.filter((r) => r.oz === ozNum);
-
-        // Gruppen rendern
-        for (let gY = 1; gY <= groups; gY++) {
-          for (let gX = 1; gX <= groups; gX++) {
-            const igNum = (gY - 1) * groups + gX;
-            const groupDiv = document.createElement("div");
-            groupDiv.classList.add("group-block");
-
-            const islandGrid = document.createElement("div");
-            islandGrid.classList.add("island-grid");
-            islandGrid.style.gridTemplateColumns = `repeat(${islands}, 6px)`;
-            islandGrid.style.gridTemplateRows = `repeat(${islands}, 6px)`;
-
-            const groupIslands = oceanIslands.filter((r) => r.ig === igNum);
-            const islandMap = new Map(groupIslands.map((r) => [r.i, r]));
-
-            for (let y = 1; y <= islands; y++) {
-              for (let x = 1; x <= islands; x++) {
-                const iNum = (y - 1) * islands + x;
-                const island = islandMap.get(iNum);
+    // Vollständige Welt generieren
+    for (let ozY = 1; ozY <= x; ozY++) {
+      for (let ozX = 1; ozX <= x; ozX++) {
+        const ozNum = (ozY - 1) * x + ozX;
+        for (let gY = 1; gY <= y; gY++) {
+          for (let gX = 1; gX <= y; gX++) {
+            const igNum = (gY - 1) * y + gX;
+            for (let iY = 1; iY <= z; iY++) {
+              for (let iX = 1; iX <= z; iX++) {
+                const iNum = (iY - 1) * z + iX;
+                const key = `${ozNum}-${igNum}-${iNum}`;
+                const island = islandMap.get(key);
                 const cell = document.createElement("div");
                 cell.classList.add("map-cell");
 
@@ -98,24 +81,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                   cell.style.backgroundColor = COLORS.ocean;
                 }
 
-                islandGrid.appendChild(cell);
+                mapContainer.appendChild(cell);
               }
             }
-
-            groupDiv.appendChild(islandGrid);
-            groupGrid.appendChild(groupDiv);
           }
         }
-
-        oceanDiv.appendChild(groupGrid);
-        mapContainer.appendChild(oceanDiv);
       }
     }
   }
 
-  // ------------------------------------------------------------
-  // Zufällige, aber stabile Allianzfarben
-  // ------------------------------------------------------------
   function colorFromString(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
