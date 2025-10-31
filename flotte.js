@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const { error } = await supabase.from("fleet_logs").insert([
       {
         user_id: userId,
-        user: username,
+        username: username,
         date: new Date().toISOString(),
         total_fleet: totalFleet,
       },
