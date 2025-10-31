@@ -1,38 +1,37 @@
 // =============================================================
-// karte.js – v1.1 (Build 05.11.2025)
-// Hierarchische Kartenlogik: Oz → IG → I
-// Darstellung mit hellblauem Meer + Inseln nach Allianzfarbe
+// karte.js – v1.2 (Build 06.11.2025)
+// Weltansicht: mehrere Ozeane mit Untergruppen und Inselraster
 // =============================================================
 
 import { supabase } from "./logbuch.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const mapContainer = document.getElementById("mapContainer");
-  const ozInput = document.getElementById("ozInput");
-  const igInput = document.getElementById("igInput");
-  const zoomInput = document.getElementById("zoomInput");
+  const worldSizeInput = document.getElementById("worldSizeInput");
+  const groupsInput = document.getElementById("groupsInput");
+  const islandsInput = document.getElementById("islandsInput");
   const refreshButton = document.getElementById("refreshButton");
 
   const COLORS = {
-    ocean: "#74b9ff", // helles blau
+    ocean: "#74b9ff",
     island: "#4caf50",
     noAlliance: "#cc55cc",
   };
 
   refreshButton.addEventListener("click", async () => {
-    const oz = parseInt(ozInput.value);
-    const ig = parseInt(igInput.value);
-    const zoom = parseInt(zoomInput.value);
-    await renderMap(oz, ig, zoom);
+    const worldSize = parseInt(worldSizeInput.value);
+    const groups = parseInt(groupsInput.value);
+    const islands = parseInt(islandsInput.value);
+    await renderWorld(worldSize, groups, islands);
   });
 
-  await renderMap(1, 1, 10); // Standard: Welt 1, Gruppe 1
+  await renderWorld(2, 4, 10);
 
   // ------------------------------------------------------------
-  // Karte rendern
+  // Weltkarte rendern
   // ------------------------------------------------------------
-  async function renderMap(oz, ig, zoom) {
-    mapContainer.innerHTML = "<p><em>Lade Karte...</em></p>";
+  async function renderWorld(worldSize, groups, islands) {
+    mapContainer.innerHTML = "<p><em>Lade Weltkarte...</em></p>";
 
     const { data, error } = await supabase
       .from("csv_base")
@@ -45,44 +44,77 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     mapContainer.innerHTML = "";
-    const cellSize = Math.max(8, 600 / zoom); // dynamisch
-    mapContainer.style.display = "grid";
-    mapContainer.style.gridTemplateColumns = `repeat(${zoom}, ${cellSize}px)`;
-    mapContainer.style.gridTemplateRows = `repeat(${zoom}, ${cellSize}px)`;
-    mapContainer.style.gap = "1px";
+    mapContainer.classList.add("world-grid");
+    mapContainer.style.gridTemplateColumns = `repeat(${worldSize}, auto)`;
+    mapContainer.style.gridTemplateRows = `repeat(${worldSize}, auto)`;
+    mapContainer.style.gap = "8px";
 
-    const filtered = data.filter((r) => r.oz === oz && r.ig === ig);
-    const islands = new Map(filtered.map((r) => [r.i, r]));
+    for (let ozY = 1; ozY <= worldSize; ozY++) {
+      for (let ozX = 1; ozX <= worldSize; ozX++) {
+        const ozNum = (ozY - 1) * worldSize + ozX;
+        const oceanDiv = document.createElement("div");
+        oceanDiv.classList.add("ocean-block");
+        oceanDiv.innerHTML = `<div class="ocean-label">Ozean ${ozNum}</div>`;
 
-    // Karte (Quadrat von Inseln) zeichnen
-    for (let y = 1; y <= zoom; y++) {
-      for (let x = 1; x <= zoom; x++) {
-        const idx = (y - 1) * zoom + x;
-        const island = islands.get(idx);
-        const cell = document.createElement("div");
-        cell.classList.add("map-cell");
+        const groupGrid = document.createElement("div");
+        groupGrid.classList.add("group-grid");
+        groupGrid.style.gridTemplateColumns = `repeat(${groups}, auto)`;
+        groupGrid.style.gridTemplateRows = `repeat(${groups}, auto)`;
 
-        if (island) {
-          let color = COLORS.island;
-          if (!island.allianzname) {
-            color = COLORS.noAlliance;
-          } else {
-            color = colorFromString(island.akuerzel || island.allianzname);
+        const oceanIslands = data.filter((r) => r.oz === ozNum);
+
+        // Gruppen rendern
+        for (let gY = 1; gY <= groups; gY++) {
+          for (let gX = 1; gX <= groups; gX++) {
+            const igNum = (gY - 1) * groups + gX;
+            const groupDiv = document.createElement("div");
+            groupDiv.classList.add("group-block");
+
+            const islandGrid = document.createElement("div");
+            islandGrid.classList.add("island-grid");
+            islandGrid.style.gridTemplateColumns = `repeat(${islands}, 6px)`;
+            islandGrid.style.gridTemplateRows = `repeat(${islands}, 6px)`;
+
+            const groupIslands = oceanIslands.filter((r) => r.ig === igNum);
+            const islandMap = new Map(groupIslands.map((r) => [r.i, r]));
+
+            for (let y = 1; y <= islands; y++) {
+              for (let x = 1; x <= islands; x++) {
+                const iNum = (y - 1) * islands + x;
+                const island = islandMap.get(iNum);
+                const cell = document.createElement("div");
+                cell.classList.add("map-cell");
+
+                if (island) {
+                  let color = COLORS.island;
+                  if (!island.allianzname) {
+                    color = COLORS.noAlliance;
+                  } else {
+                    color = colorFromString(island.akuerzel || island.allianzname);
+                  }
+                  cell.style.backgroundColor = color;
+                  cell.title = `${island.inselname}\n${island.spielername}\n${island.allianzname || "keine Allianz"}`;
+                } else {
+                  cell.style.backgroundColor = COLORS.ocean;
+                }
+
+                islandGrid.appendChild(cell);
+              }
+            }
+
+            groupDiv.appendChild(islandGrid);
+            groupGrid.appendChild(groupDiv);
           }
-
-          cell.style.backgroundColor = color;
-          cell.title = `${island.inselname || "?"}\n${island.spielername || "?"}\n${island.allianzname || "keine Allianz"}`;
-        } else {
-          cell.style.backgroundColor = COLORS.ocean;
         }
 
-        mapContainer.appendChild(cell);
+        oceanDiv.appendChild(groupGrid);
+        mapContainer.appendChild(oceanDiv);
       }
     }
   }
 
   // ------------------------------------------------------------
-  // Stabile Allianzfarbe (aus Namen generiert)
+  // Zufällige, aber stabile Allianzfarben
   // ------------------------------------------------------------
   function colorFromString(str) {
     let hash = 0;
