@@ -518,3 +518,75 @@ body.login-page {
   background-color: rgba(255, 255, 255, 0.05);
   transition: background-color 0.2s ease;
 }
+
+/* =========================================================
+   Inselkarte – Welt / Ozean / Inselgruppe
+   ========================================================= */
+.map-container {
+  display: grid;
+  justify-content: start;
+  align-content: start;
+  gap: 1px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background-color: #0b1d2a;
+  margin-top: 1rem;
+  padding: 6px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  width: fit-content;
+}
+
+.map-cell {
+  border-radius: 2px;
+  transition: transform 0.1s ease;
+}
+
+.map-cell:hover {
+  transform: scale(1.4);
+  z-index: 5;
+  box-shadow: 0 0 5px rgba(255,255,255,0.6);
+}
+
+.admin-controls {
+  background-color: #141a1f;
+  border: 1px solid #444;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.admin-controls label {
+  color: #d9cba0;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.admin-controls input {
+  width: 4rem;
+  text-align: center;
+  background-color: #1a2025;
+  color: #e0cfa2;
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 0.2rem;
+}
+
+.admin-controls button {
+  background-color: #2f363b;
+  color: #d9cba0;
+  border: 1px solid #555;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.admin-controls button:hover {
+  background-color: #3b444a;
+}
