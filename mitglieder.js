@@ -226,10 +226,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       alert("Du kannst dich nicht selbst ändern, Kapitän!");
       return true;
     }
-    if (user.role === "admin" && currentUserData.role === "admin") {
-      alert("Ein Admin kann keinen anderen Admin ändern.");
-      return true;
-    }
+    
     return false;
   }
 
