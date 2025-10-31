@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard – Logbuch</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- =========================================================
+       Dashboard – Version 1.1
+       Stand: 31.10.2025
+       Änderungen:
+       - Admins dürfen Logbucheinträge verfassen
+       - Members sehen nur bestehende Einträge
+       - Struktur kompatibel mit navigation.js v1.1
+       ========================================================= -->
+</head>
+
+<body>
+  <!-- Navigation (dynamisch über navigation.js) -->
+  <aside>
+    <header>⚓ Logbuch</header>
+    <nav>
+      <ul></ul>
+    </nav>
+  </aside>
+
+  <!-- Hauptbereich -->
+  <main>
+    <header class="topbar">
+      <h1>Dashboard</h1>
+      <div class="user-status">Lade Benutzer …</div>
+    </header>
+
+    <section class="content">
+      <!-- Nur Admins dürfen posten – Anzeige via dashboard.js -->
+      <div id="adminPostSection" style="display:none;">
+        <h2>Neuer Logbucheintrag</h2>
+        <p>Erfasse hier eine Notiz, Ankündigung oder Statusmeldung für das Logbuch.</p>
+
+        <form id="postForm">
+          <label for="postTitle">Titel:</label>
+          <input type="text" id="postTitle" placeholder="Titel des Eintrags …">
+
+          <label for="postMessage">Nachricht:</label>
+          <textarea id="postMessage" rows="5" placeholder="Kurze Nachricht oder Statusbericht …"></textarea>
+
+          <button type="submit">Eintrag speichern</button>
+        </form>
+        <hr>
+      </div>
+
+      <!-- Immer sichtbar -->
+      <h3>Logbuch-Einträge</h3>
+      <div id="dashboardLogs">
+        <table id="dashboardTable">
+          <thead>
+            <tr>
+              <th>Datum</th>
+              <th>Benutzer</th>
+              <th>Titel</th>
+              <th>Nachricht</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Skripte -->
+  <script type="module" src="navigation.js"></script>
+  <script type="module" src="access-guard.js"></script>
+  <script type="module" src="logbuch.js"></script>
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>
