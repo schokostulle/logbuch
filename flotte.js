@@ -78,7 +78,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         user: username,
         date: new Date().toISOString(),
         total_fleet: totalFleet,
-        per_island: null,
       },
     ]);
 
