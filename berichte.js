@@ -188,7 +188,7 @@ function parseReport(text) {
     Wachturm: "WT",
     Ruhestätte: "RS",
   ];
-  const RESEARCH_KEYS = ["Lt", "Sd", "Lb", "Ka"];
+  const RESEARCH_KEYS = [Lanze: "Lz", Schild: "Sd", Langbogen: "Lb", Kanone: "Ka"];
 
   const coords = [...text.matchAll(/\((\d+):(\d+):(\d+)\)/g)].map((m) => ({
     oz: +m[1],
