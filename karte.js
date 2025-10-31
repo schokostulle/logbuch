@@ -1,6 +1,5 @@
 // =============================================================
-// karte.js – v1.3 (Weltmodell x×y×z)
-// Build: 07.11.2025
+// karte.js – v1.4 (funktionierende Rasterkarte)
 // =============================================================
 import { supabase } from "./logbuch.js";
 
@@ -12,9 +11,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const refreshButton = document.getElementById("refreshButton");
 
   const COLORS = {
-    ocean: "#a6d9ff", // helles Blau
-    island: "#4caf50",
-    noAlliance: "#ff66ff"
+    ocean: "#a6d9ff",   // hellblau
+    island: "#4caf50",  // grün
+    noAlliance: "#ff66ff" // magenta
   };
 
   refreshButton.addEventListener("click", async () => {
@@ -27,10 +26,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   await renderWorld(2, 15, 4);
 
   // ------------------------------------------------------------
-  // Weltkarte zeichnen
+  // Karte zeichnen
   // ------------------------------------------------------------
   async function renderWorld(x, y, z) {
-    mapContainer.innerHTML = "<p><em>Lade Weltkarte...</em></p>";
+    mapContainer.innerHTML = "<p><em>Lade Inseln...</em></p>";
 
     const { data, error } = await supabase
       .from("csv_base")
@@ -38,11 +37,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (error) {
       console.error("❌ SUPABASE LOAD ERROR:", error);
-      mapContainer.innerHTML = "<p><em>Fehler beim Laden der Inseln.</em></p>";
+      mapContainer.innerHTML = "<p><em>Fehler beim Laden der CSV-Daten.</em></p>";
       return;
     }
 
-    // Weltweite Inselanzahl berechnen
     const worldCells = x * y * z;
     mapContainer.innerHTML = "";
     mapContainer.className = "map-grid";
@@ -50,21 +48,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     mapContainer.style.gridTemplateRows = `repeat(${worldCells}, 6px)`;
     mapContainer.style.gap = "1px";
 
-    // Index schneller abrufbar machen
-    const islandMap = new Map(data.map(r => `${r.oz}-${r.ig}-${r.i}`, r));
+    // Für schnellen Zugriff: Key = "oz-ig-i"
+    const islandMap = new Map();
+    data.forEach(r => {
+      islandMap.set(`${r.oz}-${r.ig}-${r.i}`, r);
+    });
 
-    // Vollständige Welt generieren
+    // Gesamtes Welt-Raster
     for (let ozY = 1; ozY <= x; ozY++) {
       for (let ozX = 1; ozX <= x; ozX++) {
         const ozNum = (ozY - 1) * x + ozX;
+
         for (let gY = 1; gY <= y; gY++) {
           for (let gX = 1; gX <= y; gX++) {
             const igNum = (gY - 1) * y + gX;
+
             for (let iY = 1; iY <= z; iY++) {
               for (let iX = 1; iX <= z; iX++) {
                 const iNum = (iY - 1) * z + iX;
                 const key = `${ozNum}-${igNum}-${iNum}`;
                 const island = islandMap.get(key);
+
                 const cell = document.createElement("div");
                 cell.classList.add("map-cell");
 
@@ -76,7 +80,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     color = colorFromString(island.akuerzel || island.allianzname);
                   }
                   cell.style.backgroundColor = color;
-                  cell.title = `${island.inselname}\n${island.spielername}\n${island.allianzname || "keine Allianz"}`;
+                  cell.title = `${island.inselname || "Unbenannt"}\n${island.spielername || "?"}\n${island.allianzname || "keine Allianz"}\n(${island.oz}:${island.ig}:${island.i})`;
                 } else {
                   cell.style.backgroundColor = COLORS.ocean;
                 }
@@ -90,12 +94,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  // Generiert aus String eine gut unterscheidbare Farbe
   function colorFromString(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
-    const hue = hash % 360;
+    const hue = Math.abs(hash) % 360;
     return `hsl(${hue}, 70%, 55%)`;
   }
 });
