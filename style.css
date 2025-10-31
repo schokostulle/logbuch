@@ -590,3 +590,62 @@ body.login-page {
 .admin-controls button:hover {
   background-color: #3b444a;
 }
+
+/* =========================================================
+   Weltkarte Layout – Ozeane, Gruppen, Inseln
+   ========================================================= */
+.world-grid {
+  display: grid;
+  justify-content: start;
+  align-content: start;
+  gap: 8px;
+}
+
+.ocean-block {
+  border: 1px solid #333;
+  background-color: #102030;
+  border-radius: 8px;
+  padding: 4px;
+  position: relative;
+}
+
+.ocean-label {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-size: 0.75rem;
+  color: #bba86f;
+}
+
+.group-grid {
+  display: grid;
+  gap: 4px;
+  margin-top: 1.2rem;
+}
+
+.group-block {
+  background-color: #0b1d2a;
+  border: 1px solid #222;
+  padding: 3px;
+  border-radius: 4px;
+}
+
+.island-grid {
+  display: grid;
+  gap: 1px;
+  justify-content: start;
+  align-content: start;
+}
+
+.map-cell {
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  transition: transform 0.1s ease;
+}
+
+.map-cell:hover {
+  transform: scale(1.8);
+  z-index: 10;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+}
