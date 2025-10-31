@@ -1,97 +1,95 @@
 // =============================================================
-// karte.js – v1.0 (Build 04.11.2025)
-// Weltkarte mit Inseln aus csv_base
-// Darstellung per Raster (Insel = grün / Ozean = blau)
-// Allianzfarben, Neutralität & Diplomatie folgen später
+// karte.js – v1.1 (Build 05.11.2025)
+// Hierarchische Kartenlogik: Oz → IG → I
+// Darstellung mit hellblauem Meer + Inseln nach Allianzfarbe
 // =============================================================
 
 import { supabase } from "./logbuch.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const mapContainer = document.getElementById("mapContainer");
+  const ozInput = document.getElementById("ozInput");
+  const igInput = document.getElementById("igInput");
+  const zoomInput = document.getElementById("zoomInput");
+  const refreshButton = document.getElementById("refreshButton");
 
-  // Parameter: Größe der Karte
-  const MAP_WIDTH = 50;   // Spalten
-  const MAP_HEIGHT = 50;  // Zeilen
-
-  // Farben
   const COLORS = {
-    ocean: "#1a3b5d",
-    island: "#3b6040",
+    ocean: "#74b9ff", // helles blau
+    island: "#4caf50",
     noAlliance: "#cc55cc",
-    friendly: "#55cc55",
-    hostile: "#ff3333",
-    neutral: "#bbbbbb",
   };
 
-  // --- Inseln laden --------------------------------------------------
-  const { data, error } = await supabase
-    .from("csv_base")
-    .select("oz, ig, i, spielername, akuerzel, allianzname");
-
-  if (error) {
-    console.error("❌ SUPABASE LOAD ERROR:", error);
-    mapContainer.innerHTML = "<p><em>Fehler beim Laden der Inseln.</em></p>";
-    return;
-  }
-
-  // --- Karte vorbereiten --------------------------------------------
-  mapContainer.innerHTML = "";
-  mapContainer.style.display = "grid";
-  mapContainer.style.gridTemplateColumns = `repeat(${MAP_WIDTH}, 12px)`;
-  mapContainer.style.gridTemplateRows = `repeat(${MAP_HEIGHT}, 12px)`;
-  mapContainer.style.gap = "1px";
-
-  // Inselpositionen merken
-  const islands = new Map();
-
-  data.forEach((row) => {
-    const key = `${row.oz}:${row.ig}`;
-    islands.set(key, row);
+  refreshButton.addEventListener("click", async () => {
+    const oz = parseInt(ozInput.value);
+    const ig = parseInt(igInput.value);
+    const zoom = parseInt(zoomInput.value);
+    await renderMap(oz, ig, zoom);
   });
 
-  // --- Karte zeichnen ------------------------------------------------
-  for (let y = 1; y <= MAP_HEIGHT; y++) {
-    for (let x = 1; x <= MAP_WIDTH; x++) {
-      const key = `${x}:${y}`;
-      const cell = document.createElement("div");
-      cell.classList.add("map-cell");
+  await renderMap(1, 1, 10); // Standard: Welt 1, Gruppe 1
 
-      const island = islands.get(key);
+  // ------------------------------------------------------------
+  // Karte rendern
+  // ------------------------------------------------------------
+  async function renderMap(oz, ig, zoom) {
+    mapContainer.innerHTML = "<p><em>Lade Karte...</em></p>";
 
-      if (island) {
-        // Insel vorhanden
-        let color = COLORS.island;
+    const { data, error } = await supabase
+      .from("csv_base")
+      .select("oz, ig, i, inselname, spielername, akuerzel, allianzname");
 
-        if (!island.allianzname || island.allianzname.trim() === "") {
-          color = COLORS.noAlliance; // Magenta
+    if (error) {
+      console.error("❌ SUPABASE LOAD ERROR:", error);
+      mapContainer.innerHTML = "<p><em>Fehler beim Laden der Inseln.</em></p>";
+      return;
+    }
+
+    mapContainer.innerHTML = "";
+    const cellSize = Math.max(8, 600 / zoom); // dynamisch
+    mapContainer.style.display = "grid";
+    mapContainer.style.gridTemplateColumns = `repeat(${zoom}, ${cellSize}px)`;
+    mapContainer.style.gridTemplateRows = `repeat(${zoom}, ${cellSize}px)`;
+    mapContainer.style.gap = "1px";
+
+    const filtered = data.filter((r) => r.oz === oz && r.ig === ig);
+    const islands = new Map(filtered.map((r) => [r.i, r]));
+
+    // Karte (Quadrat von Inseln) zeichnen
+    for (let y = 1; y <= zoom; y++) {
+      for (let x = 1; x <= zoom; x++) {
+        const idx = (y - 1) * zoom + x;
+        const island = islands.get(idx);
+        const cell = document.createElement("div");
+        cell.classList.add("map-cell");
+
+        if (island) {
+          let color = COLORS.island;
+          if (!island.allianzname) {
+            color = COLORS.noAlliance;
+          } else {
+            color = colorFromString(island.akuerzel || island.allianzname);
+          }
+
+          cell.style.backgroundColor = color;
+          cell.title = `${island.inselname || "?"}\n${island.spielername || "?"}\n${island.allianzname || "keine Allianz"}`;
         } else {
-          // Temporär zufällige, stabile Allianzfarbe generieren
-          color = colorFromString(island.akuerzel || island.allianzname);
+          cell.style.backgroundColor = COLORS.ocean;
         }
 
-        cell.style.backgroundColor = color;
-        cell.title = `${island.inselname || "Unbekannt"}\n${island.spielername || "?"}\n${island.allianzname || "keine Allianz"}`;
-      } else {
-        // Ozean
-        cell.style.backgroundColor = COLORS.ocean;
+        mapContainer.appendChild(cell);
       }
-
-      mapContainer.appendChild(cell);
     }
   }
 
-  console.log("🌍 Karte generiert mit", data.length, "Inseln.");
-});
-
-// -------------------------------------------------------------
-// Utility: Erzeugt eine stabile Farbe aus String
-// -------------------------------------------------------------
-function colorFromString(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  // ------------------------------------------------------------
+  // Stabile Allianzfarbe (aus Namen generiert)
+  // ------------------------------------------------------------
+  function colorFromString(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const hue = hash % 360;
+    return `hsl(${hue}, 70%, 55%)`;
   }
-  const hue = hash % 360;
-  return `hsl(${hue}, 70%, 45%)`;
-}
+});
