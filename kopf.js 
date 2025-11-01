@@ -1,0 +1,83 @@
+// =============================================================
+// kopf.js – Globaler Sticky Header für das Logbuch-Projekt
+// Version: 1.0 – 04.11.2025
+// =============================================================
+
+import { supabase } from "./logbuch.js";
+
+/**
+ * Erstellt und rendert den globalen Kopfbereich (Sticky Header)
+ */
+export async function initHeader() {
+  const header = document.createElement("header");
+  header.className = "global-header";
+  header.innerHTML = `
+    <div class="header-left">
+      <div class="header-logo">⚓</div>
+      <div class="header-title">
+        <span class="tool-name">Logbuch</span>
+        <span class="page-name">${document.title.replace("– Logbuch", "").trim()}</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <span class="user-info">Benutzer: <strong id="userName">Lädt...</strong></span>
+      <span class="user-role">Rolle: <strong id="userRole">-</strong></span>
+      <span class="session-timer">⏳ Session: <strong id="sessionTimer">--:--</strong></span>
+    </div>
+  `;
+
+  document.body.prepend(header);
+
+  // Benutzer laden
+  const { data: userData, error } = await supabase.auth.getUser();
+  if (error || !userData?.user) {
+    document.getElementById("userName").textContent = "Unbekannt";
+    document.getElementById("userRole").textContent = "-";
+    return;
+  }
+
+  const userId = userData.user.id;
+
+  const { data: userRecord } = await supabase
+    .from("users")
+    .select("username, role")
+    .eq("id", userId)
+    .single();
+
+  document.getElementById("userName").textContent = userRecord?.username ?? "Unbekannt";
+  document.getElementById("userRole").textContent = userRecord?.role ?? "Unbekannt";
+
+  // Session Timer starten
+  startSessionCountdown(30 * 60); // 30 Minuten als Beispiel
+}
+
+/**
+ * Simpler Session-Timer (Countdown bis Timeout)
+ */
+function startSessionCountdown(seconds) {
+  const timerElem = document.getElementById("sessionTimer");
+  if (!timerElem) return;
+
+  let remaining = seconds;
+
+  const interval = setInterval(() => {
+    const min = Math.floor(remaining / 60)
+      .toString()
+      .padStart(2, "0");
+    const sec = (remaining % 60).toString().padStart(2, "0");
+    timerElem.textContent = `${min}:${sec}`;
+
+    if (remaining <= 0) {
+      clearInterval(interval);
+      timerElem.textContent = "abgelaufen";
+      showStatusMessage("⚠️ Session abgelaufen – bitte neu anmelden.", "warning", 8000);
+      supabase.auth.signOut();
+      setTimeout(() => (window.location.href = "login.html"), 3000);
+    }
+
+    remaining--;
+  }, 1000);
+}
+
+document.addEventListener("DOMContentLoaded", initHeader);
