@@ -1,81 +1,78 @@
-// =============================================================
-// access-guard.js – Supabase-only Zugriffsschutz
-// Version: 2.1 – 03.11.2025
-// =============================================================
+// ============================================================
+// access-guard.js – v3.0 (Policy-kompatibel)
+// Stand: 03.11.2025
+// Autor: Kapitän ⚓
+//
+// Zweck:
+// - Prüft NUR, ob eine gültige Supabase-Session existiert
+// - Leitet sonst automatisch auf login.html weiter
+// - Optional: aktualisiert die Anzeige von Benutzername + Rolle
+// ============================================================
+
+import { supabase } from "./logbuch.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    // 🧭 1️⃣ Supabase-Client prüfen
-    if (!window.supabase) {
-      console.error("❌ Supabase-Client nicht initialisiert – logbuch.js muss zuerst geladen werden.");
-      window.location.href = "gate.html";
-      return;
-    }
-
-    const supabase = window.supabase;
-
-    // 🔐 2️⃣ Aktuelle Sitzung laden
+    // 🔹 1. Aktive Session prüfen
     const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
 
     if (sessionError || !sessionData?.user) {
-      console.warn("⚠️ Keine aktive Sitzung gefunden. Weiterleitung zur Anmeldung.");
+      console.warn("⚠️ Keine aktive Session, leite zur Anmeldung um...");
       window.location.href = "login.html";
       return;
     }
 
     const authUser = sessionData.user;
 
-    // ⚓ 3️⃣ Benutzerstatus aus 'users'-Tabelle laden
+    // 🔹 2. Benutzerinformationen laden (optional)
     const { data: userData, error: userError } = await supabase
       .from("users")
-      .select("id, username, role, status, deleted")
+      .select("username, role")
       .eq("id", authUser.id)
       .maybeSingle();
 
     if (userError) {
-      console.error("❌ Fehler beim Laden der Benutzerinformationen:", userError);
-      alert("Fehler beim Benutzerabgleich. Bitte erneut anmelden.");
-      await supabase.auth.signOut();
-      window.location.href = "login.html";
-      return;
+      console.warn("⚠️ Fehler beim Laden der Benutzerdaten:", userError);
     }
 
-    if (!userData) {
-      console.warn("⚠️ Kein Eintrag in users-Tabelle für diesen Account.");
-      await supabase.auth.signOut();
-      window.location.href = "login.html";
-      return;
-    }
+    // 🔹 3. Benutzeranzeige im Header aktualisieren (wenn vorhanden)
+    const userNameElem = document.querySelector("#userName");
+    const userRoleElem = document.querySelector("#userRole");
 
-    // 🚫 4️⃣ Sicherheitsprüfungen
-    if (userData.deleted) {
-      alert("Zugang verweigert – Benutzer wurde gelöscht.");
-      await supabase.auth.signOut();
-      window.location.href = "login.html";
-      return;
-    }
+    if (userNameElem) userNameElem.textContent = userData?.username || "Unbekannt";
+    if (userRoleElem) userRoleElem.textContent = userData?.role || "–";
 
-    if (userData.status?.toLowerCase() !== "aktiv") {
-      alert("Zugang verweigert – dein Account ist nicht aktiv. Bitte Admin kontaktieren.");
-      await supabase.auth.signOut();
-      window.location.href = "login.html";
-      return;
-    }
-
-    // ✅ 5️⃣ Zugriff gewährt
-    console.info(`✅ Zugang gewährt für ${userData.username} (${userData.role}).`);
-
-    // Benutzeranzeige aktualisieren (optional)
-    const userBox = document.querySelector(".user-status");
-    if (userBox) {
-      const symbol = userData.role.toLowerCase() === "admin" ? "⚓" : "👤";
-      userBox.textContent = `${symbol} ${userData.username} – ${userData.role}`;
-    }
+    // 🔹 4. (Optional) Session-Timer anzeigen
+    startSessionCountdown();
 
   } catch (err) {
-    console.error("❌ Unerwarteter Fehler im access-guard:", err);
-    alert("Ein unerwarteter Fehler ist aufgetreten. Du wirst ausgeloggt.");
-    if (window.supabase) await window.supabase.auth.signOut();
+    console.error("❌ Fehler in access-guard.js:", err);
     window.location.href = "login.html";
   }
 });
+
+// ============================================================
+// Session Countdown Timer (Frontend-Anzeige)
+// ============================================================
+function startSessionCountdown() {
+  const sessionTimerElem = document.getElementById("sessionTimer");
+  if (!sessionTimerElem) return;
+
+  // 60 Minuten Timer – wird lokal gezählt, nicht sicherheitsrelevant
+  let remaining = 60 * 60; // Sekunden
+
+  const updateTimer = () => {
+    const min = Math.floor(remaining / 60);
+    const sec = remaining % 60;
+    sessionTimerElem.textContent = `${min}:${sec.toString().padStart(2, "0")}`;
+    if (remaining <= 0) {
+      clearInterval(interval);
+      alert("⏳ Sitzung abgelaufen – bitte erneut anmelden.");
+      window.location.href = "login.html";
+    }
+    remaining--;
+  };
+
+  updateTimer();
+  const interval = setInterval(updateTimer, 1000);
+}
