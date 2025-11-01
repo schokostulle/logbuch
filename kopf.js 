@@ -1,14 +1,18 @@
 // =============================================================
-// kopf.js – Globaler Sticky Header für das Logbuch-Projekt
-// Version: 1.0 – 04.11.2025
+// kopf.js – Globaler Sticky Header für alle Logbuch-Seiten
+// Version: 1.0 – 31.10.2025
+// Beschreibung:
+//   - Einheitlicher Kopfbereich (Logo, Seitentitel, Userinfo, Timer)
+//   - Nutzt Supabase Auth (keine automatische Verlängerung der Session)
+//   - Sessionende -> automatische Abmeldung
 // =============================================================
 
 import { supabase } from "./logbuch.js";
 
-/**
- * Erstellt und rendert den globalen Kopfbereich (Sticky Header)
- */
-export async function initHeader() {
+document.addEventListener("DOMContentLoaded", async () => {
+  // -----------------------------
+  // Header-Container erzeugen
+  // -----------------------------
   const header = document.createElement("header");
   header.className = "global-header";
   header.innerHTML = `
@@ -16,68 +20,93 @@ export async function initHeader() {
       <div class="header-logo">⚓</div>
       <div class="header-title">
         <span class="tool-name">Logbuch</span>
-        <span class="page-name">${document.title.replace("– Logbuch", "").trim()}</span>
+        <span class="page-name">${getPageName()}</span>
       </div>
     </div>
 
     <div class="header-right">
-      <span class="user-info">Benutzer: <strong id="userName">Lädt...</strong></span>
-      <span class="user-role">Rolle: <strong id="userRole">-</strong></span>
-      <span class="session-timer">⏳ Session: <strong id="sessionTimer">--:--</strong></span>
+      <span class="user-info">👤 <strong id="userName">Lädt...</strong></span>
+      <span class="user-role">🎖️ <strong id="userRole">-</strong></span>
+      <span class="session-timer">⏳ <strong id="sessionTimer">--:--</strong></span>
     </div>
   `;
 
   document.body.prepend(header);
 
-  // Benutzer laden
-  const { data: userData, error } = await supabase.auth.getUser();
-  if (error || !userData?.user) {
-    document.getElementById("userName").textContent = "Unbekannt";
-    document.getElementById("userRole").textContent = "-";
+  // -----------------------------
+  // Elemente referenzieren
+  // -----------------------------
+  const userNameEl = document.getElementById("userName");
+  const userRoleEl = document.getElementById("userRole");
+  const timerEl = document.getElementById("sessionTimer");
+
+  // -----------------------------
+  // Supabase Session abrufen
+  // -----------------------------
+  const { data: sessionData, error } = await supabase.auth.getSession();
+  if (error || !sessionData?.session) {
+    console.warn("⚠️ Keine aktive Session – leite zu login.html um.");
+    window.location.href = "login.html";
     return;
   }
 
-  const userId = userData.user.id;
+  const session = sessionData.session;
+  const user = session.user;
 
-  const { data: userRecord } = await supabase
+  // -----------------------------
+  // Benutzer laden (users-Tabelle)
+  // -----------------------------
+  const { data: userInfo, error: userErr } = await supabase
     .from("users")
     .select("username, role")
-    .eq("id", userId)
+    .eq("id", user.id)
     .single();
 
-  document.getElementById("userName").textContent = userRecord?.username ?? "Unbekannt";
-  document.getElementById("userRole").textContent = userRecord?.role ?? "Unbekannt";
+  if (userErr) {
+    console.error("⚠️ Fehler beim Laden des Benutzers:", userErr);
+    userNameEl.textContent = "Unbekannt";
+    userRoleEl.textContent = "-";
+  } else {
+    userNameEl.textContent = userInfo.username || "Unbekannt";
+    userRoleEl.textContent = userInfo.role || "Mitglied";
+  }
 
-  // Session Timer starten
-  startSessionCountdown(30 * 60); // 30 Minuten als Beispiel
-}
+  // -----------------------------
+  // Sessionablauf berechnen
+  // -----------------------------
+  const expiresAt = new Date(session.expires_at * 1000);
+  const now = new Date();
+  let secondsLeft = Math.max(0, Math.floor((expiresAt - now) / 1000));
 
-/**
- * Simpler Session-Timer (Countdown bis Timeout)
- */
-function startSessionCountdown(seconds) {
-  const timerElem = document.getElementById("sessionTimer");
-  if (!timerElem) return;
-
-  let remaining = seconds;
-
-  const interval = setInterval(() => {
-    const min = Math.floor(remaining / 60)
-      .toString()
-      .padStart(2, "0");
-    const sec = (remaining % 60).toString().padStart(2, "0");
-    timerElem.textContent = `${min}:${sec}`;
-
-    if (remaining <= 0) {
+  const updateTimer = () => {
+    if (secondsLeft <= 0) {
+      timerEl.textContent = "Abgelaufen";
       clearInterval(interval);
-      timerElem.textContent = "abgelaufen";
-      showStatusMessage("⚠️ Session abgelaufen – bitte neu anmelden.", "warning", 8000);
+      alert("⚓ Deine Sitzung ist abgelaufen. Du wirst abgemeldet.");
       supabase.auth.signOut();
-      setTimeout(() => (window.location.href = "login.html"), 3000);
+      window.location.href = "login.html";
+      return;
     }
 
-    remaining--;
-  }, 1000);
-}
+    const m = Math.floor(secondsLeft / 60);
+    const s = secondsLeft % 60;
+    timerEl.textContent = `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+    secondsLeft--;
+  };
 
-document.addEventListener("DOMContentLoaded", initHeader);
+  updateTimer();
+  const interval = setInterval(updateTimer, 1000);
+
+  console.log(`🕒 Session läuft bis: ${expiresAt.toLocaleString()}`);
+});
+
+// =============================================================
+// Hilfsfunktion: Seitennamen aus <title> oder Dateinamen ermitteln
+// =============================================================
+function getPageName() {
+  const title = document.title || "";
+  const match = title.match(/–\s*(.+)$/); // z. B. "Logbuch – Angriffe"
+  if (match) return match[1];
+  const path = window.location.pathname.split("/").pop().replace(".html", "");
+  return path.charAt(0).toUpperCase() + path.slice(1);
+}
