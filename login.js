@@ -1,8 +1,10 @@
 // =============================================================
-// login.js – Supabase-only Login (final)
-// Version: 2.1 – 03.11.2025
-// Hinweis: Nutzt fake-email: <username>@bullfrog.fake
-// Funktioniert mit Supabase-Client aus logbuch.js
+// login.js – Supabase-only Login (v2.2)
+// -------------------------------------------------------------
+// - nutzt Fake-E-Mail <username>@bullfrog.fake
+// - sorgt für automatisches User-Mapping in "users"-Tabelle
+// - prüft Benutzerstatus ('aktiv')
+// - zeigt Statusmeldungen im UI statt via alert()
 // =============================================================
 
 import { supabase } from "./logbuch.js";
@@ -11,89 +13,73 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
   const nameInput = document.getElementById("loginName");
   const passInput = document.getElementById("loginPass");
+  const statusBox = document.getElementById("statusMessage");
 
-  if (!form || !nameInput || !passInput) {
-    console.warn("login.js: login form elements not found.");
+  if (!form) {
+    console.warn("❗ login.js: loginForm nicht gefunden");
     return;
   }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const name = nameInput.value.trim();
-    const pass = passInput.value.trim();
-
-    if (!name || !pass) {
-      alert("Bitte Name und Passwort eingeben.");
+    const username = nameInput.value.trim();
+    const password = passInput.value.trim();
+    if (!username || !password) {
+      showStatus("Bitte Name und Passwort eingeben.", "warn");
       return;
     }
 
-    // Erzeuge die Fake-Email
-    const email = `${name}@bullfrog.fake`.toLowerCase();
+    const email = `${username}@bullfrog.fake`.toLowerCase();
+    showStatus("⏳ Anmeldung wird überprüft...", "info");
 
     try {
+      // --------------------------------------------------------
       // Anmeldung bei Supabase Auth
+      // --------------------------------------------------------
       const { data: signData, error: signError } = await supabase.auth.signInWithPassword({
         email,
-        password: pass,
+        password,
       });
 
       if (signError) {
-        console.error("Login fehlgeschlagen:", signError);
-        alert("Anmeldung fehlgeschlagen. Bitte überprüfe Benutzername/Passwort.");
+        console.error("❌ Login fehlgeschlagen:", signError);
+        showStatus("Anmeldung fehlgeschlagen. Benutzername oder Passwort falsch.", "error");
         return;
       }
 
       const authUser = signData?.user;
       if (!authUser) {
-        alert("Anmeldung fehlgeschlagen (kein User).");
+        showStatus("Anmeldung fehlgeschlagen. Kein Benutzerobjekt empfangen.", "error");
         return;
       }
 
-      // -------------------------------
-      // Sicherstellen, dass users-Tabelle einen Eintrag hat
-      // -------------------------------
-      const { data: userRecord, error: userFetchError } = await supabase
+      // --------------------------------------------------------
+      // Benutzer aus Tabelle 'users' lesen
+      // --------------------------------------------------------
+      const { data: userEntry, error: userError } = await supabase
         .from("users")
         .select("id, username, role, status")
         .eq("id", authUser.id)
-        .single();
+        .maybeSingle();
 
-      if (userFetchError && userFetchError.code !== "PGRST116") {
-        console.error("Fehler beim Lesen der users-Tabelle:", userFetchError);
-        alert("Fehler beim Benutzerladen. Bitte später erneut versuchen.");
+      if (userError && userError.code !== "PGRST116") {
+        console.error("Fehler beim Laden des Benutzer-Eintrags:", userError);
+        showStatus("Fehler beim Laden des Benutzers. Bitte später erneut versuchen.", "error");
         return;
       }
 
-      let userEntry = userRecord || null;
+      let userData = userEntry;
 
-      // Falls kein Eintrag existiert → automatisch anlegen
-      if (!userEntry) {
-        const { data: byName } = await supabase
-          .from("users")
-          .select("id, username, role, status")
-          .ilike("username", name)
-          .limit(1)
-          .maybeSingle();
-
-        if (byName) {
-          // Versuch Update
-          const { error: updErr } = await supabase
-            .from("users")
-            .update({ id: authUser.id })
-            .match({ id: byName.id });
-
-          if (updErr) {
-            console.warn("Update-Konflikt, neuer Eintrag wird erstellt:", updErr);
-          }
-        }
-
-        // Neuer Benutzer falls noch keiner existiert
+      // --------------------------------------------------------
+      // Wenn Benutzer nicht existiert → neu anlegen
+      // --------------------------------------------------------
+      if (!userData) {
         const { data: newUser, error: insertErr } = await supabase
           .from("users")
           .insert({
             id: authUser.id,
-            username: name,
+            username,
             role: "member",
             status: "aktiv",
           })
@@ -101,33 +87,40 @@ document.addEventListener("DOMContentLoaded", () => {
           .single();
 
         if (insertErr) {
-          console.error("Fehler beim Anlegen des Benutzer-Eintrags:", insertErr);
-          alert("Fehler beim Anlegen des Benutzers. Bitte Admin kontaktieren.");
+          console.error("Fehler beim Anlegen des Benutzers:", insertErr);
+          showStatus("Fehler beim Anlegen des Benutzers. Bitte Admin kontaktieren.", "error");
           await supabase.auth.signOut();
           return;
         }
-
-        userEntry = newUser;
+        userData = newUser;
       }
 
-      // -------------------------------
-      // Status prüfen (nur 'aktiv' darf weiter)
-      // -------------------------------
-      const status = (userEntry.status || "").toLowerCase();
-      if (status !== "aktiv") {
-        alert("Zugang verweigert – Benutzer ist nicht aktiv. Bitte Admin kontaktieren.");
+      // --------------------------------------------------------
+      // Zugriff nur für aktive Benutzer
+      // --------------------------------------------------------
+      if ((userData.status || "").toLowerCase() !== "aktiv") {
+        showStatus("🚫 Benutzer ist nicht aktiv. Bitte Admin kontaktieren.", "error");
         await supabase.auth.signOut();
         return;
       }
 
-      // -------------------------------
-      // Login erfolgreich => Weiterleitung
-      // -------------------------------
-      alert(`Willkommen zurück, ${userEntry.username || name}!`);
-      window.location.href = "dashboard.html";
+      // --------------------------------------------------------
+      // Erfolg → Dashboard
+      // --------------------------------------------------------
+      showStatus(`✅ Willkommen zurück, ${userData.username || username}!`, "success");
+      setTimeout(() => (window.location.href = "dashboard.html"), 1200);
+
     } catch (err) {
       console.error("❌ Unbekannter Fehler beim Login:", err);
-      alert("Unbekannter Fehler beim Login. Siehe Konsole.");
+      showStatus("Unbekannter Fehler beim Login. Bitte Konsole prüfen.", "error");
     }
   });
+
+  // ------------------------------------------------------------
+  // Hilfsfunktion: Statusanzeige im DOM
+  // ------------------------------------------------------------
+  function showStatus(msg, type = "info") {
+    if (!statusBox) return alert(msg);
+    statusBox.innerHTML = `<p class="${type}">${msg}</p>`;
+  }
 });
