@@ -1,38 +1,41 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Anmeldung – Logbuch</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body class="login-page">
   <main class="login-container">
-    <h1>⚓ Logbuch Anmeldung</h1>
-    <p>Melde dich mit deinem Benutzerkonto an.</p>
+    <h1>⚓ Logbuch</h1>
+    <p class="subtitle">Melde dich mit deinem Benutzerkonto an.</p>
 
-    <form id="loginForm">
-      <label for="loginName">Name</label>
-      <input type="text" id="loginName" required>
+    <form id="loginForm" autocomplete="on">
+      <label for="loginName">Benutzername</label>
+      <input type="text" id="loginName" name="loginName" placeholder="z. B. Kapitän Nemo" required />
 
       <label for="loginPass">Passwort</label>
-      <input type="password" id="loginPass" required>
+      <input type="password" id="loginPass" name="loginPass" placeholder="••••••••" required />
 
-      <button type="submit">Anmelden</button>
+      <button type="submit" class="btn btn-primary">Anmelden</button>
     </form>
 
     <p class="hint">
       <a href="register.html">Neuen Benutzer registrieren</a>
     </p>
+
+    <div id="statusMessage" aria-live="polite"></div>
   </main>
 
-  <!-- ⚙️ Supabase SDK zuerst laden -->
+  <!-- ⚙️ Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- 🔑 Initialisierung (Client erstellen) -->
+  <!-- 🔧 Initialisierung -->
   <script type="module" src="logbuch.js"></script>
 
-  <!-- 🧭 Anmeldung -->
+  <!-- 🔑 Anmeldung -->
   <script type="module" src="login.js"></script>
 </body>
 </html>
