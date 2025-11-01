@@ -1,0 +1,26 @@
+.map-grid {
+  display: grid;
+  gap: 1px;
+  background-color: #0b1d2a;
+  padding: 5px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.map-cell {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  transition: transform 0.1s ease;
+}
+
+.map-cell:hover {
+  transform: scale(1.4);
+  box-shadow: 0 0 5px rgba(255,255,255,0.4);
+}
+
+.ocean { background-color: #66aaff; } /* hellblau */
+.unoccupied { background-color: #5c8f6e; } /* mildes grün */
+.neutral { background-color: #c04ebf; } /* magenta */
+.alliance-friendly { background-color: #557799; }
+.alliance-enemy { background-color: #cc3333; }
