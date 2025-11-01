@@ -1,9 +1,0 @@
-input, textarea, select {
-  background-color: #1a2025;
-  border: 1px solid #555;
-  border-radius: 4px;
-  color: var(--color-text);
-  padding: 0.5rem;
-  width: 100%;
-  box-sizing: border-box;
-}
