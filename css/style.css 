@@ -1,4 +1,4 @@
-/* /logbuch/css/style.css — Version 0.3 (Supabase Onlinebetrieb, responsiv, scrollbar, funktional) */
+/* /logbuch/css/style.css — Version 0.3 (Supabase Onlinebetrieb, GitHub-kompatibel, responsiv, scrollbar, funktional) */
 
 /* =========================================
    GRUNDLAGEN
@@ -246,8 +246,6 @@ body.app-layout {
 /* =========================================
    RESPONSIVE ANPASSUNG
 ========================================= */
-
-/* Kleine Bildschirme: Nur Icons anzeigen */
 @media (max-width: 800px) {
   #nav {
     width: 50px;
