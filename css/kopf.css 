@@ -1,0 +1,87 @@
+/* /logbuch/css/kopf.css — Version 0.3 (dynamische Breite + responsiv)
+   Kopf + Content orientieren sich an der Navigation, kein Designfokus */
+
+/* =========================================
+   KOPFBEREICH
+========================================= */
+#kopf {
+  position: fixed;
+  top: 0;
+  left: clamp(160px, 20vw, 240px); /* identisch zur Nav-Breite */
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  min-height: 80px;
+  height: auto;
+  border-bottom: 1px solid #ccc;
+  background: #fff;
+  box-sizing: border-box;
+  z-index: 5;
+}
+
+/* Zeilenstruktur */
+.kopf-row {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.kopf-row.row1 {
+  justify-content: flex-end;
+}
+
+.kopf-row.row2 {
+  justify-content: flex-start;
+  font-weight: bold;
+}
+
+/* Inhalt innerhalb der Kopfzeilen */
+.kopf-row .left {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex: 1;
+}
+
+.kopf-row .right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex: 1;
+}
+
+/* =========================================
+   CONTENTBEREICH
+========================================= */
+#content {
+  position: relative;
+  margin-left: clamp(160px, 20vw, 240px); /* bündig mit Navigation */
+  padding-top: 80px;                      /* Platz für Kopf */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: calc(100% - clamp(160px, 20vw, 240px));
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   RESPONSIVE ANPASSUNG
+========================================= */
+@media (max-width: 800px) {
+  #kopf {
+    left: 50px; /* Navigation im Icon-Modus */
+  }
+
+  #content {
+    margin-left: 50px;
+    width: calc(100% - 50px);
+  }
+}
