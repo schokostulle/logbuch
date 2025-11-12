@@ -1,4 +1,4 @@
-/* /logbuch/css/style.css — responsiv, scrollbar, funktional */
+/* /logbuch/css/style.css — Version 0.3 (Supabase Onlinebetrieb, responsiv, scrollbar, funktional) */
 
 /* =========================================
    GRUNDLAGEN
@@ -13,7 +13,9 @@ html, body {
   width: 100%;
   height: 100%;
   font-family: system-ui, sans-serif;
-  overflow: hidden; /* Gesamtseite kein Scrollen – nur einzelne Bereiche */
+  overflow: hidden; /* nur Teilbereiche scrollen */
+  background: #fff;
+  color: #000;
 }
 
 /* =========================================
@@ -35,6 +37,7 @@ html, body {
   width: 400px;
   max-width: 90vw;
   gap: 16px;
+  text-align: center;
 }
 
 .auth-tabs {
@@ -68,10 +71,12 @@ label {
 
 input {
   width: 100%;
+  padding: 6px;
 }
 
 button[type="submit"] {
   align-self: center;
+  padding: 6px 12px;
 }
 
 .msg {
@@ -112,15 +117,16 @@ body.app-layout {
   border-right: 1px solid #ccc;
   background: #f8f8f8;
   z-index: 10;
-  overflow-y: auto;           /* unabhängig scrollbar */
+  overflow-y: auto;
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 /* Navigationselemente */
 .nav {
   display: flex;
   flex-direction: column;
-  align-items: center;        /* zentrale Ausrichtung */
+  align-items: center;
   width: 100%;
 }
 
@@ -136,6 +142,7 @@ body.app-layout {
   gap: 6px;
   white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .nav .brand::before {
@@ -169,7 +176,8 @@ body.app-layout {
   padding: 8px 0;
   width: 100%;
   text-decoration: none;
-  color: black;
+  color: #000;
+  transition: background 0.2s ease;
 }
 
 .nav a:hover {
@@ -229,9 +237,10 @@ body.app-layout {
   justify-content: flex-start;
   width: calc(100% - clamp(160px, 20vw, 240px));
   height: calc(100vh - 80px);
-  overflow-y: auto;           /* unabhängig scrollbar */
+  overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 /* =========================================
@@ -241,21 +250,22 @@ body.app-layout {
 /* Kleine Bildschirme: Nur Icons anzeigen */
 @media (max-width: 800px) {
   #nav {
-    width: 50px;             /* schmaler Menübereich */
+    width: 50px;
   }
 
   .nav .brand {
-    font-size: 0;            /* Text ausblenden */
+    font-size: 0;
     padding: 12px 0;
+    border-bottom: 1px solid #ccc;
   }
 
   .nav .brand::before {
-    content: "⚓";            /* nur Symbol bleibt sichtbar */
+    content: "⚓";
     font-size: 20px;
   }
 
   .nav a .label {
-    display: none;           /* nur Icons */
+    display: none;
   }
 
   #kopf {
