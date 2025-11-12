@@ -1,6 +1,8 @@
 // /logbuch/js/index.js — Version 0.3 (Onlinebetrieb über Supabase)
 
+// ==============================
 // Tabs & Formulare
+// ==============================
 const tabLogin = document.getElementById("tab-login");
 const tabRegister = document.getElementById("tab-register");
 const loginForm = document.getElementById("login-form");
@@ -12,7 +14,7 @@ function fadeSwitch(fromEl, toEl, fromTab, toTab) {
   setTimeout(() => {
     fromEl.classList.add("hidden");
     fromEl.classList.remove("fadeout");
-    fromEl.reset();
+    if (typeof fromEl.reset === "function") fromEl.reset();
     toEl.classList.remove("hidden");
     toEl.style.opacity = "0";
     toEl.style.transform = "scale(0.98)";
@@ -25,7 +27,7 @@ function fadeSwitch(fromEl, toEl, fromTab, toTab) {
   toTab.classList.add("active");
 }
 
-// Tab-Events
+// Tabs umschalten
 tabLogin.addEventListener("click", () => {
   if (!loginForm.classList.contains("hidden")) return;
   fadeSwitch(registerForm, loginForm, tabRegister, tabLogin);
@@ -37,7 +39,7 @@ tabRegister.addEventListener("click", () => {
 });
 
 // ==============================
-// Login über Supabase
+// LOGIN über Supabase
 // ==============================
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -50,17 +52,16 @@ loginForm.addEventListener("submit", async (e) => {
   }
 
   try {
-    const data = await supabaseAPI.loginUser(username, password);
-    if (!data?.user) throw new Error("Login fehlgeschlagen.");
+    const { user, error } = await supabaseAPI.loginUser(username, password);
+    if (error || !user) throw error || new Error("Login fehlgeschlagen.");
 
-    const profileName = data.user.user_metadata?.username || username;
+    const profileName = user.user_metadata?.username || username;
     sessionStorage.setItem("username", profileName);
     sessionStorage.setItem("userRole", "User");
     sessionStorage.removeItem("lastExit");
 
     status.show(`Willkommen ${profileName}`, "ok");
     loginForm.reset();
-
     setTimeout(() => (window.location.href = "gate.html"), 900);
   } catch (err) {
     console.error(err);
@@ -69,7 +70,7 @@ loginForm.addEventListener("submit", async (e) => {
 });
 
 // ==============================
-// Registrierung über Supabase
+// REGISTRIERUNG über Supabase
 // ==============================
 registerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -88,18 +89,18 @@ registerForm.addEventListener("submit", async (e) => {
   }
 
   try {
-    const data = await supabaseAPI.registerUser(username, pw1);
-    if (!data?.user) throw new Error("Registrierung fehlgeschlagen.");
+    const { user, error } = await supabaseAPI.registerUser(username, pw1);
+    if (error || !user) throw error || new Error("Registrierung fehlgeschlagen.");
 
     status.show("Registrierung erfolgreich. Jetzt einloggen.", "ok");
     registerForm.reset();
     fadeSwitch(registerForm, loginForm, tabRegister, tabLogin);
   } catch (err) {
     console.error(err);
-    if (err.message.includes("duplicate")) {
-      status.show("Benutzername existiert bereits.", "warn");
-    } else {
-      status.show("Registrierung fehlgeschlagen.", "error");
-    }
+    const msg =
+      err.message?.includes("duplicate") || err.message?.includes("unique")
+        ? "Benutzername existiert bereits."
+        : "Registrierung fehlgeschlagen.";
+    status.show(msg, "warn");
   }
 });
