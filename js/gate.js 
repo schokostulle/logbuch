@@ -55,4 +55,4 @@
   title.textContent = "Zugriff verweigert";
   msg.textContent = "Keine aktive Sitzung gefunden.";
   autoRedirect("index.html");
-})();
+});
