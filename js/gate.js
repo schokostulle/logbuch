@@ -1,9 +1,12 @@
-// /logbuch/js/gate.js — Version 0.3 (Supabase Onlinebetrieb)
+// /logbuch/js/gate.js — Version 0.3 (Supabase-Onlinebetrieb)
 (async function () {
   const title = document.getElementById("gate-title");
   const msg = document.getElementById("gate-msg");
   const sub = document.getElementById("gate-sub");
 
+  // ---------------------------
+  // Automatische Weiterleitung
+  // ---------------------------
   function autoRedirect(target, delay = 1000) {
     sub.textContent = `Weiterleitung in ${delay / 1000}s ...`;
     setTimeout(() => (window.location.href = target), delay);
@@ -12,18 +15,19 @@
   const username = sessionStorage.getItem("username");
   const lastExit = sessionStorage.getItem("lastExit");
 
+  // ---------------------------
   // Supabase-Session prüfen
+  // ---------------------------
   let session = null;
   try {
-    const data = await supabaseAPI.getSession();
-    session = data;
+    session = await supabaseAPI.getSession();
   } catch (err) {
     console.error("Supabase-Sessionprüfung fehlgeschlagen:", err);
   }
 
-  // =========================
-  // EINGANG — gültige Sitzung
-  // =========================
+  // ---------------------------
+  // Eingang – gültige Sitzung
+  // ---------------------------
   if (session && !lastExit) {
     const user = session.user;
     const name = user?.user_metadata?.username || username || "Benutzer";
@@ -33,9 +37,9 @@
     return;
   }
 
-  // =========================
-  // AUSGANG — Logout-Vorgang
-  // =========================
+  // ---------------------------
+  // Ausgang – Logout-Vorgang
+  // ---------------------------
   if (lastExit === "pending") {
     try {
       await supabaseAPI.logoutUser();
@@ -49,10 +53,10 @@
     return;
   }
 
-  // =========================
-  // KEIN gültiger Zustand
-  // =========================
+  // ---------------------------
+  // Kein gültiger Zustand
+  // ---------------------------
   title.textContent = "Zugriff verweigert";
   msg.textContent = "Keine aktive Sitzung gefunden.";
   autoRedirect("index.html");
-});
+})();
