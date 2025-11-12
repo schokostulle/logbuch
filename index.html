@@ -1,4 +1,4 @@
-<!-- /logbuch/index.html -->
+<!-- /logbuch/index.html — Version 0.3 (Supabase Onlinebetrieb + GitHub-kompatibel) -->
 <!doctype html>
 <html lang="de">
 <head>
@@ -6,20 +6,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <title>Logbuch | Login</title>
+
+  <!-- Styles -->
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/status.css" />
-
 </head>
+
 <body>
   <main class="auth-container">
     <section class="auth-card">
       <h1>Logbuch</h1>
 
+      <!-- Tabs -->
       <div class="auth-tabs">
         <button id="tab-login" class="active">Login</button>
         <button id="tab-register">Registrierung</button>
       </div>
 
+      <!-- Login -->
       <form id="login-form" class="auth-form">
         <label>Nutzername
           <input id="login-username" type="text" required />
@@ -31,6 +35,7 @@
         <p id="login-msg" class="msg"></p>
       </form>
 
+      <!-- Registrierung -->
       <form id="register-form" class="auth-form hidden">
         <label>Nutzername
           <input id="reg-username" type="text" required />
@@ -47,7 +52,14 @@
     </section>
   </main>
 
-  <script src="js/index.js"></script>
+  <!-- Supabase SDK + Schnittstelle -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+
+  <!-- Globale Statusanzeige -->
   <script src="js/status.js"></script>
+
+  <!-- Login-/Register-Logik -->
+  <script src="js/index.js"></script>
 </body>
 </html>
