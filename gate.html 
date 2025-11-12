@@ -1,0 +1,34 @@
+<!-- /logbuch/gate.html — Version 0.3 (Supabase Onlinebetrieb) -->
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="/logbuch/" />
+  <title>Logbuch | Gate</title>
+
+  <!-- Zentrale Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/status.css" />
+</head>
+
+<body>
+  <main class="auth-container">
+    <section class="auth-card" id="gate-card">
+      <h1 id="gate-title">Zugangskontrolle</h1>
+      <p id="gate-msg">Überprüfung läuft ...</p>
+      <p id="gate-sub" class="msg"></p>
+    </section>
+  </main>
+
+  <!-- Supabase SDK + Schnittstelle -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+
+  <!-- Globale Statusausgabe -->
+  <script src="js/status.js"></script>
+
+  <!-- Gate-Logik -->
+  <script src="js/gate.js"></script>
+</body>
+</html>
