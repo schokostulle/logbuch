@@ -1,0 +1,41 @@
+<!-- /logbuch/dashboard/dashboard.html — Version 0.3 (Supabase Onlinebetrieb) -->
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="/logbuch/" />
+  <title>Logbuch | Dashboard</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/status.css" />
+  <link rel="stylesheet" href="dashboard/dashboard.css" />
+</head>
+
+<body class="app-layout">
+  <!-- Linkes Navigationsmenü -->
+  <aside id="nav"></aside>
+
+  <!-- Kopfbereich -->
+  <header id="kopf"></header>
+
+  <!-- Hauptinhalt -->
+  <main id="content" class="content">
+    <h2>Dashboard</h2>
+    <p>Willkommen im Allianz-Logbuch.</p>
+  </main>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+
+  <!-- Globale Skripte -->
+  <script src="js/status.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/kopf.js"></script>
+
+  <!-- Dashboard-spezifisches Skript -->
+  <script src="dashboard/dashboard.js"></script>
+</body>
+</html>
