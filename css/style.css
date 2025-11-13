@@ -103,54 +103,51 @@ body.app-layout {
   overflow: hidden;
 }
 
-/* -------------------------------
-   Navigation (links)
--------------------------------- */
-#nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: clamp(160px, 20vw, 240px);
-  display: flex;
-  flex-direction: column;
-  border-right: 1px solid #ccc;
-  background: #f8f8f8;
-  z-index: 10;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-}
-
-/* Navigationselemente */
-.nav {
+/* ============================
+   NAVIGATION: Kopfbereich
+============================ */
+.nav-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  justify-content: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #ccc;
+  background: #f0f0f0;
 }
 
-/* ⚓ Logbuch-Titel */
-.nav .brand {
-  padding: 16px;
-  text-align: center;
-  font-weight: bold;
-  border-bottom: 1px solid #ccc;
+.nav-title {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+  font-weight: bold;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.nav .brand::before {
-  content: "⚓";
+.nav-title .icon {
+  font-size: 18px;
 }
 
-/* Menülisten */
-.nav ul {
+.nav-session {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.nav-session .timeout {
+  font-family: monospace;
+  font-weight: 600;
+}
+
+/* ============================
+   NAVIGATION: Listen
+============================ */
+.nav-list {
   list-style: none;
   padding: 8px 0;
   margin: 0;
@@ -161,31 +158,10 @@ body.app-layout {
   width: 100%;
 }
 
-.nav li {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-.nav a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 0;
-  width: 100%;
-  text-decoration: none;
-  color: #000;
-  transition: background 0.2s ease;
-}
-
-.nav a:hover {
-  background: #e6e6e6;
-}
-
-.nav .logout {
-  margin: 12px 0;
+.nav-list.bottom {
+  margin-top: auto;
+  border-top: 1px solid #ccc;
+  padding-top: 8px;
 }
 
 /* -------------------------------
