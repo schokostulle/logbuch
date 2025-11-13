@@ -1,4 +1,4 @@
-// /logbuch/member/member.js — Version 1.3 (Admin-Tool, last_login + Core-Admin-Schutz)
+// /logbuch/member/member.js — Version 1.3A (Admin-Tool, last_login + Core-Admin-Schutz)
 (async function () {
   const tableBody = document.querySelector("#member-table tbody");
   const username = sessionStorage.getItem("username");
@@ -16,13 +16,19 @@
   // -----------------------------------------
   async function loadUsers() {
     tableBody.innerHTML = `<tr><td colspan="6">Lade Daten...</td></tr>`;
+
     try {
-      // alle Profile laden
-      const data = await supabaseAPI.fetchData("public.profiles");
-      // Ersten (Core-)User bestimmen (kleinstes created_at)
-      const first = [...data].sort((a, b) => new Date(a.created_at) - new Date(b.created_at))[0];
-      const coreAdminId = first?.id || null;
-      renderTable(data, coreAdminId);
+      // Wichtig: Tabelle OHNE public.
+      const profiles = await supabaseAPI.fetchData("profiles");
+
+      // Core-Admin = der zuerst registrierte User
+      const core = [...profiles].sort((a, b) =>
+        new Date(a.created_at) - new Date(b.created_at)
+      )[0];
+
+      const coreAdminId = core?.id || null;
+
+      renderTable(profiles, coreAdminId);
     } catch (err) {
       console.error("[Member] Fehler beim Laden:", err);
       tableBody.innerHTML = `<tr><td colspan="6">Fehler beim Laden der Daten.</td></tr>`;
@@ -38,14 +44,17 @@
       return;
     }
 
-    // Sortierung: aktiv zuerst, dann nach Name
+    // Sortierung: aktiv → blockiert → gelöscht → nach Name
     users.sort((a, b) => {
-      const sA = (a.status || "").localeCompare(b.status || "");
-      if (sA !== 0) return sA;
+      const order = ["aktiv", "blockiert", null];
+      const sA = order.indexOf(a.status);
+      const sB = order.indexOf(b.status);
+      if (sA !== sB) return sA - sB;
       return (a.username || "").localeCompare(b.username || "");
     });
 
     tableBody.innerHTML = "";
+
     users.forEach((u) => {
       const isSelf = u.username === username;
       const isCore = u.id === coreAdminId;
@@ -58,29 +67,42 @@
         <td>${u.rolle}</td>
         <td>${u.status}</td>
         <td class="actions">
-          <button class="btn-role" title="${isSelf ? "Eigene Rolle gesperrt" : isCore ? "Core-Admin gesperrt" : "Rollenwechsel"}" ${isSelf || isCore ? "disabled" : ""}>
+          <button class="btn-role" 
+            title="${isSelf ? "Eigene Rolle gesperrt" : isCore ? "Core-Admin gesperrt" : "Rollenwechsel"}"
+            ${isSelf || isCore ? "disabled" : ""}>
             ${u.rolle === "admin" ? "🪖" : "🎖️"}
           </button>
-          <button class="btn-status" title="${isCore ? "Core-Admin gesperrt" : "Statuswechsel"}" ${isCore ? "disabled" : ""}>
+
+          <button class="btn-status"
+            title="${isCore ? "Core-Admin gesperrt" : "Statuswechsel"}"
+            ${isCore ? "disabled" : ""}>
             ${u.status === "aktiv" ? "🌕" : "🌑"}
           </button>
-          <button class="btn-delete" title="${isCore ? "Core-Admin gesperrt" : u.deleted ? "Reaktivieren" : "Soft Delete"}" ${isCore ? "disabled" : ""}>
+
+          <button class="btn-delete"
+            title="${isCore ? "Core-Admin gesperrt" : u.deleted ? "Reaktivieren" : "Soft Delete"}"
+            ${isCore ? "disabled" : ""}>
             ${u.deleted ? "🐦‍🔥" : "🔥"}
           </button>
         </td>
       `;
 
+      // Buttons referenzieren
       const btnRole = tr.querySelector(".btn-role");
       const btnStatus = tr.querySelector(".btn-status");
       const btnDelete = tr.querySelector(".btn-delete");
 
+      // -------------------------------------
       // Rollenwechsel (admin <-> member)
+      // -------------------------------------
       btnRole?.addEventListener("click", async () => {
         if (isSelf) return status.show("Eigene Rolle kann nicht geändert werden.", "warn");
         if (isCore) return status.show("Erster Nutzer ist geschützt.", "warn");
+
         const newRole = u.rolle === "admin" ? "member" : "admin";
+
         try {
-          await supabaseAPI.updateData("public.profiles", u.id, { rolle: newRole });
+          await supabaseAPI.updateData("profiles", u.id, { rolle: newRole });
           status.show(`Rolle geändert: ${u.username} → ${newRole}`, "ok");
           loadUsers();
         } catch (err) {
@@ -89,12 +111,16 @@
         }
       });
 
-      // Statuswechsel (aktiv <-> blockiert)
+      // -------------------------------------
+      // Statuswechsel
+      // -------------------------------------
       btnStatus?.addEventListener("click", async () => {
         if (isCore) return status.show("Erster Nutzer ist geschützt.", "warn");
+
         const newStatus = u.status === "aktiv" ? "blockiert" : "aktiv";
+
         try {
-          await supabaseAPI.updateData("public.profiles", u.id, { status: newStatus });
+          await supabaseAPI.updateData("profiles", u.id, { status: newStatus });
           status.show(`Status geändert: ${u.username} → ${newStatus}`, "ok");
           loadUsers();
         } catch (err) {
@@ -103,12 +129,16 @@
         }
       });
 
-      // Soft-Delete / Reaktivierung
+      // -------------------------------------
+      // Soft-Delete / Restore
+      // -------------------------------------
       btnDelete?.addEventListener("click", async () => {
         if (isCore) return status.show("Erster Nutzer ist geschützt.", "warn");
+
         const newDeleted = !u.deleted;
+
         try {
-          await supabaseAPI.updateData("public.profiles", u.id, { deleted: newDeleted });
+          await supabaseAPI.updateData("profiles", u.id, { deleted: newDeleted });
           status.show(
             newDeleted ? `Benutzer gelöscht: ${u.username}` : `Benutzer reaktiviert: ${u.username}`,
             newDeleted ? "warn" : "ok"
