@@ -16,18 +16,19 @@
   }
 
   // ================================
-  // Deleted-Filter (Standard: ausblenden)
-  // ================================
-  let showDeleted = false;
+// Deleted-Filter (Standard: ausblenden)
+// ================================
+let showDeleted = false;
 
-  btnToggleDeleted.addEventListener("click", () => {
-    showDeleted = !showDeleted;
-    btnToggleDeleted.textContent = showDeleted
-      ? "🐦‍🔥 Gelöschte einblenden"
-      : "🔥 Gelöschte ausblenden";
+btnToggleDeleted.addEventListener("click", () => {
+  showDeleted = !showDeleted;
 
-    loadUsers();
-  });
+  btnToggleDeleted.textContent = showDeleted
+    ? "🐦‍🔥 Gelöschte einblenden"
+    : "🔥 Gelöschte ausblenden";
+
+  loadUsers();
+});
 
   // ================================
   // Benutzerliste laden
