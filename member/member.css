@@ -1,32 +1,37 @@
-/* /logbuch/member/member.css — Version 1.2 */
+/* /logbuch/member/member.css — Version 1.3 */
 
-/* Container um die Tabelle */
+/* ============================================
+   Tabellen-Wrapper (scrollbar + full height)
+============================================ */
 .member-table-wrapper {
   width: 100%;
-  max-width: 100%;
-  height: calc(100vh - 140px);
+  height: calc(100vh - 150px); /* Kopf + Toolbar + Puffer */
   overflow-x: auto;
   overflow-y: auto;
   border: 1px solid #ccc;
   background: #fff;
   border-radius: 4px;
+  position: relative;
 }
 
-/* Tabelle */
+/* ============================================
+   Tabelle
+============================================ */
 #member-table {
   width: max-content;
   border-collapse: collapse;
-  white-space: nowrap;
-  table-layout: fixed;
+  white-space: nowrap; /* Keine Umbrüche in Zellen */
+  background: #fff;
 }
 
-/* Sticky Table Head */
+/* ============================================
+   Sticky Tabellenkopf
+============================================ */
 #member-table thead {
   position: sticky;
   top: 0;
+  z-index: 10;
   background: #f2f2f2;
-  z-index: 5;
-  border-bottom: 2px solid #bbb;
 }
 
 #member-table th,
@@ -36,9 +41,18 @@
   text-align: left;
 }
 
-/* Aktionen */
+/* Kopf etwas stärker abheben */
+#member-table th {
+  font-weight: bold;
+  border-bottom: 2px solid #bbb;
+}
+
+/* ============================================
+   Aktionen (Buttons in einer Zeile)
+============================================ */
 #member-table td.actions {
   display: flex;
+  align-items: center;
   gap: 6px;
 }
 
@@ -48,13 +62,21 @@
   border: none;
   background: transparent;
   font-size: 18px;
+  transition: opacity 0.2s ease;
 }
 
 #member-table td.actions button:hover {
   opacity: 0.7;
 }
 
-/* Toggle-Bar */
+#member-table td.actions button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   Toolbar (über Tabelle)
+============================================ */
 .member-toolbar {
   display: flex;
   align-items: center;
@@ -69,6 +91,7 @@
   background: #eee;
   border-radius: 4px;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 
 .member-toolbar button:hover {
