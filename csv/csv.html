@@ -1,0 +1,42 @@
+<!-- /logbuch/dashboard/dashboard.html — Version 0.3 (Supabase Onlinebetrieb) -->
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="../" />
+  <title>Logbuch | Dashboard</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/status.css" />
+  <link rel="stylesheet" href="dashboard/dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+</head>
+
+<body class="app-layout">
+  <!-- Linkes Navigationsmenü -->
+  <aside id="nav"></aside>
+
+  <!-- Kopfbereich -->
+  <header id="kopf"></header>
+
+  <!-- Hauptinhalt -->
+  <main id="content" class="content">
+    <h2>CSV-Upload</h2>
+    <p>csv-tabelle</p>
+  </main>
+
+
+  <!-- Globale Skripte -->
+  <script src="js/status.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/kopf.js"></script>
+  <script src="js/timeout.js"></script>
+  <script src="csv/csv.js"></script>
+
+</body>
+</html>
