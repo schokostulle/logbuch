@@ -34,12 +34,20 @@ async function registerUser(username, password) {
     email,
     password,
     options: {
-      data: { username }, // nur Username, keine Rolle hier!
-    },
+      data: { username }
+    }
   });
 
-  if (error) throw new Error(error.message);
-  return data; // { user, session }
+  if (error) {
+    console.error("[supabase] Registrierung-Fehler:", error);
+    throw new Error(error.message);
+  }
+
+  // Registrierung erfolgreich, auch wenn keine Session erzeugt wird
+  return {
+    ok: true,
+    user: data.user || null
+  };
 }
 
 /**
