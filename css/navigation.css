@@ -1,19 +1,19 @@
 /* ============================================================
-   /logbuch/css/navigation.css — Version 1.0 (Marine Logbuch Edition)
-   Dunkle Marinefarben | Metallakzente | serifen/mono minimalistisch
+   /logbuch/css/navigation.css — Version 1.1 (Marine Logbuch Edition)
+   Dunkle Marinefarben | Metallakzente | Serif + Mono minimalistisch
 ============================================================ */
 
 /* =========================================
-   VARIABLEN – MARITIMES DESIGN
+   MARITIME VARIABLEN
 ========================================= */
 :root {
   --nav-width: clamp(160px, 20vw, 240px);
 
-  --nav-bg: #0b1017;       /* sehr dunkles Marineblau */
-  --nav-border: #1a2028;   /* dunkles Metallgrau */
-  --nav-text: #d7dde3;     /* helles Eisen */
-  --nav-hover: #121a24;    /* leicht helleres Marineblau */
-  --nav-accent: #b08d57;   /* Bronze/Gold-Akzent (minimal) */
+  --nav-bg: #0b1017;        /* sehr dunkles Marineblau */
+  --nav-border: #1a2028;    /* metallisches Dunkelgrau */
+  --nav-text: #d7dde3;      /* helles Eisen */
+  --nav-hover: #121a24;     /* etwas heller, Marineblau */
+  --nav-accent: #b08d57;    /* Bronze */
 }
 
 /* =========================================
@@ -32,56 +32,61 @@
 
   overflow-y: auto;
   overflow-x: hidden;
-  scroll-behavior: smooth;
 
+  scroll-behavior: smooth;
   z-index: 10;
+
   font-family: "Merriweather", serif;
 }
 
 /* =========================================
-   LOGBUCH BRAND (oben)
+   NAV-HEADER (Titelbereich)
 ========================================= */
-.nav .brand {
+.nav-header {
   padding: 16px;
-  font-weight: 700;
   border-bottom: 1px solid var(--nav-border);
 
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  justify-content: center;
 
   color: var(--nav-text);
-  letter-spacing: 0.5px;
 }
 
-.nav .brand::before {
-  content: "⚓";
-  font-size: 18px;
-  color: var(--nav-accent); /* Bronze-Akzent */
+.nav-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.nav-title .icon {
+  font-size: 20px;
+  color: var(--nav-accent);
 }
 
 /* =========================================
-   MENÜLISTE
+   MENÜ-LISTE
 ========================================= */
 .nav ul {
   list-style: none;
-  padding: 8px 8px;
+  padding: 8px;
   margin: 0;
 
   display: flex;
   flex-direction: column;
   gap: 6px;
-
   flex: 1;
 }
 
 /* =========================================
-   EINZELNE LINKS
+   LINKS
 ========================================= */
 .nav a {
   display: flex;
@@ -89,18 +94,17 @@
   gap: 10px;
 
   padding: 10px 12px;
-
   width: 100%;
+
   color: var(--nav-text);
   text-decoration: none;
-
   border-radius: 6px;
-
-  font-family: "Roboto Mono", monospace;
 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  font-family: "Roboto Mono", monospace;
 
   transition: background 0.2s ease, color 0.2s ease;
 }
@@ -116,33 +120,37 @@
 }
 
 /* =========================================
-   LOGOUT
+   LOGOUT-Bereich
 ========================================= */
-.logout {
-  margin: 12px;
-  padding-top: 8px;
-
+.nav-list.bottom {
+  margin-top: auto;
   border-top: 1px solid var(--nav-border);
+  padding-top: 10px;
 }
 
 /* =========================================
-   RESPONSIVE (Icon-Modus)
+   RESPONSIVE – Icon Mode
 ========================================= */
 @media (max-width: 800px) {
   :root {
     --nav-width: 50px;
   }
 
-  .nav a span.label {
+  /* Titel ohne Text → nur Icon */
+  .nav-title .label {
     display: none;
   }
 
-  .nav .brand {
-    font-size: 0;
-    padding: 14px 0;
+  .nav-header {
+    padding: 10px 0;
   }
 
-  .nav .brand::before {
-    font-size: 20px;
+  .nav-title .icon {
+    font-size: 22px;
+  }
+
+  /* Menüeinträge ohne Label */
+  .nav a .label {
+    display: none;
   }
 }
