@@ -1,34 +1,56 @@
-/* /logbuch/member/member.css — Version 1.1 */
-#member-table {
+/* /logbuch/member/member.css — Version 1.0 */
+
+/* Gesamter Tabellencontainer */
+.member-table-wrapper {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 16px;
-  font-size: 15px;
-}
-
-#member-table th, #member-table td {
+  max-width: 100%;
+  height: calc(100vh - 120px); /* unter dem Kopf */
+  overflow-x: auto;  /* horizontal scrollen */
+  overflow-y: auto;  /* vertikal scrollen */
   border: 1px solid #ccc;
-  padding: 6px 10px;
-  text-align: center;
+  border-radius: 4px;
+  background: #fff;
 }
 
+/* Tabelle selbst */
+#member-table {
+  width: max-content; /* passt sich an Inhalt an → benötigt horizontal scroll */
+  border-collapse: collapse;
+  table-layout: fixed; /* verhindert unkontrolliertes Ausdehnen */
+  white-space: nowrap; /* keine Zeilenumbrüche */
+}
+
+/* Tabellenkopf */
 #member-table thead {
-  background: #f3f3f3;
-  font-weight: bold;
+  position: sticky;
+  top: 0;
+  background: #f2f2f2;
+  z-index: 2;
 }
 
-#member-table tbody tr:nth-child(even) {
-  background: #fafafa;
+/* Zellen */
+#member-table th,
+#member-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+  white-space: nowrap; /* erzwingt Einzeiligkeit */
+}
+
+/* Aktionen (Buttons) */
+#member-table td.actions {
+  display: flex;
+  gap: 6px;
 }
 
 #member-table td.actions button {
-  background: none;
-  border: none;
   cursor: pointer;
+  padding: 4px 8px;
+  border: none;
+  background: transparent;
   font-size: 18px;
-  transition: transform 0.1s ease;
 }
 
 #member-table td.actions button:hover {
-  transform: scale(1.2);
+  opacity: 0.7;
 }
