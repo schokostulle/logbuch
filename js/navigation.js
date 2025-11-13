@@ -1,4 +1,4 @@
-// /logbuch/js/navigation.js — Version 0.3a (Supabase Onlinebetrieb, erweitert mit Kopfzeilen)
+// /logbuch/js/navigation.js — Version 0.3b (stabil, kompatibel mit timeout.js & style.css)
 (function initNavigation() {
   let initialized = false;
   let attempts = 0;
@@ -9,38 +9,28 @@
     const navContainer = document.getElementById("nav");
     if (!navContainer) return false;
 
-    // ==========================================
-    // Benutzername prüfen (Supabase + Session)
-    // ==========================================
-    let username = sessionStorage.getItem("username") || "Gast";
-    try {
-      const data = await supabaseAPI.getSession();
-      const user = data?.user;
-      if (user) {
-        username = user.user_metadata?.username || username;
-      }
-    } catch (err) {
-      console.warn("Navigation: Supabase-Session konnte nicht geprüft werden:", err);
-    }
+    // Username ausschließlich aus SessionStorage
+    // (Rolle & Status werden nicht in der Navi angezeigt)
+    const username = sessionStorage.getItem("username") || "Gast";
 
     // ==========================================
     // Navigation HTML-Struktur aufbauen
     // ==========================================
     navContainer.innerHTML = `
       <nav class="nav">
-        <!-- Zeile 1: Logbuch -->
+
+        <!-- Header: Titel + Timeout -->
         <div class="nav-header">
           <div class="nav-title">
             <span class="icon">⚓</span>
             <span class="label">Logbuch</span>
           </div>
-          <!-- Zeile 2: Session-Info -->
           <div class="nav-session">
-            <span class="timeout">[--:--]</span>
+            <span id="nav-timeout">[--:--]</span>
           </div>
         </div>
 
-        <!-- Navigationseinträge -->
+        <!-- Menüeinträge -->
         <ul class="nav-list">
           <li>
             <a href="dashboard/dashboard.html">
@@ -65,6 +55,7 @@
             </a>
           </li>
         </ul>
+
       </nav>
     `;
 
@@ -78,7 +69,7 @@
         try {
           await supabaseAPI.logoutUser();
         } catch (err) {
-          console.warn("Logout fehlgeschlagen:", err);
+          console.warn("[Navigation] Logout fehlgeschlagen:", err);
         }
         sessionStorage.setItem("lastExit", "pending");
         window.location.href = "gate.html";
@@ -97,8 +88,5 @@
     if (!success && attempts++ < 10) setTimeout(tryRender, 300);
   }
 
-  // ==========================================
-  // Initialisierung nach DOM-Load
-  // ==========================================
   window.addEventListener("load", tryRender);
 })();
