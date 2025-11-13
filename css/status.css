@@ -1,20 +1,51 @@
-/* /logbuch/css/status.css */
+/* ============================================================
+   /logbuch/css/status.css — Version 1.0 (Marine Logbuch Edition)
+   Maritime Farben | Minimalistisch | Metallische Warnfarben
+============================================================ */
+
 .status {
   position: fixed;
-  bottom: 16px;
+  bottom: 18px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 10px 16px;
-  border-radius: 8px;
-  background: #1e293b;
-  color: #e2e8f0;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+
+  padding: 10px 18px;
+  border-radius: 4px;
+
+  background: #0f141d; /* tiefmarine */
+  border: 1px solid #1b1f24; /* dunkles Eisen */
+
+  color: #d7dde3; /* helles Eisen */
+  font-family: "Roboto Mono", monospace;
   font-size: 14px;
+
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.55);
+
   z-index: 1000;
-  opacity: 0.95;
-  transition: opacity 0.3s ease;
+  opacity: 0.97;
+  transition: opacity 0.3s ease, transform 0.2s ease;
 }
-.status.ok { background: #16a34a; }
-.status.warn { background: #f59e0b; }
-.status.error { background: #dc2626; }
-.status.hidden { opacity: 0; pointer-events: none; }
+
+.status.ok {
+  background: #0f2a1e;       /* dunkles grün-blau (marine) */
+  border-color: #3c7a54;     /* oxidiertes Messing */
+  color: #8fd6a8;            /* blasses Grün */
+}
+
+.status.warn {
+  background: #2a2412;       /* dunkle Bronze */
+  border-color: #b58a42;     /* Bronze */
+  color: #e7c483;            /* helles Gold-Bronze */
+}
+
+.status.error {
+  background: #2b0d0d;       /* dunkles Rotbraun */
+  border-color: #7a1e1e;     /* dunkle Schiffslaternenfarbe */
+  color: #f1a9a9;            /* entsättigtes Alarmrot */
+}
+
+.status.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(8px);
+}
