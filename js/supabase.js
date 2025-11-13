@@ -40,12 +40,14 @@ async function registerUser(username, password) {
   return data;
 }
 
-/** Login mit Username + Passwort (Fake-Mail) */
+// Login: gibt sowohl data als auch error sauber zurück
 async function loginUser(username, password) {
   const email = makeFakeEmail(username);
-  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-  if (error) throw new Error(`Login fehlgeschlagen: ${error.message}`);
-  return data;
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+  return { data, error };
 }
 
 /** Logout */
