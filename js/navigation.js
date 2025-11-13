@@ -24,7 +24,7 @@
     // Navigation erzeugen
     navContainer.innerHTML = `
       <nav class="nav">
-        <div class="brand">⚓ Allianz-Logbuch</div>
+        <div class="brand"><span class="icon">⚓</span><span class="label">Logbuch</span></div>
 
         <ul class="nav-list">
           <li>
