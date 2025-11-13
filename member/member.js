@@ -24,8 +24,8 @@ btnToggleDeleted.addEventListener("click", () => {
   showDeleted = !showDeleted;
 
   btnToggleDeleted.textContent = showDeleted
-    ? "🐦‍🔥 Gelöschte einblenden"
-    : "🔥 Gelöschte ausblenden";
+    ? "🔥 Gelöschte ausblenden"
+    : "🐦‍🔥 Gelöschte einblenden";
 
   loadUsers();
 });
