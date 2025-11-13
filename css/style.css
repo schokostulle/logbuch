@@ -1,5 +1,5 @@
 /* ============================================================
-   /logbuch/css/style.css — Version 0.4
+   /logbuch/css/style.css — Version 0.7
    Supabase Onlinebetrieb | Responsiv | Scrollbar | Funktional
    ============================================================ */
 
@@ -16,7 +16,7 @@ html, body {
   width: 100%;
   height: 100%;
   font-family: system-ui, sans-serif;
-  overflow: hidden; /* Nur Teilbereiche scrollen */
+  overflow: hidden;
   background: #fff;
   color: #000;
 }
@@ -125,9 +125,7 @@ body.app-layout {
   scroll-behavior: smooth;
 }
 
-/* ============================
-   NAVIGATION: Kopfbereich
-============================ */
+/* Kopfbereich der Navigation */
 .nav-header {
   display: flex;
   flex-direction: column;
@@ -147,18 +145,17 @@ body.app-layout {
   white-space: nowrap;
 }
 
-.nav-title .icon {
-  font-size: 18px;
-}
+.nav-title .icon { font-size: 18px; }
 
 .nav-session {
   margin-top: 4px;
   font-size: 12px;
-  color: #555;
+  color: #333;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 4px;
+  text-align: center;
 }
 
 .nav-session .timeout {
@@ -166,9 +163,7 @@ body.app-layout {
   font-weight: 600;
 }
 
-/* ============================
-   NAVIGATION: Listen
-============================ */
+/* Navigationslisten */
 .nav-list {
   list-style: none;
   padding: 8px 0;
@@ -205,13 +200,9 @@ body.app-layout {
   transition: background 0.2s ease;
 }
 
-.nav a:hover {
-  background: #e6e6e6;
-}
+.nav a:hover { background: #e6e6e6; }
 
-.nav .logout {
-  margin: 12px 0;
-}
+.nav .logout { margin: 12px 0; }
 
 /* -------------------------------
    KOPF (rechts vom Menü)
@@ -229,6 +220,7 @@ body.app-layout {
   min-height: 80px;
   background: #fff;
   z-index: 5;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
 .kopf-row {
@@ -239,47 +231,45 @@ body.app-layout {
   box-sizing: border-box;
 }
 
-.kopf-row.row1 {
-  justify-content: flex-end;
-}
-
-.kopf-row.row2 {
-  justify-content: flex-start;
-  font-weight: bold;
-}
+.kopf-row.row1 { justify-content: flex-end; }
+.kopf-row.row2 { justify-content: flex-start; font-weight: bold; }
 
 /* -------------------------------
-   CONTENT (rechts, unter Kopf)
+   CONTENT (rechts, unterhalb Kopf)
 -------------------------------- */
 #content {
-  position: relative;
-  margin-left: clamp(160px, 20vw, 240px);
-  padding-top: 80px;
+  position: absolute;
+  top: 80px; /* unterhalb des Kopfbereichs */
+  left: clamp(160px, 20vw, 240px);
+  right: 0;
+  bottom: 0;
+
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  width: calc(100% - clamp(160px, 20vw, 240px));
-  height: calc(100vh - 80px);
+
   overflow-y: auto;
   overflow-x: hidden;
+  padding: 16px;
+  background: #fff;
   box-sizing: border-box;
   scroll-behavior: smooth;
+  z-index: 1;
 }
 
 /* =========================================
    RESPONSIVE ANPASSUNG
 ========================================= */
 @media (max-width: 800px) {
-  #nav {
-    width: 50px;
-  }
+  #nav { width: 50px; }
 
   .nav-header {
-    padding: 10px 0;
+    padding: 8px 0;
   }
 
   .nav-title {
+    flex-direction: column;
     font-size: 0;
   }
 
@@ -287,20 +277,26 @@ body.app-layout {
     font-size: 20px;
   }
 
+  /* Timeout sichtbar, zentriert unter ⚓ */
   .nav-session {
-    display: none; /* Sessiontimeout bei schmalen Screens ausblenden */
+    flex-direction: column;
+    font-size: 11px;
+    margin-top: 4px;
+    line-height: 1.1em;
+    text-align: center;
   }
 
-  .nav a .label {
-    display: none;
+  .nav-session .timeout {
+    display: block;
   }
 
-  #kopf {
-    left: 50px;
-  }
+  .nav a .label { display: none; }
 
+  #kopf { left: 50px; }
   #content {
-    margin-left: 50px;
-    width: calc(100% - 50px);
+    left: 50px;
+    top: 80px;
+    right: 0;
+    bottom: 0;
   }
 }
