@@ -1,4 +1,4 @@
-// /logbuch/member/member.js — Version 1.3C (ohne last_login)
+// /logbuch/member/member.js — Version 1.3D (ohne last_login, stabil)
 (async function () {
   const tableBody = document.querySelector("#member-table tbody");
   const btnToggleDeleted = document.getElementById("toggle-deleted");
@@ -6,14 +6,18 @@
   const username = sessionStorage.getItem("username");
   const role = sessionStorage.getItem("userRole");
 
-  // Zugang nur für Admins
+  // ==========================================
+  // Zugriffsschutz
+  // ==========================================
   if (!username || role !== "admin") {
     status.show("Zugriff verweigert.", "error");
     setTimeout(() => (window.location.href = "dashboard/dashboard.html"), 1200);
     return;
   }
 
-  // Deleted-Filter (Default: ausblenden)
+  // ==========================================
+  // Deleted-Filter (Standard: ausgeblendet)
+  // ==========================================
   let showDeleted = false;
 
   btnToggleDeleted.addEventListener("click", () => {
@@ -26,21 +30,23 @@
     loadUsers();
   });
 
-  // -------------------------------------------------------
+  // ==========================================
   // Benutzer laden
-  // -------------------------------------------------------
+  // ==========================================
   async function loadUsers() {
     tableBody.innerHTML = `<tr><td colspan="5">Lade Daten...</td></tr>`;
 
     try {
       const users = await supabaseAPI.fetchData("profiles");
 
-      // Core-Admin (1. registrierter Benutzer)
+      // Core-Admin (erster registrierter Benutzer)
       const coreUser = [...users].sort(
         (a, b) => new Date(a.created_at) - new Date(b.created_at)
       )[0];
 
-      renderTable(users, coreUser?.id ?? null);
+      const coreAdminId = coreUser?.id ?? null;
+
+      renderTable(users, coreAdminId);
 
     } catch (err) {
       console.error("[Member] Fehler:", err);
@@ -48,13 +54,13 @@
     }
   }
 
-  // -------------------------------------------------------
+  // ==========================================
   // Tabelle erzeugen
-  // -------------------------------------------------------
+  // ==========================================
   function renderTable(users, coreAdminId) {
     tableBody.innerHTML = "";
 
-    // Optional: gelöschte Benutzer ausblenden
+    // Gelöschte optional ausblenden
     const list = showDeleted ? users : users.filter(u => !u.deleted);
 
     if (list.length === 0) {
@@ -104,25 +110,30 @@
         </td>
       `;
 
-      // 🟦 Rollenwechsel
+      // Rollenwechsel
       tr.querySelector(".btn-role")?.addEventListener("click", async () => {
+        if (isSelf || isCore) return;
         const newRole = u.rolle === "admin" ? "member" : "admin";
         await update(u.id, { rolle: newRole }, `Rolle geändert: ${u.username} → ${newRole}`);
       });
 
-      // 🟧 Statuswechsel
+      // Statuswechsel
       tr.querySelector(".btn-status")?.addEventListener("click", async () => {
+        if (isCore) return;
         const newStatus = u.status === "aktiv" ? "blockiert" : "aktiv";
         await update(u.id, { status: newStatus }, `Status geändert: ${u.username} → ${newStatus}`);
       });
 
-      // 🔴 Soft Delete / Restore
+      // Soft Delete / Restore
       tr.querySelector(".btn-delete")?.addEventListener("click", async () => {
+        if (isCore) return;
         const newDeleted = !u.deleted;
         await update(
           u.id,
           { deleted: newDeleted },
-          newDeleted ? `Benutzer gelöscht: ${u.username}` : `Benutzer reaktiviert: ${u.username}`
+          newDeleted
+            ? `Benutzer gelöscht: ${u.username}`
+            : `Benutzer reaktiviert: ${u.username}`
         );
       });
 
@@ -130,7 +141,9 @@
     });
   }
 
+  // ==========================================
   // Hilfsfunktion für Updates
+  // ==========================================
   async function update(id, values, msg) {
     try {
       await supabaseAPI.updateData("profiles", id, values);
