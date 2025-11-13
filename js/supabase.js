@@ -1,16 +1,16 @@
-// /logbuch/js/supabase.js — Version 0.3
-// Zweck: Zentrale Schnittstelle zwischen Frontend (Index, Dashboard, etc.) und Supabase
-// Keine UI-Logik, keine DOM-Zugriffe – nur API-Kommunikation
+// /logbuch/js/supabase.js — Version 0.3a (geprüft + stabilisiert)
+// Zweck: zentrale Schnittstelle zwischen Frontend (Index, Dashboard etc.) und Supabase
+// Nur API-Kommunikation – keine UI-Logik oder DOM-Zugriffe
 
 // ==========================
 // Grundkonfiguration
 // ==========================
 
-// !!! Eigene Projektwerte einsetzen !!!
+// !!! Eigene Supabase-Daten einsetzen !!!
 const SUPABASE_URL = "https://bbeczprdumbeqcutqopr.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiZWN6cHJkdW1iZXFjdXRxb3ByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3NjMzMTgsImV4cCI6MjA3NzMzOTMxOH0.j2DiRK_40cSiFOM8KdA9DzjLklC9hXH_Es6mHPOvPQk";
 
-// Supabase-Client erstellen (globale Instanz)
+// Globale Supabase-Clientinstanz
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ==========================
@@ -26,7 +26,7 @@ function makeFakeEmail(username) {
 // Authentifizierung
 // ==========================
 
-// Registrierung mit Username + Passwort (Fake-Mail)
+/** Registrierung mit Username + Passwort (Fake-Mail) */
 async function registerUser(username, password) {
   const email = makeFakeEmail(username);
   const { data, error } = await supabaseClient.auth.signUp({
@@ -34,42 +34,33 @@ async function registerUser(username, password) {
     password,
     options: {
       data: { username },
-      emailRedirectTo: window.location.origin + "/logbuch/gate.html"
-    }
+      emailRedirectTo: `${window.location.origin}/logbuch/gate.html`,
+    },
   });
-  if (error) throw new Error(error.message);
-  // Auch ohne bestätigte E-Mail als Erfolg werten:
-  return { ok: true, data };
-}
 
-/**
- * Login mit Username + Passwort (Fake-Mail)
- */
-async function loginUser(username, password) {
-  const email = makeFakeEmail(username);
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
-  });
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(`Registrierung fehlgeschlagen: ${error.message}`);
   return data;
 }
 
-/**
- * Logout
- */
+/** Login mit Username + Passwort (Fake-Mail) */
+async function loginUser(username, password) {
+  const email = makeFakeEmail(username);
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) throw new Error(`Login fehlgeschlagen: ${error.message}`);
+  return data;
+}
+
+/** Logout */
 async function logoutUser() {
   const { error } = await supabaseClient.auth.signOut();
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(`Logout fehlgeschlagen: ${error.message}`);
   return true;
 }
 
-/**
- * Aktive Session abrufen
- */
+/** Aktive Session abrufen */
 async function getSession() {
   const { data, error } = await supabaseClient.auth.getSession();
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(`Sessionabruf fehlgeschlagen: ${error.message}`);
   return data?.session || null;
 }
 
@@ -82,28 +73,28 @@ async function fetchData(table, filter = {}) {
   let query = supabaseClient.from(table).select("*");
   for (const [key, value] of Object.entries(filter)) query = query.eq(key, value);
   const { data, error } = await query;
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(`Fetch fehlgeschlagen: ${error.message}`);
   return data;
 }
 
 /** Datensatz hinzufügen */
 async function insertData(table, values) {
   const { data, error } = await supabaseClient.from(table).insert(values).select();
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(`Insert fehlgeschlagen: ${error.message}`);
   return data;
 }
 
 /** Datensatz aktualisieren */
 async function updateData(table, id, values) {
   const { data, error } = await supabaseClient.from(table).update(values).eq("id", id).select();
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(`Update fehlgeschlagen: ${error.message}`);
   return data;
 }
 
 /** Datensatz löschen */
 async function deleteData(table, id) {
   const { error } = await supabaseClient.from(table).delete().eq("id", id);
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(`Delete fehlgeschlagen: ${error.message}`);
   return true;
 }
 
@@ -120,5 +111,5 @@ window.supabaseAPI = {
   fetchData,
   insertData,
   updateData,
-  deleteData
+  deleteData,
 };
