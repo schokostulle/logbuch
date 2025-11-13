@@ -3,43 +3,64 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Sehr wichtig für GitHub Pages -->
   <base href="../" />
+
   <title>Memberverwaltung</title>
 
+  <!-- Styles -->
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="member/member.css" />
   <link rel="stylesheet" href="css/status.css" />
 </head>
 
 <body>
+  <!-- Navigation & Kopf werden dynamisch durch JS aufgebaut -->
   <aside id="nav"></aside>
   <header id="kopf"></header>
 
   <main id="content">
 
-  <div class="member-table-wrapper">
-    <table id="member-table">
-      <thead>
-        <tr>
-          <th>Username</th>
-          <th>Registriert</th>
-          <th>Letzter Login</th>
-          <th>Rolle</th>
-          <th>Status</th>
-          <th>Aktion</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</main>
+    <!-- Toolbar über der Tabelle -->
+    <div class="member-toolbar">
+      <button id="toggle-deleted">🐦‍🔥 Gelöschte ausblenden</button>
+    </div>
 
+    <!-- Scrollbarer Tabellenbereich -->
+    <div class="member-table-wrapper">
+      <table id="member-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Registriert</th>
+            <th>Letzter Login</th>
+            <th>Rolle</th>
+            <th>Status</th>
+            <th>Aktion</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- Globale Statusanzeige -->
   <script src="js/status.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Supabase MUST COME FIRST -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Schnittstelle -->
   <script src="js/supabase.js"></script>
+
+  <!-- Layout-Komponenten -->
   <script src="js/navigation.js"></script>
   <script src="js/kopf.js"></script>
   <script src="js/timeout.js"></script>
+
+  <!-- Member-Logik -->
   <script src="member/member.js"></script>
 </body>
 </html>
