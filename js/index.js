@@ -1,5 +1,4 @@
-// /logbuch/js/index.js — Version 0.3a (Onlinebetrieb über Supabase)
-// Login & Registrierung – zentrale Benutzeroberfläche
+// /logbuch/js/index.js — Version 0.7 (Supabase Onlinebetrieb)
 
 // ==============================
 // Tabs & Formulare
@@ -16,7 +15,6 @@ function fadeSwitch(fromEl, toEl, fromTab, toTab) {
     fromEl.classList.add("hidden");
     fromEl.classList.remove("fadeout");
     if (typeof fromEl.reset === "function") fromEl.reset();
-
     toEl.classList.remove("hidden");
     toEl.style.opacity = "0";
     toEl.style.transform = "scale(0.98)";
@@ -25,12 +23,11 @@ function fadeSwitch(fromEl, toEl, fromTab, toTab) {
       toEl.style.transform = "scale(1)";
     }, 30);
   }, 350);
-
   fromTab.classList.remove("active");
   toTab.classList.add("active");
 }
 
-// Tabsteuerung
+// Tabs umschalten
 tabLogin.addEventListener("click", () => {
   if (!loginForm.classList.contains("hidden")) return;
   fadeSwitch(registerForm, loginForm, tabRegister, tabLogin);
@@ -55,26 +52,37 @@ loginForm.addEventListener("submit", async (e) => {
   }
 
   try {
-    const data = await supabaseAPI.loginUser(username, password);
-    const user = data?.user ?? data?.session?.user;
-
-    if (!user) throw new Error("Login fehlgeschlagen.");
+    // Login mit Fake-Mail
+    const { user, error } = await supabaseAPI.loginUser(username, password);
+    if (error || !user) throw error || new Error("Login fehlgeschlagen.");
 
     const profileName = user.user_metadata?.username || username;
+
+    // 🔹 Rolle aus Tabelle "profiles" abrufen
+    let role = "member";
+    try {
+      const res = await supabaseAPI.fetchData("profiles", { username: profileName });
+      if (res && res.length > 0 && res[0].rolle) {
+        role = res[0].rolle;
+      }
+    } catch (dbErr) {
+      console.warn("[Login] Rolle konnte nicht aus 'profiles' geladen werden:", dbErr);
+    }
+
+    // Session speichern
     sessionStorage.setItem("username", profileName);
-    sessionStorage.setItem("userRole", "User");
+    sessionStorage.setItem("userRole", role);
     sessionStorage.removeItem("lastExit");
+
+    // 🔁 Live-Aktualisierung des Kopfs auslösen
+    window.dispatchEvent(new StorageEvent("storage", { key: "userRole", newValue: role }));
 
     status.show(`Willkommen ${profileName}`, "ok");
     loginForm.reset();
     setTimeout(() => (window.location.href = "gate.html"), 900);
   } catch (err) {
-    console.error("Login-Fehler:", err);
-    const msg =
-      (err.message || "").toLowerCase().includes("invalid")
-        ? "Falscher Benutzername oder Passwort."
-        : "Anmeldung fehlgeschlagen.";
-    status.show(msg, "error");
+    console.error(err);
+    status.show("Anmeldung fehlgeschlagen.", "error");
   }
 });
 
@@ -101,19 +109,35 @@ registerForm.addEventListener("submit", async (e) => {
   }
 
   try {
-    const data = await supabaseAPI.registerUser(username, pw1);
-    if (!data) throw new Error("Registrierung fehlgeschlagen.");
+    const res = await supabaseAPI.registerUser(username, pw1);
+    if (!res?.ok) throw new Error("Registrierung fehlgeschlagen.");
+
+    // Standardrolle & Status in Tabelle "profiles" eintragen
+    try {
+      const allProfiles = await supabaseAPI.fetchData("profiles");
+      const role = allProfiles.length === 0 ? "admin" : "member"; // erster wird Admin
+      const statusVal = allProfiles.length === 0 ? "aktiv" : "blockiert";
+
+      await supabaseAPI.insertData("profiles", {
+        username,
+        rolle: role,
+        status: statusVal,
+        deleted: false
+      });
+    } catch (insErr) {
+      console.warn("[Registrierung] Konnte Profil nicht speichern:", insErr);
+    }
 
     status.show("Registrierung erfolgreich. Jetzt einloggen.", "ok");
     registerForm.reset();
     fadeSwitch(registerForm, loginForm, tabRegister, tabLogin);
   } catch (err) {
-    console.error("Registrierungsfehler:", err);
+    console.error(err);
     const msg =
       (err.message || "").toLowerCase().includes("duplicate") ||
       (err.message || "").toLowerCase().includes("unique")
         ? "Benutzername existiert bereits."
-        : "Registrierung fehlgeschlagen.";
+        : err.message || "Registrierung fehlgeschlagen.";
     status.show(msg, "error");
   }
 });
