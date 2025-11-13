@@ -39,7 +39,7 @@ tabRegister.addEventListener("click", () => {
 });
 
 // ==============================
-// LOGIN über Supabase (fix)
+// LOGIN über Supabase (Fehlerdiagnose aktiv)
 // ==============================
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -52,9 +52,13 @@ loginForm.addEventListener("submit", async (e) => {
   }
 
   try {
-    // 🔹 Korrektur: Supabase liefert data.user, nicht user direkt
     const { data, error } = await supabaseAPI.loginUser(username, password);
-    if (error || !data?.user) throw error || new Error("Login fehlgeschlagen.");
+    console.log("[DEBUG] Login result:", data, error);
+
+    if (error) throw error;
+    if (!data || !data.user) {
+      throw new Error("Kein Benutzerobjekt empfangen (data.user fehlt).");
+    }
 
     const user = data.user;
     const profileName = user.user_metadata?.username || username;
