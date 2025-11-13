@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Sehr wichtig für GitHub Pages -->
+  <!-- Wichtig für GitHub Pages -->
   <base href="../" />
 
   <title>Memberverwaltung</title>
@@ -16,18 +16,18 @@
 </head>
 
 <body>
-  <!-- Navigation & Kopf werden dynamisch durch JS aufgebaut -->
+  <!-- Navigation & Kopf -->
   <aside id="nav"></aside>
   <header id="kopf"></header>
 
   <main id="content">
 
-    <!-- Toolbar über der Tabelle -->
+    <!-- Toolbar -->
     <div class="member-toolbar">
-      <button id="toggle-deleted">🐦‍🔥 Gelöschte ausblenden</button>
+      <button id="toggle-deleted">🗑️ Gelöschte anzeigen</button>
     </div>
 
-    <!-- Scrollbarer Tabellenbereich -->
+    <!-- Tabelle -->
     <div class="member-table-wrapper">
       <table id="member-table">
         <thead>
@@ -49,18 +49,18 @@
   <!-- Globale Statusanzeige -->
   <script src="js/status.js"></script>
 
-  <!-- Supabase MUST COME FIRST -->
+  <!-- Supabase zuerst laden -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Schnittstelle -->
+  <!-- Schnittstelle zu Supabase -->
   <script src="js/supabase.js"></script>
 
-  <!-- Layout-Komponenten -->
+  <!-- Layout & Systemkomponenten -->
   <script src="js/navigation.js"></script>
   <script src="js/kopf.js"></script>
   <script src="js/timeout.js"></script>
 
-  <!-- Member-Logik -->
+  <!-- Hauptlogik -->
   <script src="member/member.js"></script>
 </body>
 </html>
