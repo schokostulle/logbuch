@@ -1,7 +1,7 @@
 /* ============================================================
-   /logbuch/css/style.css — Version 0.7
-   Supabase Onlinebetrieb | Responsiv | Scrollbar | Funktional
-   ============================================================ */
+   /logbuch/css/style.css — Version 1.0 (Marine Logbuch Edition)
+   Maritime Farben | Metallische Akzente | Minimalistisch
+============================================================ */
 
 /* =========================================
    GRUNDLAGEN
@@ -15,10 +15,10 @@
 html, body {
   width: 100%;
   height: 100%;
-  font-family: system-ui, sans-serif;
+  font-family: "Roboto Mono", monospace;
+  background: #0a0f1a; /* tiefmarine */
+  color: #c8cdd4; /* helles Eisen */
   overflow: hidden;
-  background: #fff;
-  color: #000;
 }
 
 /* =========================================
@@ -28,82 +28,60 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
   height: 100vh;
 }
 
 .auth-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 400px;
+  background: #1b1f24;   /* eisengrau */
+  border: 1px solid #3b4148;
+  border-radius: 4px;
+  padding: 24px;
+  width: 380px;
   max-width: 90vw;
-  gap: 16px;
   text-align: center;
-}
-
-.auth-tabs {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-}
-
-.auth-tabs button {
-  flex: 1;
-  text-align: center;
-}
-
-.auth-form {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  width: 100%;
-  gap: 10px;
+  gap: 16px;
+}
+
+.auth-card h1 {
+  font-family: "Cormorant SC", serif;
+  color: #d1b87b; /* gold */
+  letter-spacing: 1px;
 }
 
 label {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
+  text-align: left;
+  font-size: 14px;
+  color: #c8cdd4;
 }
 
 input {
   width: 100%;
   padding: 6px;
+  border: 1px solid #3b4148;
+  background: #0f141d;
+  color: #eee;
 }
 
-button[type="submit"] {
-  align-self: center;
-  padding: 6px 12px;
+button {
+  cursor: pointer;
+  padding: 8px 12px;
+  border: 1px solid #3b4148;
+  background: #2a2f35;
+  color: #eee;
 }
-
-.msg {
-  align-self: center;
-  text-align: center;
-  min-height: 1em;
-}
-
-.auth-form.hidden { display: none; }
-
-.auth-form.fadeout {
-  opacity: 0;
-  transform: scale(0.98);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+button:hover {
+  background: #3b4148;
 }
 
 /* =========================================
    APP-LAYOUT (Navigation + Kopf + Content)
 ========================================= */
+
 body.app-layout {
   display: flex;
   flex-direction: row;
-  height: 100vh;
-  overflow: hidden;
 }
 
 /* -------------------------------
@@ -114,189 +92,149 @@ body.app-layout {
   top: 0;
   left: 0;
   bottom: 0;
-  width: clamp(160px, 20vw, 240px);
+
+  width: clamp(160px, 18vw, 240px);
+  background: #0a0f1a;  /* tiefmarine */
+  border-right: 1px solid #1b1f24;
+
+  color: #c8cdd4;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #ccc;
-  background: #f8f8f8;
-  z-index: 10;
+
   overflow-y: auto;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
 }
 
 /* Kopfbereich der Navigation */
 .nav-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #ccc;
-  background: #f0f0f0;
+  padding: 14px 10px;
+  text-align: center;
+  border-bottom: 1px solid #1b1f24;
+  background: #0f141d;
 }
 
 .nav-title {
+  font-family: "Cormorant SC", serif;
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: #d1b87b;
   display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 6px;
-  font-weight: bold;
-  white-space: nowrap;
+  justify-content: center;
 }
 
-.nav-title .icon { font-size: 18px; }
-
 .nav-session {
-  margin-top: 4px;
-  font-size: 12px;
-  color: #333;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  text-align: center;
+  margin-top: 6px;
+  font-size: 13px;
+  color: #c8cdd4;
 }
 
 .nav-session .timeout {
-  font-family: monospace;
-  font-weight: 600;
+  font-family: "Roboto Mono", monospace;
+  font-weight: 500;
 }
 
 /* Navigationslisten */
 .nav-list {
   list-style: none;
-  padding: 8px 0;
-  margin: 0;
+  padding: 12px 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
+  gap: 4px;
 }
 
 .nav-list.bottom {
   margin-top: auto;
-  border-top: 1px solid #ccc;
-  padding-top: 8px;
+  border-top: 1px solid #1b1f24;
 }
 
 .nav li {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: 100%;
 }
 
 .nav a {
   display: flex;
+  gap: 10px;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 0;
+  padding: 10px;
   width: 100%;
+  color: #c8cdd4;
   text-decoration: none;
-  color: #000;
-  transition: background 0.2s ease;
+  font-size: 15px;
+  border-left: 4px solid transparent;
+
+  transition: background 0.15s ease;
 }
 
-.nav a:hover { background: #e6e6e6; }
-
-.nav .logout { margin: 12px 0; }
+.nav a:hover {
+  background: #1b1f24;
+  border-left: 4px solid #b08d57; /* bronze */
+}
 
 /* -------------------------------
-   KOPF (rechts vom Menü)
+   KOPF (Header rechts)
 -------------------------------- */
 #kopf {
   position: fixed;
   top: 0;
-  left: clamp(160px, 20vw, 240px);
+  left: clamp(160px, 18vw, 240px);
   right: 0;
+
+  background: #0f141d; /* marine dunkel */
+  border-bottom: 1px solid #1b1f24;
+  color: #d1b87b; /* gold */
+
+  padding: 10px 18px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: stretch;
-  border-bottom: 1px solid #ccc;
-  min-height: 80px;
-  background: #fff;
-  z-index: 5;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
 .kopf-row {
   display: flex;
-  align-items: center;
-  padding: 8px 16px;
-  width: 100%;
-  box-sizing: border-box;
+  padding: 4px 0;
 }
 
-.kopf-row.row1 { justify-content: flex-end; }
-.kopf-row.row2 { justify-content: flex-start; font-weight: bold; }
+.kopf-row.row1 {
+  justify-content: flex-end;
+  font-family: "Roboto Mono", monospace;
+  color: #c8cdd4;
+}
+
+.kopf-row.row2 {
+  font-family: "Cormorant SC", serif;
+  font-size: 20px;
+  color: #d1b87b;
+}
 
 /* -------------------------------
-   CONTENT (rechts, unterhalb Kopf)
+   CONTENT (rechts unter Kopf)
 -------------------------------- */
 #content {
   position: absolute;
-  top: 80px; /* unterhalb des Kopfbereichs */
-  left: clamp(160px, 20vw, 240px);
+  top: 90px;
+  left: clamp(160px, 18vw, 240px);
   right: 0;
   bottom: 0;
 
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-
   overflow-y: auto;
-  overflow-x: hidden;
-  padding: 16px;
-  background: #fff;
-  box-sizing: border-box;
-  scroll-behavior: smooth;
-  z-index: 1;
+  padding: 20px;
+
+  background: #0a0f1a;
 }
 
 /* =========================================
-   RESPONSIVE ANPASSUNG
+   RESPONSIVE
 ========================================= */
 @media (max-width: 800px) {
-  #nav { width: 50px; }
+  #nav { width: 58px; }
+  #kopf { left: 58px; }
+  #content { left: 58px; }
 
-  .nav-header {
-    padding: 8px 0;
-  }
-
-  .nav-title {
-    flex-direction: column;
-    font-size: 0;
-  }
-
-  .nav-title .icon {
-    font-size: 20px;
-  }
-
-  /* Timeout sichtbar, zentriert unter ⚓ */
-  .nav-session {
-    flex-direction: column;
-    font-size: 11px;
-    margin-top: 4px;
-    line-height: 1.1em;
-    text-align: center;
-  }
-
-  .nav-session .timeout {
-    display: block;
-  }
+  .nav-title { font-size: 0; }
+  .nav-title .icon { font-size: 20px; }
 
   .nav a .label { display: none; }
 
-  #kopf { left: 50px; }
-  #content {
-    left: 50px;
-    top: 80px;
-    right: 0;
-    bottom: 0;
+  .nav-session {
+    font-size: 11px;
   }
 }
