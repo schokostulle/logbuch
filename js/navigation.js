@@ -35,6 +35,12 @@
               <span class="label">Memberverwaltung</span>
             </a>
           </li>
+          <li>
+            <a href="csv/csv.html">
+              <span class="icon">⚙️</span>
+              <span class="label">CSV-Upload</span>
+            </a>
+          </li>
         </ul>
 
         <!-- Logout -->
