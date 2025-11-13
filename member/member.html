@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="../" />
+  <title>Memberverwaltung</title>
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="member/member.css" />
+  <link rel="stylesheet" href="css/status.css" />
+</head>
+
+<body>
+  <aside id="nav"></aside>
+  <header id="kopf"></header>
+
+  <main id="content" class="content">
+    <h2>Mitgliederverwaltung</h2>
+    <table id="member-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Registriert am</th>
+          <th>Rolle</th>
+          <th>Status</th>
+          <th>Aktion</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="5">Lade Daten...</td></tr>
+      </tbody>
+    </table>
+  </main>
+
+  <script src="js/status.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/kopf.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="member/member.js"></script>
+</body>
+</html>
