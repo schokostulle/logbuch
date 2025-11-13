@@ -1,17 +1,36 @@
-/* /logbuch/member/member.css — Version 1.3 */
+/* ============================================================
+   /logbuch/member/member.css — Version 2.0
+   Marine Logbuch Edition
+   Dunkles Blau · Metallgrau · Bronzeakzente · Minimalistisch
+============================================================ */
 
 /* ============================================
    Tabellen-Wrapper (scrollbar + full height)
 ============================================ */
 .member-table-wrapper {
   width: 100%;
-  height: calc(100vh - 150px); /* Kopf + Toolbar + Puffer */
+  height: calc(100vh - 150px); /* Kopf + Toolbar */
   overflow-x: auto;
   overflow-y: auto;
-  border: 1px solid #ccc;
-  background: #fff;
-  border-radius: 4px;
+
+  background: #0d1218;                /* tiefes Marineblau */
+  border: 1px solid #252c35;          /* dunkles Metallgrau */
+  border-radius: 6px;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
   position: relative;
+}
+
+/* Scrollbars maritim */
+.member-table-wrapper::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.member-table-wrapper::-webkit-scrollbar-thumb {
+  background: #3b4652;     /* Metallgrau */
+}
+.member-table-wrapper::-webkit-scrollbar-track {
+  background: #11161b;
 }
 
 /* ============================================
@@ -20,40 +39,56 @@
 #member-table {
   width: max-content;
   border-collapse: collapse;
-  white-space: nowrap; /* Keine Umbrüche in Zellen */
-  background: #fff;
+  white-space: nowrap;
+
+  background: #141a20;   /* dunkles Marineblau */
+  color: #d7dde3;        /* helles graublau */
+  font-family: "Roboto Mono", monospace;
 }
 
 /* ============================================
-   Sticky Tabellenkopf
+   Tabellenkopf (sticky)
 ============================================ */
 #member-table thead {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: #f2f2f2;
+  background: #1a2027;      /* etwas helleres Blau */
+  border-bottom: 2px solid #36404b;
 }
 
-#member-table th,
-#member-table td {
-  padding: 8px 12px;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
-}
-
-/* Kopf etwas stärker abheben */
 #member-table th {
-  font-weight: bold;
-  border-bottom: 2px solid #bbb;
+  padding: 10px 14px;
+  font-weight: 700;
+  font-family: "Merriweather", serif;
+  color: #e5eaf0;
+  border-bottom: 2px solid #3a444f;
 }
 
 /* ============================================
-   Aktionen (Buttons in einer Zeile)
+   Tabellenzellen
+============================================ */
+#member-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #2a323c;
+  color: #cbd3db;
+}
+
+/* Optional: Gelöschte User farblich markieren */
+/*
+tr.deleted td {
+  background: rgba(120, 0, 0, 0.15);
+  color: #ffb3b3;
+}
+*/
+
+/* ============================================
+   Aktionen
 ============================================ */
 #member-table td.actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 #member-table td.actions button {
@@ -61,12 +96,15 @@
   padding: 4px 8px;
   border: none;
   background: transparent;
-  font-size: 18px;
-  transition: opacity 0.2s ease;
+
+  font-size: 20px;
+  color: #d7dde3;
+  transition: transform 0.15s ease, color 0.2s ease;
 }
 
 #member-table td.actions button:hover {
-  opacity: 0.7;
+  transform: scale(1.15);
+  color: #b48a3c;        /* Bronze-Akzent */
 }
 
 #member-table td.actions button:disabled {
@@ -75,25 +113,31 @@
 }
 
 /* ============================================
-   Toolbar (über Tabelle)
+   Toolbar über der Tabelle
 ============================================ */
 .member-toolbar {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  margin-bottom: 8px;
-  gap: 10px;
+  margin-bottom: 10px;
+  gap: 12px;
 }
 
 .member-toolbar button {
-  padding: 6px 12px;
-  border: 1px solid #aaa;
-  background: #eee;
+  padding: 6px 14px;
+  border: 1px solid #3a444f;       /* Metallgrau */
+  background: #1a2027;
+  color: #d7dde3;
+
   border-radius: 4px;
   cursor: pointer;
-  transition: background 0.2s ease;
+
+  font-family: "Roboto Mono", monospace;
+  font-size: 14px;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .member-toolbar button:hover {
-  background: #ddd;
+  background: #232c35;
+  border-color: #b48a3c;          /* Bronze */
 }
