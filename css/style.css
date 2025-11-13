@@ -1,7 +1,13 @@
 /* ============================================================
-   /logbuch/css/style.css — Version 1.1 (Marine Logbuch Edition)
-   Maritime Farben | Metallische Akzente | Minimalistisch | Stabil
+   /logbuch/css/style.css — Version 1.2 (Marine Logbuch Edition)
 ============================================================ */
+
+/* =========================================
+   VARIABLEN – Navigation global steuern
+========================================= */
+:root {
+  --nav-width: clamp(160px, 18vw, 240px); /* Standardbreite Desktop */
+}
 
 /* =========================================
    GRUNDLAGEN
@@ -22,7 +28,7 @@ html, body {
 }
 
 /* =========================================
-   INDEX & GATE (zentriert)
+   INDEX & GATE
 ========================================= */
 .auth-container {
   display: flex;
@@ -32,7 +38,7 @@ html, body {
 }
 
 .auth-card {
-  background: #1b1f24;    /* eisengrau */
+  background: #1b1f24;
   border: 1px solid #3b4148;
   border-radius: 4px;
   padding: 26px 24px;
@@ -46,12 +52,12 @@ html, body {
 
 .auth-card h1 {
   font-family: "Cormorant SC", serif;
-  color: #d1b87b; /* gold */
+  color: #d1b87b;
   font-size: 32px;
   letter-spacing: 1px;
 }
 
-/* Tabs oben */
+/* Tabs */
 .auth-tabs {
   display: flex;
   gap: 10px;
@@ -69,7 +75,7 @@ html, body {
 
 .auth-tabs button.active {
   background: #0f1317;
-  border-color: #b48a3c; /* Bronze */
+  border-color: #b48a3c;
   color: #f8fafc;
   font-weight: 700;
 }
@@ -78,7 +84,7 @@ html, body {
   background: #232c35;
 }
 
-/* Formular */
+/* FORM */
 .auth-form {
   display: flex;
   flex-direction: column;
@@ -88,7 +94,6 @@ html, body {
 label {
   text-align: left;
   font-size: 14px;
-  color: #c8cdd4;
 }
 
 input {
@@ -100,11 +105,11 @@ input {
 }
 
 .auth-form input {
-  margin-bottom: 4px; /* sanfte Luft */
+  margin-bottom: 4px;
 }
 
 .auth-form button[type="submit"] {
-  margin-top: 10px;
+  margin-top: 12px;
   padding: 10px 14px;
   background: #2a2f35;
   border: 1px solid #3b4148;
@@ -115,14 +120,11 @@ input {
   background: #3b4148;
 }
 
-.hidden {
-  display: none !important;
-}
+.hidden { display: none !important; }
 
 /* =========================================
-   APP-LAYOUT (Navigation + Kopf + Content)
+   APP-LAYOUT
 ========================================= */
-
 body.app-layout {
   display: flex;
   flex-direction: row;
@@ -130,26 +132,25 @@ body.app-layout {
 }
 
 /* -------------------------------
-   NAVIGATION (links)
+   NAVIGATION
 -------------------------------- */
 #nav {
   position: fixed;
   top: 0;
-  bottom: 0;
   left: 0;
+  bottom: 0;
 
-  width: clamp(160px, 18vw, 240px);
-  background: #0a0f1a; 
+  width: var(--nav-width);
+  background: #0a0f1a;
   border-right: 1px solid #1b1f24;
 
   display: flex;
   flex-direction: column;
-  color: #c8cdd4;
-
   overflow-y: auto;
+  color: #c8cdd4;
 }
 
-/* Header im Menü */
+/* NAV-HEADER */
 .nav-header {
   padding: 16px 10px;
   text-align: center;
@@ -167,7 +168,7 @@ body.app-layout {
   justify-content: center;
 }
 
-/* Navigationslisten */
+/* NAV-LIST */
 .nav-list {
   list-style: none;
   padding: 12px 0;
@@ -185,7 +186,7 @@ body.app-layout {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px;
+  padding: 12px 10px;
   width: 100%;
 
   text-decoration: none;
@@ -197,23 +198,22 @@ body.app-layout {
 
 .nav a:hover {
   background: #1b1f24;
-  border-left: 4px solid #b08d57; /* Bronze */
+  border-left: 4px solid #b08d57;
 }
 
 /* -------------------------------
-   KOPF (Header rechts)
+   KOPF
 -------------------------------- */
 #kopf {
   position: fixed;
   top: 0;
-  left: clamp(160px, 18vw, 240px);
+  left: var(--nav-width);
   right: 0;
 
   background: #0f141d;
   border-bottom: 1px solid #1b1f24;
   padding: 10px 18px;
 
-  color: #c8cdd4;
   display: flex;
   flex-direction: column;
 }
@@ -237,7 +237,7 @@ body.app-layout {
 #content {
   position: absolute;
   top: 90px;
-  left: clamp(160px, 18vw, 240px);
+  left: var(--nav-width);
   right: 0;
   bottom: 0;
 
@@ -246,38 +246,32 @@ body.app-layout {
 }
 
 /* =========================================
-   RESPONSIVE – Icon Mode (unter 800px)
+   RESPONSIVE – Icon Mode < 800px
 ========================================= */
 @media (max-width: 800px) {
+
   :root {
-    /* Nav nimmt max. 15% des Screens ein, aber mindestens 58px */
     --nav-width: clamp(58px, 15vw, 90px);
   }
 
-  /* Labels ausblenden */
+  /* Labels verstecken */
   .nav a .label,
   .nav-title .label {
     display: none !important;
   }
 
-  .nav-header {
-    padding: 12px 0;
-  }
-
-  .nav-title .icon {
-    font-size: 22px;
-  }
-
   /* Icons zentrieren */
   .nav a {
-    justify-content: center !important;
+    justify-content: center;
     text-align: center;
-    padding: 12px 0;
+    padding: 14px 0;
   }
 
   .nav a .icon {
+    font-size: 22px;
     min-width: 100%;
     text-align: center;
-    font-size: 22px;
   }
+
+  /* Kopf passt sich automatisch an, da left: var(--nav-width); */
 }
