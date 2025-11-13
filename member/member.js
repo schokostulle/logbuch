@@ -1,4 +1,4 @@
-// /logbuch/member/member.js — Version 1.2 (Admin-Tool für Benutzerverwaltung)
+// /logbuch/member/member.js — Version 1.3 (Admin-Tool, last_login + Core-Admin-Schutz)
 (async function () {
   const tableBody = document.querySelector("#member-table tbody");
   const username = sessionStorage.getItem("username");
@@ -15,41 +15,56 @@
   // Benutzerliste laden
   // -----------------------------------------
   async function loadUsers() {
-    tableBody.innerHTML = `<tr><td colspan="5">Lade Daten...</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="6">Lade Daten...</td></tr>`;
     try {
+      // alle Profile laden
       const data = await supabaseAPI.fetchData("public.profiles");
-      renderTable(data);
+      // Ersten (Core-)User bestimmen (kleinstes created_at)
+      const first = [...data].sort((a, b) => new Date(a.created_at) - new Date(b.created_at))[0];
+      const coreAdminId = first?.id || null;
+      renderTable(data, coreAdminId);
     } catch (err) {
       console.error("[Member] Fehler beim Laden:", err);
-      tableBody.innerHTML = `<tr><td colspan="5">Fehler beim Laden der Daten.</td></tr>`;
+      tableBody.innerHTML = `<tr><td colspan="6">Fehler beim Laden der Daten.</td></tr>`;
     }
   }
 
   // -----------------------------------------
   // Tabelle rendern
   // -----------------------------------------
-  function renderTable(users) {
+  function renderTable(users, coreAdminId) {
     if (!users || users.length === 0) {
-      tableBody.innerHTML = `<tr><td colspan="5">Keine Benutzer gefunden.</td></tr>`;
+      tableBody.innerHTML = `<tr><td colspan="6">Keine Benutzer gefunden.</td></tr>`;
       return;
     }
 
+    // Sortierung: aktiv zuerst, dann nach Name
+    users.sort((a, b) => {
+      const sA = (a.status || "").localeCompare(b.status || "");
+      if (sA !== 0) return sA;
+      return (a.username || "").localeCompare(b.username || "");
+    });
+
     tableBody.innerHTML = "";
     users.forEach((u) => {
+      const isSelf = u.username === username;
+      const isCore = u.id === coreAdminId;
+
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${u.username}</td>
         <td>${new Date(u.created_at).toLocaleString("de-DE")}</td>
+        <td>${u.last_login ? new Date(u.last_login).toLocaleString("de-DE") : "–"}</td>
         <td>${u.rolle}</td>
         <td>${u.status}</td>
         <td class="actions">
-          <button class="btn-role" title="Rollenwechsel">
+          <button class="btn-role" title="${isSelf ? "Eigene Rolle gesperrt" : isCore ? "Core-Admin gesperrt" : "Rollenwechsel"}" ${isSelf || isCore ? "disabled" : ""}>
             ${u.rolle === "admin" ? "🪖" : "🎖️"}
           </button>
-          <button class="btn-status" title="Statuswechsel">
+          <button class="btn-status" title="${isCore ? "Core-Admin gesperrt" : "Statuswechsel"}" ${isCore ? "disabled" : ""}>
             ${u.status === "aktiv" ? "🌕" : "🌑"}
           </button>
-          <button class="btn-delete" title="Soft Delete">
+          <button class="btn-delete" title="${isCore ? "Core-Admin gesperrt" : u.deleted ? "Reaktivieren" : "Soft Delete"}" ${isCore ? "disabled" : ""}>
             ${u.deleted ? "🐦‍🔥" : "🔥"}
           </button>
         </td>
@@ -59,13 +74,10 @@
       const btnStatus = tr.querySelector(".btn-status");
       const btnDelete = tr.querySelector(".btn-delete");
 
-      // -------------------------------------
       // Rollenwechsel (admin <-> member)
-      // -------------------------------------
-      btnRole.addEventListener("click", async () => {
-        if (u.username === username)
-          return status.show("Eigene Rolle kann nicht geändert werden.", "warn");
-
+      btnRole?.addEventListener("click", async () => {
+        if (isSelf) return status.show("Eigene Rolle kann nicht geändert werden.", "warn");
+        if (isCore) return status.show("Erster Nutzer ist geschützt.", "warn");
         const newRole = u.rolle === "admin" ? "member" : "admin";
         try {
           await supabaseAPI.updateData("public.profiles", u.id, { rolle: newRole });
@@ -77,10 +89,9 @@
         }
       });
 
-      // -------------------------------------
       // Statuswechsel (aktiv <-> blockiert)
-      // -------------------------------------
-      btnStatus.addEventListener("click", async () => {
+      btnStatus?.addEventListener("click", async () => {
+        if (isCore) return status.show("Erster Nutzer ist geschützt.", "warn");
         const newStatus = u.status === "aktiv" ? "blockiert" : "aktiv";
         try {
           await supabaseAPI.updateData("public.profiles", u.id, { status: newStatus });
@@ -92,18 +103,15 @@
         }
       });
 
-      // -------------------------------------
       // Soft-Delete / Reaktivierung
-      // -------------------------------------
-      btnDelete.addEventListener("click", async () => {
+      btnDelete?.addEventListener("click", async () => {
+        if (isCore) return status.show("Erster Nutzer ist geschützt.", "warn");
         const newDeleted = !u.deleted;
         try {
           await supabaseAPI.updateData("public.profiles", u.id, { deleted: newDeleted });
           status.show(
-            newDeleted
-              ? `Benutzer gelöscht: ${u.username}`
-              : `Benutzer reaktiviert: ${u.username}`,
-            "warn"
+            newDeleted ? `Benutzer gelöscht: ${u.username}` : `Benutzer reaktiviert: ${u.username}`,
+            newDeleted ? "warn" : "ok"
           );
           loadUsers();
         } catch (err) {
