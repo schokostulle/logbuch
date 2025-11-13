@@ -37,7 +37,6 @@
           <!-- Zeile 2: Session-Info -->
           <div class="nav-session">
             <span class="timeout">[--:--]</span>
-            <span class="label"> (Sessiontimeout)</span>
           </div>
         </div>
 
