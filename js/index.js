@@ -1,4 +1,4 @@
-// /logbuch/js/index.js — Version 0.7 (Supabase Onlinebetrieb)
+// /logbuch/js/index.js — Version 0.8 (Supabase Onlinebetrieb + Statusprüfung)
 
 // ==============================
 // Tabs & Formulare
@@ -58,15 +58,24 @@ loginForm.addEventListener("submit", async (e) => {
 
     const profileName = user.user_metadata?.username || username;
 
-    // 🔹 Rolle aus Tabelle "profiles" abrufen
+    // 🔹 Rolle und Status aus Tabelle "profiles" abrufen
     let role = "member";
+    let statusVal = "blockiert";
     try {
       const res = await supabaseAPI.fetchData("profiles", { username: profileName });
-      if (res && res.length > 0 && res[0].rolle) {
-        role = res[0].rolle;
+      if (res && res.length > 0) {
+        role = res[0].rolle || "member";
+        statusVal = res[0].status || "blockiert";
       }
     } catch (dbErr) {
-      console.warn("[Login] Rolle konnte nicht aus 'profiles' geladen werden:", dbErr);
+      console.warn("[Login] Profil konnte nicht aus 'profiles' geladen werden:", dbErr);
+    }
+
+    // ⛔ Blockierte Nutzer abweisen
+    if (statusVal.toLowerCase() !== "aktiv") {
+      await supabaseAPI.logoutUser().catch(() => {});
+      status.show("Zugang gesperrt. Bitte wende dich an einen Admin.", "error");
+      return;
     }
 
     // Session speichern
@@ -74,7 +83,7 @@ loginForm.addEventListener("submit", async (e) => {
     sessionStorage.setItem("userRole", role);
     sessionStorage.removeItem("lastExit");
 
-    // 🔁 Live-Aktualisierung des Kopfs auslösen
+    // 🔁 Kopf sofort aktualisieren
     window.dispatchEvent(new StorageEvent("storage", { key: "userRole", newValue: role }));
 
     status.show(`Willkommen ${profileName}`, "ok");
@@ -112,10 +121,10 @@ registerForm.addEventListener("submit", async (e) => {
     const res = await supabaseAPI.registerUser(username, pw1);
     if (!res?.ok) throw new Error("Registrierung fehlgeschlagen.");
 
-    // Standardrolle & Status in Tabelle "profiles" eintragen
+    // Standardrolle & Status setzen
     try {
       const allProfiles = await supabaseAPI.fetchData("profiles");
-      const role = allProfiles.length === 0 ? "admin" : "member"; // erster wird Admin
+      const role = allProfiles.length === 0 ? "admin" : "member"; // erster Admin
       const statusVal = allProfiles.length === 0 ? "aktiv" : "blockiert";
 
       await supabaseAPI.insertData("profiles", {
