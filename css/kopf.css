@@ -1,5 +1,7 @@
-/* /logbuch/css/kopf.css — Version 0.3 (dynamische Breite + responsiv)
-   Kopf + Content orientieren sich an der Navigation, kein Designfokus */
+/* ============================================================
+   /logbuch/css/kopf.css — Version 1.0 (Marine Logbuch Edition)
+   Dunkle Marinefarben | Metallakzente | Serifen & Monospace
+============================================================ */
 
 /* =========================================
    KOPFBEREICH
@@ -7,21 +9,29 @@
 #kopf {
   position: fixed;
   top: 0;
-  left: clamp(160px, 20vw, 240px); /* identisch zur Nav-Breite */
+  left: clamp(160px, 20vw, 240px);
   right: 0;
+
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
+
   min-height: 80px;
-  height: auto;
-  border-bottom: 1px solid #ccc;
-  background: #fff;
+  background: #0f141d;        /* tiefmarine */
+  border-bottom: 1px solid #1c2129; /* dunkles Metall */
+
+  color: #d7dde3;             /* helles Eisen */
   box-sizing: border-box;
   z-index: 5;
+
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  font-family: "Merriweather", serif;
 }
 
-/* Zeilenstruktur */
+/* =========================================
+   KOPFZEILEN
+========================================= */
 .kopf-row {
   display: flex;
   align-items: center;
@@ -30,28 +40,29 @@
   box-sizing: border-box;
 }
 
+/* Zeile 1: rechtsbündig — User, Rolle, Zeit */
 .kopf-row.row1 {
   justify-content: flex-end;
+  font-family: "Roboto Mono", monospace;
+  font-size: 14px;
+  letter-spacing: 0.4px;
+  color: #aeb7c2;             /* gedämpftes helles Eisen */
 }
 
+/* Zeile 2: linksbündig — Seitentitel */
 .kopf-row.row2 {
   justify-content: flex-start;
-  font-weight: bold;
+  font-size: 20px;
+  font-weight: 600;
+  color: #e1e6eb;             /* helles Stahlgrau */
 }
 
-/* Inhalt innerhalb der Kopfzeilen */
-.kopf-row .left {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  flex: 1;
-}
-
+/* Links/Rechts Container */
+.kopf-row .left,
 .kopf-row .right {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
   flex: 1;
+  display: flex;
+  align-items: center;
 }
 
 /* =========================================
@@ -59,21 +70,24 @@
 ========================================= */
 #content {
   position: relative;
-  margin-left: clamp(160px, 20vw, 240px); /* bündig mit Navigation */
-  padding-top: 80px;                      /* Platz für Kopf */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
+
+  margin-left: clamp(160px, 20vw, 240px);
+  padding-top: 80px; /* Platz für Kopfbereich */
+
   width: calc(100% - clamp(160px, 20vw, 240px));
   height: calc(100vh - 80px);
+
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
-  overflow-x: hidden;
+
+  background: #11161f;     /* tiefer Marinehintergrund */
+  color: #d7dde3;          /* helles Eisen */
   box-sizing: border-box;
 }
 
 /* =========================================
-   RESPONSIVE ANPASSUNG
+   RESPONSIV
 ========================================= */
 @media (max-width: 800px) {
   #kopf {
