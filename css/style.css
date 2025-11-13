@@ -76,6 +76,13 @@ button:hover {
 }
 
 /* =========================================
+   Sichtbarkeitssteuerung für Index-Formulare
+========================================= */
+.hidden {
+  display: none !important;
+}
+
+/* =========================================
    APP-LAYOUT (Navigation + Kopf + Content)
 ========================================= */
 
