@@ -1,6 +1,4 @@
-// /logbuch/js/gate.js — Version 2.0
-// Frontend-Einlasskontrolle basierend auf sessionStorage + Supabase-Profilstatus
-
+// /logbuch/js/gate.js — Version 2.1 (Schleifenfrei)
 (async function () {
   const title = document.getElementById("gate-title");
   const msg = document.getElementById("gate-msg");
@@ -11,15 +9,12 @@
     setTimeout(() => (window.location.href = target), delay);
   }
 
-  // ----------------------------------------------------
-  // 1. Logout-Vorgang (Frontend)
-  // ----------------------------------------------------
+  // --------------------------------------------
+  // 1. Logout-Vorgang
+  // --------------------------------------------
   const lastExit = sessionStorage.getItem("lastExit");
   if (lastExit === "pending") {
-    try {
-      await supabaseAPI.logoutUser(); // Supabase Sitzung beenden
-    } catch (_) {}
-
+    try { await supabaseAPI.logoutUser(); } catch (_) {}
     sessionStorage.clear();
 
     title.textContent = "Abmeldung";
@@ -27,9 +22,9 @@
     return redirect("index.html");
   }
 
-  // ----------------------------------------------------
-  // 2. Prüfung: Ist eine lokale Session vorhanden?
-  // ----------------------------------------------------
+  // --------------------------------------------
+  // 2. Lokale Session vorhanden?
+  // --------------------------------------------
   const username = sessionStorage.getItem("username");
   if (!username) {
     title.textContent = "Zugriff verweigert";
@@ -37,33 +32,37 @@
     return redirect("index.html");
   }
 
-  // ----------------------------------------------------
-  // 3. Profil aus Supabase laden (Status + Rolle)
-  // ----------------------------------------------------
+  // --------------------------------------------
+  // 3. Profil aus DB prüfen
+  // --------------------------------------------
   let profile = null;
   try {
-    const result = await supabaseAPI.fetchData("profiles", { username });
-    profile = result?.[0] || null;
+    const res = await supabaseAPI.fetchData("profiles", { username });
+    profile = res?.[0] || null;
   } catch (err) {
-    console.warn("[Gate] Profil konnte nicht geladen werden:", err);
+    console.warn("[Gate] DB-Fehler → sichere Rückleitung:", err);
 
-    // Fallback – nur lokale Session
-    title.textContent = "Willkommen";
-    msg.textContent = `Hallo ${username}!`;
-    return redirect("dashboard/dashboard.html");
+    // ❗ KEIN redirect zum Dashboard, sonst Loop!
+    // Zurück zum Login.
+    sessionStorage.clear();
+    title.textContent = "Zugriff verweigert";
+    msg.textContent = "Profil konnte nicht geladen werden.";
+    return redirect("index.html");
   }
 
+  // --------------------------------------------
+  // 4. Profil überhaupt vorhanden?
+  // --------------------------------------------
   if (!profile) {
-    // Kein Profil? → zurück zum Login
     sessionStorage.clear();
     title.textContent = "Unbekannter Benutzer";
     msg.textContent = "Bitte erneut anmelden.";
     return redirect("index.html");
   }
 
-  // ----------------------------------------------------
-  // 4. Blockiert? → raus!
-  // ----------------------------------------------------
+  // --------------------------------------------
+  // 5. Status prüfen
+  // --------------------------------------------
   if (profile.status !== "aktiv") {
     sessionStorage.clear();
     title.textContent = "Zugang gesperrt";
@@ -71,14 +70,13 @@
     return redirect("index.html");
   }
 
-  // ----------------------------------------------------
-  // 5. Alles ok → Weiter zum Dashboard
-  // ----------------------------------------------------
+  // --------------------------------------------
+  // 6. Finale Weiterleitung (einmalig)
+  // --------------------------------------------
+  sessionStorage.setItem("userRole", profile.rolle);
+
   title.textContent = "Willkommen zurück";
   msg.textContent = `Guten Tag, ${profile.username}!`;
 
-  // Rolle sicherstellen
-  sessionStorage.setItem("userRole", profile.rolle);
-
-  redirect("dashboard/dashboard.html");
+  return redirect("dashboard/dashboard.html");
 })();
