@@ -1,68 +1,84 @@
-// /logbuch/js/gate.js — Version 0.4 (Supabase-Onlinebetrieb, stabiler Redirect)
+// /logbuch/js/gate.js — Version 2.0
+// Frontend-Einlasskontrolle basierend auf sessionStorage + Supabase-Profilstatus
+
 (async function () {
   const title = document.getElementById("gate-title");
   const msg = document.getElementById("gate-msg");
   const sub = document.getElementById("gate-sub");
 
-  // ---------------------------
-  // Automatische Weiterleitung
-  // ---------------------------
-  function autoRedirect(target, delay = 1000) {
+  function redirect(target, delay = 1200) {
     sub.textContent = `Weiterleitung in ${delay / 1000}s ...`;
     setTimeout(() => (window.location.href = target), delay);
   }
 
-  const username = sessionStorage.getItem("username") || null;
-  const lastExit = sessionStorage.getItem("lastExit") || null;
-
-  // ---------------------------
-  // Supabase-Session prüfen
-  // ---------------------------
-  let activeSession = null;
-  try {
-    activeSession = await supabaseAPI.getSession();
-  } catch (err) {
-    console.warn("[Gate] Supabase Sessionprüfung fehlgeschlagen:", err);
-  }
-
-  // ---------------------------
-  // Eingang – gültige Sitzung
-  // ---------------------------
-  if (activeSession && !lastExit) {
-    const user = activeSession.user;
-    const name = user?.user_metadata?.username || username || "Benutzer";
-
-    title.textContent = "Willkommen zurück";
-    msg.textContent = `Guten Tag, ${name}!`;
-
-    autoRedirect("dashboard/dashboard.html");
-    return;
-  }
-
-  // ---------------------------
-  // Ausgang – Logout-Vorgang
-  // ---------------------------
+  // ----------------------------------------------------
+  // 1. Logout-Vorgang (Frontend)
+  // ----------------------------------------------------
+  const lastExit = sessionStorage.getItem("lastExit");
   if (lastExit === "pending") {
     try {
-      await supabaseAPI.logoutUser();
-    } catch (err) {
-      console.warn("[Gate] Logout bei Supabase fehlgeschlagen:", err);
-    }
+      await supabaseAPI.logoutUser(); // Supabase Sitzung beenden
+    } catch (_) {}
 
     sessionStorage.clear();
 
     title.textContent = "Abmeldung";
-    msg.textContent = "Bis bald! Sie wurden erfolgreich abgemeldet.";
-
-    autoRedirect("index.html");
-    return;
+    msg.textContent = "Sie wurden erfolgreich abgemeldet.";
+    return redirect("index.html");
   }
 
-  // ---------------------------
-  // Kein gültiger Zustand
-  // ---------------------------
-  title.textContent = "Zugriff verweigert";
-  msg.textContent = "Keine aktive Sitzung gefunden.";
+  // ----------------------------------------------------
+  // 2. Prüfung: Ist eine lokale Session vorhanden?
+  // ----------------------------------------------------
+  const username = sessionStorage.getItem("username");
+  if (!username) {
+    title.textContent = "Zugriff verweigert";
+    msg.textContent = "Keine gültige Sitzung gefunden.";
+    return redirect("index.html");
+  }
 
-  autoRedirect("index.html");
+  // ----------------------------------------------------
+  // 3. Profil aus Supabase laden (Status + Rolle)
+  // ----------------------------------------------------
+  let profile = null;
+  try {
+    const result = await supabaseAPI.fetchData("profiles", { username });
+    profile = result?.[0] || null;
+  } catch (err) {
+    console.warn("[Gate] Profil konnte nicht geladen werden:", err);
+
+    // Fallback – nur lokale Session
+    title.textContent = "Willkommen";
+    msg.textContent = `Hallo ${username}!`;
+    return redirect("dashboard/dashboard.html");
+  }
+
+  if (!profile) {
+    // Kein Profil? → zurück zum Login
+    sessionStorage.clear();
+    title.textContent = "Unbekannter Benutzer";
+    msg.textContent = "Bitte erneut anmelden.";
+    return redirect("index.html");
+  }
+
+  // ----------------------------------------------------
+  // 4. Blockiert? → raus!
+  // ----------------------------------------------------
+  if (profile.status !== "aktiv") {
+    sessionStorage.clear();
+    title.textContent = "Zugang gesperrt";
+    msg.textContent = "Bitte wende dich an einen Administrator.";
+    return redirect("index.html");
+  }
+
+  // ----------------------------------------------------
+  // 5. Alles ok → Weiter zum Dashboard
+  // ----------------------------------------------------
+  title.textContent = "Willkommen zurück";
+  msg.textContent = `Guten Tag, ${profile.username}!`;
+
+  // Rolle sicherstellen
+  sessionStorage.setItem("userRole", profile.rolle);
+
+  redirect("dashboard/dashboard.html");
 })();
