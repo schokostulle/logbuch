@@ -26,18 +26,20 @@ function makeFakeEmail(username) {
 // Authentifizierung
 // ==========================
 
-/**
- * Registrierung mit Username + Passwort (Fake-Mail)
- */
+// Registrierung mit Username + Passwort (Fake-Mail)
 async function registerUser(username, password) {
   const email = makeFakeEmail(username);
   const { data, error } = await supabaseClient.auth.signUp({
     email,
     password,
-    options: { data: { username } }
+    options: {
+      data: { username },
+      emailRedirectTo: window.location.origin + "/logbuch/gate.html"
+    }
   });
   if (error) throw new Error(error.message);
-  return data;
+  // Auch ohne bestätigte E-Mail als Erfolg werten:
+  return { ok: true, data };
 }
 
 /**
