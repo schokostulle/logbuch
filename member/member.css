@@ -129,6 +129,9 @@ tr.deleted td {
   background: #1a2027;
   color: #d7dde3;
 
+  white-space: nowrap;
+  flex-shrink: 0;
+
   border-radius: 4px;
   cursor: pointer;
 
