@@ -1,4 +1,4 @@
-// /logbuch/js/gate.js — Version 0.3 (Supabase-Onlinebetrieb)
+// /logbuch/js/gate.js — Version 0.4 (Supabase-Onlinebetrieb, stabiler Redirect)
 (async function () {
   const title = document.getElementById("gate-title");
   const msg = document.getElementById("gate-msg");
@@ -12,27 +12,29 @@
     setTimeout(() => (window.location.href = target), delay);
   }
 
-  const username = sessionStorage.getItem("username");
-  const lastExit = sessionStorage.getItem("lastExit");
+  const username = sessionStorage.getItem("username") || null;
+  const lastExit = sessionStorage.getItem("lastExit") || null;
 
   // ---------------------------
   // Supabase-Session prüfen
   // ---------------------------
-  let session = null;
+  let activeSession = null;
   try {
-    session = await supabaseAPI.getSession();
+    activeSession = await supabaseAPI.getSession();
   } catch (err) {
-    console.error("Supabase-Sessionprüfung fehlgeschlagen:", err);
+    console.warn("[Gate] Supabase Sessionprüfung fehlgeschlagen:", err);
   }
 
   // ---------------------------
   // Eingang – gültige Sitzung
   // ---------------------------
-  if (session && !lastExit) {
-    const user = session.user;
+  if (activeSession && !lastExit) {
+    const user = activeSession.user;
     const name = user?.user_metadata?.username || username || "Benutzer";
+
     title.textContent = "Willkommen zurück";
     msg.textContent = `Guten Tag, ${name}!`;
+
     autoRedirect("dashboard/dashboard.html");
     return;
   }
@@ -44,11 +46,14 @@
     try {
       await supabaseAPI.logoutUser();
     } catch (err) {
-      console.warn("Abmeldung mit Supabase fehlgeschlagen:", err);
+      console.warn("[Gate] Logout bei Supabase fehlgeschlagen:", err);
     }
+
     sessionStorage.clear();
+
     title.textContent = "Abmeldung";
     msg.textContent = "Bis bald! Sie wurden erfolgreich abgemeldet.";
+
     autoRedirect("index.html");
     return;
   }
@@ -58,5 +63,6 @@
   // ---------------------------
   title.textContent = "Zugriff verweigert";
   msg.textContent = "Keine aktive Sitzung gefunden.";
+
   autoRedirect("index.html");
 })();
