@@ -41,7 +41,7 @@
           <li>
             <a href="member/member.html">
               <span class="icon">🪖</span>
-              <span class="label">Member</span>
+              <span class="label">Memberverwaltung</span>
             </a>
           </li>
         </ul>
