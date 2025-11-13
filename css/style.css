@@ -96,6 +96,19 @@ button:hover {
   background: #232c35;
 }
 
+.auth-form input {
+  margin-bottom: 12px; /* vorher 0 – jetzt Luft */
+}
+
+.auth-form button[type="submit"] {
+  margin-top: 8px;      /* neuer Abstand */
+  padding: 8px 14px;    /* etwas mehr Körper */
+}
+
+.auth-form {
+  gap: 14px;
+}
+
 /* =========================================
    Sichtbarkeitssteuerung für Index-Formulare
 ========================================= */
