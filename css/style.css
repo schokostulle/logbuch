@@ -250,44 +250,34 @@ body.app-layout {
 ========================================= */
 @media (max-width: 800px) {
   :root {
-    --nav-width: 58px;
+    /* Nav nimmt max. 15% des Screens ein, aber mindestens 58px */
+    --nav-width: clamp(58px, 15vw, 90px);
   }
 
   /* Labels ausblenden */
-  .nav a .label {
-    display: none !important;
-  }
-
-  /* Titel auf Icon reduzieren */
+  .nav a .label,
   .nav-title .label {
     display: none !important;
   }
 
-  /* Header kompakter */
   .nav-header {
     padding: 12px 0;
   }
 
-  /* Icon größer */
   .nav-title .icon {
     font-size: 22px;
   }
 
-  /* >>> ICONS ZENTRAL AUSRICHTEN <<< */
+  /* Icons zentrieren */
   .nav a {
-    justify-content: center !important;   /* zentrale Ausrichtung */
-    text-align: center !important;
+    justify-content: center !important;
+    text-align: center;
     padding: 12px 0;
   }
 
-  .nav a span.icon {
-    min-width: 100%;        /* ganze Breite nutzen */
-    text-align: center;     /* Icon exakt in der Mitte */
+  .nav a .icon {
+    min-width: 100%;
+    text-align: center;
     font-size: 22px;
-  }
-
-  /* Logout-Bereich ebenfalls zentrieren */
-  .nav-list.bottom {
-    padding-top: 10px;
   }
 }
