@@ -1,4 +1,4 @@
-// /logbuch/js/navigation.js — Version 0.3b (stabil, kompatibel mit timeout.js & style.css)
+// /logbuch/js/navigation.js — Version 0.4 (ohne Session-Timeout, responsive Icon-Menü)
 (function initNavigation() {
   let initialized = false;
   let attempts = 0;
@@ -9,24 +9,15 @@
     const navContainer = document.getElementById("nav");
     if (!navContainer) return false;
 
-    // Username ausschließlich aus SessionStorage
-    // (Rolle & Status werden nicht in der Navi angezeigt)
-    const username = sessionStorage.getItem("username") || "Gast";
-
-    // ==========================================
-    // Navigation HTML-Struktur aufbauen
-    // ==========================================
+    // Navigation HTML-Struktur aufbauen (ohne Session-Timeout)
     navContainer.innerHTML = `
       <nav class="nav">
 
-        <!-- Header: Titel + Timeout -->
+        <!-- Header: Titel -->
         <div class="nav-header">
           <div class="nav-title">
             <span class="icon">⚓</span>
             <span class="label">Logbuch</span>
-          </div>
-          <div class="nav-session">
-            <span id="nav-timeout">[--:--]</span>
           </div>
         </div>
 
@@ -59,9 +50,7 @@
       </nav>
     `;
 
-    // ==========================================
     // Logout → Gate (Exit)
-    // ==========================================
     const logoutBtn = navContainer.querySelector("#btn-logout");
     if (logoutBtn) {
       logoutBtn.addEventListener("click", async (e) => {
@@ -80,9 +69,7 @@
     return true;
   }
 
-  // ==========================================
   // Wiederholungslogik bei Ladeverzögerung
-  // ==========================================
   async function tryRender() {
     const success = await renderNavigation();
     if (!success && attempts++ < 10) setTimeout(tryRender, 300);
