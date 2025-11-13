@@ -1,23 +1,22 @@
-// /logbuch/js/supabase.js — Version 0.3a (geprüft + stabilisiert)
-// Zweck: zentrale Schnittstelle zwischen Frontend (Index, Dashboard etc.) und Supabase
-// Nur API-Kommunikation – keine UI-Logik oder DOM-Zugriffe
+// /logbuch/js/supabase.js — Version 0.3b (ohne Email-Bestätigung)
+// Zentrale Schnittstelle zwischen Frontend (Index, Dashboard etc.) und Supabase
+// Keine DOM- oder UI-Logik – nur API-Kommunikation
 
 // ==========================
 // Grundkonfiguration
 // ==========================
 
-// !!! Eigene Supabase-Daten einsetzen !!!
+// !!! Eigene Supabase-Projektwerte einsetzen !!!
 const SUPABASE_URL = "https://bbeczprdumbeqcutqopr.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiZWN6cHJkdW1iZXFjdXRxb3ByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3NjMzMTgsImV4cCI6MjA3NzMzOTMxOH0.j2DiRK_40cSiFOM8KdA9DzjLklC9hXH_Es6mHPOvPQk";
 
-// Globale Supabase-Clientinstanz
+// Supabase-Client (global)
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ==========================
 // Hilfsfunktionen
 // ==========================
 
-// Fake-E-Mail für Username-basierte Authentifizierung
 function makeFakeEmail(username) {
   return `${username.trim().toLowerCase()}@logbuch.fake`;
 }
@@ -34,7 +33,6 @@ async function registerUser(username, password) {
     password,
     options: {
       data: { username },
-      emailRedirectTo: `${window.location.origin}/logbuch/gate.html`,
     },
   });
 
@@ -65,10 +63,9 @@ async function getSession() {
 }
 
 // ==========================
-// CRUD-Vorlagen (generisch)
+// CRUD-Funktionen (generisch)
 // ==========================
 
-/** Datensätze abrufen */
 async function fetchData(table, filter = {}) {
   let query = supabaseClient.from(table).select("*");
   for (const [key, value] of Object.entries(filter)) query = query.eq(key, value);
@@ -77,21 +74,18 @@ async function fetchData(table, filter = {}) {
   return data;
 }
 
-/** Datensatz hinzufügen */
 async function insertData(table, values) {
   const { data, error } = await supabaseClient.from(table).insert(values).select();
   if (error) throw new Error(`Insert fehlgeschlagen: ${error.message}`);
   return data;
 }
 
-/** Datensatz aktualisieren */
 async function updateData(table, id, values) {
   const { data, error } = await supabaseClient.from(table).update(values).eq("id", id).select();
   if (error) throw new Error(`Update fehlgeschlagen: ${error.message}`);
   return data;
 }
 
-/** Datensatz löschen */
 async function deleteData(table, id) {
   const { error } = await supabaseClient.from(table).delete().eq("id", id);
   if (error) throw new Error(`Delete fehlgeschlagen: ${error.message}`);
