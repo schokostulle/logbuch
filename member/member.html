@@ -15,24 +15,25 @@
   <aside id="nav"></aside>
   <header id="kopf"></header>
 
-  <main id="content" class="content">
-    <h2>Mitgliederverwaltung</h2>
+  <main id="content">
+  <h2>Userverwaltung</h2>
+
+  <div class="member-table-wrapper">
     <table id="member-table">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Registriert am</th>
-          <th>letzter Login</th>
+          <th>Username</th>
+          <th>Registriert</th>
+          <th>Letzter Login</th>
           <th>Rolle</th>
           <th>Status</th>
           <th>Aktion</th>
         </tr>
       </thead>
-      <tbody>
-        <tr><td colspan="5">Lade Daten...</td></tr>
-      </tbody>
+      <tbody></tbody>
     </table>
-  </main>
+  </div>
+</main>
 
   <script src="js/status.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
