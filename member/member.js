@@ -1,4 +1,4 @@
-// /logbuch/member/member.js — Version 1.3C (stabil + deleted-Filter + Core-Admin-Schutz)
+// /logbuch/member/member.js — Version 1.3C (ohne last_login)
 (async function () {
   const tableBody = document.querySelector("#member-table tbody");
   const btnToggleDeleted = document.getElementById("toggle-deleted");
@@ -6,96 +6,80 @@
   const username = sessionStorage.getItem("username");
   const role = sessionStorage.getItem("userRole");
 
-  // ================================
-  // Zugriffsschutz
-  // ================================
+  // Zugang nur für Admins
   if (!username || role !== "admin") {
     status.show("Zugriff verweigert.", "error");
     setTimeout(() => (window.location.href = "dashboard/dashboard.html"), 1200);
     return;
   }
 
-  // ================================
-// Deleted-Filter (Standard: ausblenden)
-// ================================
-let showDeleted = false;
+  // Deleted-Filter (Default: ausblenden)
+  let showDeleted = false;
 
-btnToggleDeleted.addEventListener("click", () => {
-  showDeleted = !showDeleted;
+  btnToggleDeleted.addEventListener("click", () => {
+    showDeleted = !showDeleted;
 
-  btnToggleDeleted.textContent = showDeleted
-    ? "🔥 Gelöschte ausblenden"
-    : "🐦‍🔥 Gelöschte einblenden";
+    btnToggleDeleted.textContent = showDeleted
+      ? "🔥 Gelöschte ausblenden"
+      : "🐦‍🔥 Gelöschte einblenden";
 
-  loadUsers();
-});
+    loadUsers();
+  });
 
-  // ================================
-  // Benutzerliste laden
-  // ================================
+  // -------------------------------------------------------
+  // Benutzer laden
+  // -------------------------------------------------------
   async function loadUsers() {
-    tableBody.innerHTML = `<tr><td colspan="6">Lade Daten...</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="5">Lade Daten...</td></tr>`;
 
     try {
-      const profiles = await supabaseAPI.fetchData("profiles");
+      const users = await supabaseAPI.fetchData("profiles");
 
-      if (!profiles || profiles.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="6">Keine Benutzer gefunden.</td></tr>`;
-        return;
-      }
-
-      // Core-Admin (erster registrierter User)
-      const core = [...profiles].sort((a, b) =>
-        new Date(a.created_at) - new Date(b.created_at)
+      // Core-Admin (1. registrierter Benutzer)
+      const coreUser = [...users].sort(
+        (a, b) => new Date(a.created_at) - new Date(b.created_at)
       )[0];
-      const coreAdminId = core?.id || null;
 
-      // Gelöschte optional filtern
-      const filtered = showDeleted
-        ? profiles
-        : profiles.filter((u) => !u.deleted);
-
-      renderTable(filtered, coreAdminId);
+      renderTable(users, coreUser?.id ?? null);
 
     } catch (err) {
-      console.error("[Member] Fehler beim Laden:", err);
-      tableBody.innerHTML = `<tr><td colspan="6">Fehler beim Laden der Daten.</td></tr>`;
+      console.error("[Member] Fehler:", err);
+      tableBody.innerHTML = `<tr><td colspan="5">Fehler beim Laden der Daten.</td></tr>`;
     }
   }
 
-  // ================================
-  // Tabelle rendern
-  // ================================
+  // -------------------------------------------------------
+  // Tabelle erzeugen
+  // -------------------------------------------------------
   function renderTable(users, coreAdminId) {
     tableBody.innerHTML = "";
 
-    if (!users || users.length === 0) {
-      tableBody.innerHTML = `<tr><td colspan="6">Keine Benutzer gefunden.</td></tr>`;
+    // Optional: gelöschte Benutzer ausblenden
+    const list = showDeleted ? users : users.filter(u => !u.deleted);
+
+    if (list.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="5">Keine Benutzer vorhanden.</td></tr>`;
       return;
     }
 
-    // Sortierung: aktiv → blockiert → gelöscht → alphabetisch
-    users.sort((a, b) => {
-      const order = { aktiv: 0, blockiert: 1, deleted: 2, null: 2, undefined: 2 };
-      const aOrder = a.deleted ? 2 : order[a.status] ?? 2;
-      const bOrder = b.deleted ? 2 : order[b.status] ?? 2;
-
-      if (aOrder !== bOrder) return aOrder - bOrder;
+    // Sortierung: aktiv → blockiert → alphabetisch
+    list.sort((a, b) => {
+      const order = { aktiv: 0, blockiert: 1, undefined: 2 };
+      const oa = order[a.status] ?? 2;
+      const ob = order[b.status] ?? 2;
+      if (oa !== ob) return oa - ob;
       return (a.username || "").localeCompare(b.username || "");
     });
 
-    users.forEach((u) => {
+    list.forEach(u => {
       const isSelf = u.username === username;
       const isCore = u.id === coreAdminId;
 
       const tr = document.createElement("tr");
 
-      if (u.deleted) tr.classList.add("row-deleted");
-
       tr.innerHTML = `
         <td>${u.username}</td>
         <td>${new Date(u.created_at).toLocaleString("de-DE")}</td>
-        <td>${u.last_login ? new Date(u.last_login).toLocaleString("de-DE") : "–"}</td>
         <td>${u.rolle}</td>
         <td>${u.status}</td>
 
@@ -103,7 +87,7 @@ btnToggleDeleted.addEventListener("click", () => {
           <button class="btn-role"
             ${isSelf || isCore ? "disabled" : ""}
             title="${isCore ? "Core-Admin gesperrt" : isSelf ? "Eigene Rolle gesperrt" : "Rollenwechsel"}">
-            ${u.rolle === "admin" ? "🪖" : "🎖️"}
+            ${u.rolle === "admin" ? "🎖️" : "🪖"}
           </button>
 
           <button class="btn-status"
@@ -120,74 +104,44 @@ btnToggleDeleted.addEventListener("click", () => {
         </td>
       `;
 
-      const btnRole = tr.querySelector(".btn-role");
-      const btnStatus = tr.querySelector(".btn-status");
-      const btnDelete = tr.querySelector(".btn-delete");
-
-      // ================================
-      // Rollenwechsel
-      // ================================
-      btnRole?.addEventListener("click", async () => {
-        if (isSelf) return status.show("Eigene Rolle kann nicht geändert werden.", "warn");
-        if (isCore) return status.show("Erster Nutzer ist geschützt.", "warn");
-
+      // 🟦 Rollenwechsel
+      tr.querySelector(".btn-role")?.addEventListener("click", async () => {
         const newRole = u.rolle === "admin" ? "member" : "admin";
-
-        try {
-          await supabaseAPI.updateData("profiles", u.id, { rolle: newRole });
-          status.show(`Rolle geändert: ${u.username} → ${newRole}`, "ok");
-          loadUsers();
-        } catch (err) {
-          console.error("[Member] Fehler beim Rollenwechsel:", err);
-          status.show("Fehler beim Ändern der Rolle.", "error");
-        }
+        await update(u.id, { rolle: newRole }, `Rolle geändert: ${u.username} → ${newRole}`);
       });
 
-      // ================================
-      // Statuswechsel
-      // ================================
-      btnStatus?.addEventListener("click", async () => {
-        if (isCore) return status.show("Erster Nutzer ist geschützt.", "warn");
-
+      // 🟧 Statuswechsel
+      tr.querySelector(".btn-status")?.addEventListener("click", async () => {
         const newStatus = u.status === "aktiv" ? "blockiert" : "aktiv";
-
-        try {
-          await supabaseAPI.updateData("profiles", u.id, { status: newStatus });
-          status.show(`Status geändert: ${u.username} → ${newStatus}`, "ok");
-          loadUsers();
-        } catch (err) {
-          console.error("[Member] Fehler beim Statuswechsel:", err);
-          status.show("Fehler beim Ändern des Status.", "error");
-        }
+        await update(u.id, { status: newStatus }, `Status geändert: ${u.username} → ${newStatus}`);
       });
 
-      // ================================
-      // Soft Delete / Restore
-      // ================================
-      btnDelete?.addEventListener("click", async () => {
-        if (isCore) return status.show("Erster Nutzer ist geschützt.", "warn");
-
+      // 🔴 Soft Delete / Restore
+      tr.querySelector(".btn-delete")?.addEventListener("click", async () => {
         const newDeleted = !u.deleted;
-
-        try {
-          await supabaseAPI.updateData("profiles", u.id, { deleted: newDeleted });
-
-          status.show(
-            newDeleted ? `Benutzer gelöscht: ${u.username}` : `Benutzer reaktiviert: ${u.username}`,
-            newDeleted ? "warn" : "ok"
-          );
-
-          loadUsers();
-        } catch (err) {
-          console.error("[Member] Fehler beim Löschen/Reaktivieren:", err);
-          status.show("Fehler beim Löschen/Reaktivieren.", "error");
-        }
+        await update(
+          u.id,
+          { deleted: newDeleted },
+          newDeleted ? `Benutzer gelöscht: ${u.username}` : `Benutzer reaktiviert: ${u.username}`
+        );
       });
 
       tableBody.appendChild(tr);
     });
   }
 
+  // Hilfsfunktion für Updates
+  async function update(id, values, msg) {
+    try {
+      await supabaseAPI.updateData("profiles", id, values);
+      status.show(msg, "ok");
+      loadUsers();
+    } catch (err) {
+      console.error("[Member] Update-Fehler:", err);
+      status.show("Fehler beim Anwenden der Änderung.", "error");
+    }
+  }
+
   // Initial laden
-  await loadUsers();
+  loadUsers();
 })();
