@@ -1,8 +1,11 @@
-// /logbuch/js/kopf.js — Version 0.5 (Live-Uhrzeit + Supabase Onlinebetrieb)
+// /logbuch/js/kopf.js — Version 0.6 (Live-Uhrzeit + automatische Rollensynchronisierung)
 (function buildKopf() {
   let initialized = false;
   let tries = 0;
   let lastTime = "";
+  let lastUser = "";
+  let lastRole = "";
+
   const TIME_API = "https://worldtimeapi.org/api/timezone/Europe/Berlin";
 
   async function getTime() {
@@ -16,30 +19,27 @@
   }
 
   async function renderKopf() {
-    if (initialized) return true;
     const kopf = document.getElementById("kopf");
     if (!kopf) return false;
 
-    // ----------------------------
-    // Benutzer + Rolle aus Session
-    // ----------------------------
     let username = sessionStorage.getItem("username") || "Gast";
-    let role = sessionStorage.getItem("userRole") || "Member";
+    let role = sessionStorage.getItem("userRole") || "member";
 
+    // Wenn sich Werte nicht geändert haben → abbrechen
+    if (initialized && username === lastUser && role === lastRole) return true;
+
+    // Supabase Session ggf. prüfen
     try {
       const data = await supabaseAPI.getSession();
       const user = data?.user;
       if (user) {
         username = user.user_metadata?.username || username;
-        role = user.user_metadata?.role || role;
       }
     } catch (err) {
       console.warn("Kopf: Supabase-Session konnte nicht geprüft werden:", err);
     }
 
-    // ----------------------------
-    // Dynamischer Titel anhand Seite
-    // ----------------------------
+    // Titel abhängig von der Seite
     const path = window.location.pathname;
     let appTitle = "Logbuch";
     if (path.includes("dashboard.html")) appTitle = "Dashboard";
@@ -47,9 +47,7 @@
     else if (path.includes("gate.html")) appTitle = "Zugangskontrolle";
     else if (path.includes("index.html")) appTitle = "Login & Registrierung";
 
-    // ----------------------------
-    // Grundstruktur erzeugen
-    // ----------------------------
+    // Kopf HTML rendern
     kopf.innerHTML = `
       <div class="kopf-row row1">
         <div class="right" id="kopf-zeit">
@@ -62,10 +60,10 @@
     `;
 
     initialized = true;
+    lastUser = username;
+    lastRole = role;
 
-    // ----------------------------
-    // Live-Zeit aktualisieren
-    // ----------------------------
+    // Zeitupdate starten
     async function updateTime() {
       const el = document.getElementById("kopf-zeit");
       if (!el) return;
@@ -89,14 +87,20 @@
       }
     }
 
-    // Zeit sofort + alle 60 Sekunden aktualisieren
     updateTime();
     setInterval(updateTime, 60000);
-
     return true;
   }
 
-  // Wiederholungsmechanismus (DOM + Supabase-Verzögerung)
+  // 🔁 Beobachtung von Änderungen an SessionStorage (z. B. neue Rolle)
+  window.addEventListener("storage", (e) => {
+    if (e.key === "userRole" || e.key === "username") {
+      console.log("Kopf aktualisiert nach Sessionänderung");
+      renderKopf();
+    }
+  });
+
+  // Wiederholungsmechanismus (bei langsamer Supabase-Verbindung)
   async function tryRender() {
     const success = await renderKopf();
     if (!success && tries++ < 10) setTimeout(tryRender, 300);
