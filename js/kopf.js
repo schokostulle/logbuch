@@ -1,4 +1,4 @@
-// /logbuch/js/kopf.js — Version 0.3a (Supabase Onlinebetrieb, stabilisiert)
+// /logbuch/js/kopf.js — Version 0.4 (User + Rolle + Datum + Uhrzeit)
 (function buildKopf() {
   let initialized = false;
   let tries = 0;
@@ -8,33 +8,34 @@
     const kopf = document.getElementById("kopf");
     if (!kopf) return false;
 
-    // =====================================
-    // Session prüfen (Supabase + Frontend)
-    // =====================================
+    // ----------------------------
+    // Benutzer + Rolle aus Session
+    // ----------------------------
     let username = sessionStorage.getItem("username") || "Gast";
-    let role = sessionStorage.getItem("userRole") || "";
+    let role = sessionStorage.getItem("userRole") || "Member";
 
     try {
-      const session = await supabaseAPI.getSession();
-      const user = session?.user;
+      const data = await supabaseAPI.getSession();
+      const user = data?.user;
       if (user) {
         username = user.user_metadata?.username || username;
+        role = user.user_metadata?.role || role;
       }
     } catch (err) {
       console.warn("Kopf: Supabase-Session konnte nicht geprüft werden:", err);
     }
 
-    // =====================================
-    // Datum + Uhrzeit formatieren
-    // =====================================
+    // ----------------------------
+    // Datum + Uhrzeit (live)
+    // ----------------------------
     const datum = new Date().toLocaleString("de-DE", {
       dateStyle: "short",
       timeStyle: "short",
     });
 
-    // =====================================
-    // Dynamischer Titel anhand des Pfads
-    // =====================================
+    // ----------------------------
+    // Seitentitel dynamisch
+    // ----------------------------
     const path = window.location.pathname;
     let appTitle = "Logbuch";
     if (path.includes("dashboard.html")) appTitle = "Dashboard";
@@ -42,12 +43,12 @@
     else if (path.includes("gate.html")) appTitle = "Zugangskontrolle";
     else if (path.includes("index.html")) appTitle = "Login & Registrierung";
 
-    // =====================================
-    // HTML-Inhalt aufbauen
-    // =====================================
+    // ----------------------------
+    // HTML-Ausgabe
+    // ----------------------------
     kopf.innerHTML = `
       <div class="kopf-row row1">
-        <div class="right">${username}${role ? " (" + role + ")" : ""} [${datum}]</div>
+        <div class="right">${username} (${role}) [${datum}]</div>
       </div>
       <div class="kopf-row row2">
         <div class="left">${appTitle}</div>
@@ -58,11 +59,14 @@
     return true;
   }
 
-  // Wiederholungsmechanismus (bei Ladeverzögerungen)
+  // ----------------------------
+  // Wiederholungsmechanismus (falls DOM/Supabase verzögert)
+  // ----------------------------
   async function tryRender() {
     const success = await renderKopf();
     if (!success && tries++ < 10) setTimeout(tryRender, 300);
   }
 
+  // Start nach vollständigem Laden
   window.addEventListener("load", tryRender);
 })();
