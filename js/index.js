@@ -1,4 +1,5 @@
-// /logbuch/js/index.js — Version 0.3 (Onlinebetrieb über Supabase)
+// /logbuch/js/index.js — Version 0.3a (Onlinebetrieb über Supabase)
+// Login & Registrierung – zentrale Benutzeroberfläche
 
 // ==============================
 // Tabs & Formulare
@@ -15,6 +16,7 @@ function fadeSwitch(fromEl, toEl, fromTab, toTab) {
     fromEl.classList.add("hidden");
     fromEl.classList.remove("fadeout");
     if (typeof fromEl.reset === "function") fromEl.reset();
+
     toEl.classList.remove("hidden");
     toEl.style.opacity = "0";
     toEl.style.transform = "scale(0.98)";
@@ -23,11 +25,12 @@ function fadeSwitch(fromEl, toEl, fromTab, toTab) {
       toEl.style.transform = "scale(1)";
     }, 30);
   }, 350);
+
   fromTab.classList.remove("active");
   toTab.classList.add("active");
 }
 
-// Tabs umschalten
+// Tabsteuerung
 tabLogin.addEventListener("click", () => {
   if (!loginForm.classList.contains("hidden")) return;
   fadeSwitch(registerForm, loginForm, tabRegister, tabLogin);
@@ -52,8 +55,10 @@ loginForm.addEventListener("submit", async (e) => {
   }
 
   try {
-    const { user, error } = await supabaseAPI.loginUser(username, password);
-    if (error || !user) throw error || new Error("Login fehlgeschlagen.");
+    const data = await supabaseAPI.loginUser(username, password);
+    const user = data?.user ?? data?.session?.user;
+
+    if (!user) throw new Error("Login fehlgeschlagen.");
 
     const profileName = user.user_metadata?.username || username;
     sessionStorage.setItem("username", profileName);
@@ -64,8 +69,12 @@ loginForm.addEventListener("submit", async (e) => {
     loginForm.reset();
     setTimeout(() => (window.location.href = "gate.html"), 900);
   } catch (err) {
-    console.error(err);
-    status.show("Anmeldung fehlgeschlagen.", "error");
+    console.error("Login-Fehler:", err);
+    const msg =
+      (err.message || "").toLowerCase().includes("invalid")
+        ? "Falscher Benutzername oder Passwort."
+        : "Anmeldung fehlgeschlagen.";
+    status.show(msg, "error");
   }
 });
 
@@ -92,20 +101,19 @@ registerForm.addEventListener("submit", async (e) => {
   }
 
   try {
-    const res = await supabaseAPI.registerUser(username, pw1);
-    if (!res?.ok) throw new Error("Registrierung fehlgeschlagen.");
+    const data = await supabaseAPI.registerUser(username, pw1);
+    if (!data) throw new Error("Registrierung fehlgeschlagen.");
 
-    // Erfolg: unabhängig davon, ob Supabase bereits user/session liefert
     status.show("Registrierung erfolgreich. Jetzt einloggen.", "ok");
     registerForm.reset();
     fadeSwitch(registerForm, loginForm, tabRegister, tabLogin);
   } catch (err) {
-    console.error(err);
+    console.error("Registrierungsfehler:", err);
     const msg =
       (err.message || "").toLowerCase().includes("duplicate") ||
       (err.message || "").toLowerCase().includes("unique")
         ? "Benutzername existiert bereits."
-        : (err.message || "Registrierung fehlgeschlagen.");
+        : "Registrierung fehlgeschlagen.";
     status.show(msg, "error");
   }
 });
