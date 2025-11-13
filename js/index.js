@@ -1,14 +1,13 @@
-// /logbuch/js/index.js — Version 0.8 (Supabase Onlinebetrieb + Statusprüfung)
+// /logbuch/js/index.js — Version 0.9 (Supabase Onlinebetrieb + Statusprüfung + last_login)
 
-// ==============================
-// Tabs & Formulare
-// ==============================
 const tabLogin = document.getElementById("tab-login");
 const tabRegister = document.getElementById("tab-register");
 const loginForm = document.getElementById("login-form");
 const registerForm = document.getElementById("register-form");
 
+// -----------------------------------------
 // Umschaltanimation
+// -----------------------------------------
 function fadeSwitch(fromEl, toEl, fromTab, toTab) {
   fromEl.classList.add("fadeout");
   setTimeout(() => {
@@ -27,20 +26,19 @@ function fadeSwitch(fromEl, toEl, fromTab, toTab) {
   toTab.classList.add("active");
 }
 
-// Tabs umschalten
+// Tabs
 tabLogin.addEventListener("click", () => {
   if (!loginForm.classList.contains("hidden")) return;
   fadeSwitch(registerForm, loginForm, tabRegister, tabLogin);
 });
-
 tabRegister.addEventListener("click", () => {
   if (!registerForm.classList.contains("hidden")) return;
   fadeSwitch(loginForm, registerForm, tabLogin, tabRegister);
 });
 
-// ==============================
+// -----------------------------------------
 // LOGIN über Supabase
-// ==============================
+// -----------------------------------------
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const username = document.getElementById("login-username").value.trim();
@@ -52,29 +50,32 @@ loginForm.addEventListener("submit", async (e) => {
   }
 
   try {
-    // Login mit Fake-Mail
     const { user, error } = await supabaseAPI.loginUser(username, password);
     if (error || !user) throw error || new Error("Login fehlgeschlagen.");
 
     const profileName = user.user_metadata?.username || username;
 
-    // 🔹 Rolle und Status aus Tabelle "profiles" abrufen
+    // Profil abrufen
     let role = "member";
     let statusVal = "blockiert";
+    let profileId = null;
+
     try {
-      const res = await supabaseAPI.fetchData("profiles", { username: profileName });
+      const res = await supabaseAPI.fetchData("public.profiles", { username: profileName });
       if (res && res.length > 0) {
-        role = res[0].rolle || "member";
-        statusVal = res[0].status || "blockiert";
+        const p = res[0];
+        role = p.rolle || "member";
+        statusVal = p.status || "blockiert";
+        profileId = p.id;
       }
     } catch (dbErr) {
-      console.warn("[Login] Profil konnte nicht aus 'profiles' geladen werden:", dbErr);
+      console.warn("[Login] Profil konnte nicht geladen werden:", dbErr);
     }
 
-    // ⛔ Blockierte Nutzer abweisen
+    // Blockierte Nutzer abweisen
     if (statusVal.toLowerCase() !== "aktiv") {
       await supabaseAPI.logoutUser().catch(() => {});
-      status.show("Zugang gesperrt. Bitte wende dich an einen Admin.", "error");
+      status.show("Zugang gesperrt. Bitte an Admin wenden.", "error");
       return;
     }
 
@@ -83,21 +84,32 @@ loginForm.addEventListener("submit", async (e) => {
     sessionStorage.setItem("userRole", role);
     sessionStorage.removeItem("lastExit");
 
-    // 🔁 Kopf sofort aktualisieren
+    // Kopf sofort aktualisieren
     window.dispatchEvent(new StorageEvent("storage", { key: "userRole", newValue: role }));
+
+    // 🔹 Letzter Login aktualisieren
+    if (profileId) {
+      try {
+        await supabaseAPI.updateData("public.profiles", profileId, {
+          last_login: new Date().toISOString(),
+        });
+      } catch (upErr) {
+        console.warn("[Login] last_login konnte nicht aktualisiert werden:", upErr);
+      }
+    }
 
     status.show(`Willkommen ${profileName}`, "ok");
     loginForm.reset();
     setTimeout(() => (window.location.href = "gate.html"), 900);
   } catch (err) {
-    console.error(err);
+    console.error("[Login] Fehler:", err);
     status.show("Anmeldung fehlgeschlagen.", "error");
   }
 });
 
-// ==============================
+// -----------------------------------------
 // REGISTRIERUNG über Supabase
-// ==============================
+// -----------------------------------------
 registerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const username = document.getElementById("reg-username").value.trim();
@@ -121,17 +133,19 @@ registerForm.addEventListener("submit", async (e) => {
     const res = await supabaseAPI.registerUser(username, pw1);
     if (!res?.ok) throw new Error("Registrierung fehlgeschlagen.");
 
-    // Standardrolle & Status setzen
+    // Rolle & Status setzen
     try {
-      const allProfiles = await supabaseAPI.fetchData("profiles");
-      const role = allProfiles.length === 0 ? "admin" : "member"; // erster Admin
-      const statusVal = allProfiles.length === 0 ? "aktiv" : "blockiert";
+      const allProfiles = await supabaseAPI.fetchData("public.profiles");
+      const isFirst = allProfiles.length === 0;
+      const role = isFirst ? "admin" : "member";
+      const statusVal = isFirst ? "aktiv" : "blockiert";
 
-      await supabaseAPI.insertData("profiles", {
+      await supabaseAPI.insertData("public.profiles", {
         username,
         rolle: role,
         status: statusVal,
-        deleted: false
+        deleted: false,
+        last_login: null,
       });
     } catch (insErr) {
       console.warn("[Registrierung] Konnte Profil nicht speichern:", insErr);
@@ -141,7 +155,7 @@ registerForm.addEventListener("submit", async (e) => {
     registerForm.reset();
     fadeSwitch(registerForm, loginForm, tabRegister, tabLogin);
   } catch (err) {
-    console.error(err);
+    console.error("[Registrierung] Fehler:", err);
     const msg =
       (err.message || "").toLowerCase().includes("duplicate") ||
       (err.message || "").toLowerCase().includes("unique")
