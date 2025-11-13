@@ -1,54 +1,93 @@
-/* /logbuch/dashboard/dashboard.css — Version 0.3 */
+/* ============================================================
+   /logbuch/dashboard/dashboard.css — Version 1.0
+   Marine Logbuch Edition
+   Dunkles Blau · Metallisches Grau · Minimalistisch
+============================================================ */
 
 /* =========================================
-   DASHBOARD-INHALT
-   Ergänzt das globale Layout (style.css)
+   DASHBOARD-CONTAINER
 ========================================= */
-
-/* Grundstruktur */
 #content {
-  padding: 20px 24px;
+  padding: 24px 28px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 12px;
+  gap: 16px;
+
   box-sizing: border-box;
+
+  /* Marine Hintergrund */
+  background: #0d1218;
+  color: #d7dde3;
+  font-family: "Roboto Mono", monospace;
 }
 
-/* Überschrift */
+/* =========================================
+   ÜBERSCHRIFTEN (Logbuch-Stil)
+========================================= */
 #content h2 {
-  margin-top: 0;
-  margin-bottom: 8px;
+  margin: 0 0 10px 0;
   font-size: 1.6em;
-  font-weight: 600;
+  font-weight: 700;
+  color: #e5eaf0;
+
+  font-family: "Merriweather", serif;
+  letter-spacing: 0.5px;
 }
 
-/* Standardabsätze */
+/* =========================================
+   STANDARDELEMENTE / TEXT
+========================================= */
 #content p {
-  line-height: 1.5;
+  line-height: 1.55;
   max-width: 800px;
+  color: #cbd3db;
+  font-size: 1rem;
 }
 
-/* Platzhalter oder Infoelemente */
+/* =========================================
+   INFO-BOX (Metallrahmen)
+========================================= */
 #content .info-box {
-  border: 1px solid #ccc;
-  padding: 12px 16px;
-  border-radius: 8px;
-  background: #fafafa;
+  border: 1px solid #252c35;        /* dunkles Metallgrau */
+  padding: 14px 18px;
+  border-radius: 6px;
+
+  background: #141a20;              /* dunkles Blau */
   width: 100%;
   max-width: 900px;
-  box-sizing: border-box;
+
+  box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+  font-family: "Roboto Mono", monospace;
+  color: #d0d7de;
 }
 
-/* Tabellen oder Toolcontainer (Vorbereitung für spätere Module) */
+/* =========================================
+   TOOL-CONTAINER (für Tabellen/Module)
+========================================= */
 #content .tool-container {
   width: 100%;
   max-width: 1000px;
+
   overflow-x: auto;
-  border: 1px solid #ddd;
+  background: #0f151c;
+  border: 1px solid #2a323c;
   border-radius: 6px;
-  background: #fff;
-  padding: 8px;
+
+  padding: 10px;
   box-sizing: border-box;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* Scrollbar optimieren */
+#content .tool-container::-webkit-scrollbar {
+  height: 8px;
+}
+#content .tool-container::-webkit-scrollbar-thumb {
+  background: #39424c;
+}
+#content .tool-container::-webkit-scrollbar-track {
+  background: #11161b;
 }
