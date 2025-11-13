@@ -14,7 +14,7 @@
   async function loadUsers() {
     tableBody.innerHTML = `<tr><td colspan="5">Lade Daten...</td></tr>`;
     try {
-      const data = await supabaseAPI.fetchData("profiles");
+      const data = await supabaseAPI.fetchData("public.profiles");
       renderTable(data);
     } catch (err) {
       console.error(err);
