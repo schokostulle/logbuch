@@ -1,4 +1,4 @@
-// /logbuch/member/member.js — Version 1.2 (Realtime-Sync für Benutzerverwaltung)
+// /logbuch/member/member.js — Version 1.1 (Admin-Tool für Userverwaltung)
 (async function () {
   const tableBody = document.querySelector("#member-table tbody");
   const username = sessionStorage.getItem("username");
@@ -10,9 +10,7 @@
     return;
   }
 
-  // -------------------------------------------------------
-  // Tabelle laden und rendern
-  // -------------------------------------------------------
+  // Benutzerliste laden
   async function loadUsers() {
     tableBody.innerHTML = `<tr><td colspan="5">Lade Daten...</td></tr>`;
     try {
@@ -24,6 +22,7 @@
     }
   }
 
+  // Tabelle aufbauen
   function renderTable(users) {
     if (!users || users.length === 0) {
       tableBody.innerHTML = `<tr><td colspan="5">Keine Benutzer gefunden.</td></tr>`;
@@ -45,18 +44,19 @@
         </td>
       `;
 
+      // Aktionen
       const btnRole = tr.querySelector(".btn-role");
       const btnStatus = tr.querySelector(".btn-status");
       const btnDelete = tr.querySelector(".btn-delete");
 
-      // ------------------- Aktionen --------------------
       // Rollenwechsel (admin <-> member)
       btnRole.addEventListener("click", async () => {
-        if (u.username === username) return status.show("Eigene Rolle kann nicht geändert werden.", "warn");
         const newRole = u.rolle === "admin" ? "member" : "admin";
+        if (u.username === username) return status.show("Eigene Rolle kann nicht geändert werden.", "warn");
         try {
           await supabaseAPI.updateData("profiles", u.id, { rolle: newRole });
           status.show(`Rolle geändert: ${u.username} → ${newRole}`, "ok");
+          loadUsers();
         } catch {
           status.show("Fehler beim Ändern der Rolle.", "error");
         }
@@ -68,6 +68,7 @@
         try {
           await supabaseAPI.updateData("profiles", u.id, { status: newStatus });
           status.show(`Status geändert: ${u.username} → ${newStatus}`, "ok");
+          loadUsers();
         } catch {
           status.show("Fehler beim Ändern des Status.", "error");
         }
@@ -79,6 +80,7 @@
         try {
           await supabaseAPI.updateData("profiles", u.id, { deleted: newVal });
           status.show(newVal ? `Benutzer gelöscht: ${u.username}` : `Benutzer reaktiviert: ${u.username}`, "warn");
+          loadUsers();
         } catch {
           status.show("Fehler beim Löschen/Reaktivieren.", "error");
         }
@@ -88,30 +90,5 @@
     }
   }
 
-  // -------------------------------------------------------
-  // Realtime-Kanal für Änderungen an "profiles"
-  // -------------------------------------------------------
-  function subscribeRealtime() {
-    const channel = supabaseAPI.client
-      .channel("profiles_realtime")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "profiles" },
-        (payload) => {
-          console.log("[Realtime] Änderung erkannt:", payload.eventType, payload.new);
-          loadUsers(); // Tabelle neu laden bei Insert, Update, Delete
-        }
-      )
-      .subscribe((status) => {
-        if (status === "SUBSCRIBED") {
-          console.log("[Realtime] Kanal aktiv");
-        }
-      });
-  }
-
-  // -------------------------------------------------------
-  // Initialisieren
-  // -------------------------------------------------------
   await loadUsers();
-  subscribeRealtime();
 })();
