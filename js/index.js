@@ -1,4 +1,4 @@
-// /logbuch/js/index.js — Version 1.0 (Supabase Onlinebetrieb, Statusprüfung, last_login)
+// /logbuch/js/index.js — Version 1.1 (Supabase Onlinebetrieb, Statusprüfung, Bugfix public.public)
 
 // ==============================
 // Tabs & Formulare
@@ -32,14 +32,13 @@ tabLogin.addEventListener("click", () => {
   if (!loginForm.classList.contains("hidden")) return;
   fadeSwitch(registerForm, loginForm, tabRegister, tabLogin);
 });
-
 tabRegister.addEventListener("click", () => {
   if (!registerForm.classList.contains("hidden")) return;
   fadeSwitch(loginForm, registerForm, tabLogin, tabRegister);
 });
 
 // ==============================
-// LOGIN über Supabase (Fehlerdiagnose aktiv)
+// LOGIN über Supabase
 // ==============================
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -53,37 +52,29 @@ loginForm.addEventListener("submit", async (e) => {
 
   try {
     const { data, error } = await supabaseAPI.loginUser(username, password);
-    console.log("[DEBUG] Login result:", data, error);
-
-    if (error) throw error;
-    if (!data || !data.user) {
-      throw new Error("Kein Benutzerobjekt empfangen (data.user fehlt).");
-    }
+    if (error || !data?.user) throw error || new Error("Login fehlgeschlagen.");
 
     const user = data.user;
     const profileName = user.user_metadata?.username || username;
 
-    // Profil-Daten abrufen
+    // 🔹 Rolle & Status aus Tabelle "profiles" abrufen
     let role = "member";
     let statusVal = "blockiert";
-    let profileId = null;
-
     try {
-      const res = await supabaseAPI.fetchData("public.profiles", { username: profileName });
+      const res = await supabaseAPI.fetchData("profiles", { username: profileName });
       if (res && res.length > 0) {
         const p = res[0];
         role = p.rolle || "member";
         statusVal = p.status || "blockiert";
-        profileId = p.id;
       }
     } catch (dbErr) {
       console.warn("[Login] Profil konnte nicht aus 'profiles' geladen werden:", dbErr);
     }
 
-    // Blockierte Nutzer sperren
+    // ⛔ Blockierte Nutzer abweisen
     if (statusVal.toLowerCase() !== "aktiv") {
       await supabaseAPI.logoutUser().catch(() => {});
-      status.show("Zugang gesperrt. Bitte an Admin wenden.", "error");
+      status.show("Zugang gesperrt. Bitte wende dich an einen Admin.", "error");
       return;
     }
 
@@ -92,19 +83,8 @@ loginForm.addEventListener("submit", async (e) => {
     sessionStorage.setItem("userRole", role);
     sessionStorage.removeItem("lastExit");
 
-    // Kopf sofort aktualisieren
+    // Kopf-Update triggern (optional)
     window.dispatchEvent(new StorageEvent("storage", { key: "userRole", newValue: role }));
-
-    // Letzten Login speichern
-    if (profileId) {
-      try {
-        await supabaseAPI.updateData("public.profiles", profileId, {
-          last_login: new Date().toISOString(),
-        });
-      } catch (upErr) {
-        console.warn("[Login] last_login konnte nicht aktualisiert werden:", upErr);
-      }
-    }
 
     status.show(`Willkommen ${profileName}`, "ok");
     loginForm.reset();
@@ -141,19 +121,17 @@ registerForm.addEventListener("submit", async (e) => {
     const res = await supabaseAPI.registerUser(username, pw1);
     if (!res?.ok) throw new Error("Registrierung fehlgeschlagen.");
 
-    // Standardrolle & Status setzen
+    // Standardrolle & Status setzen (erster User = Admin)
     try {
-      const allProfiles = await supabaseAPI.fetchData("public.profiles");
-      const isFirst = allProfiles.length === 0;
-      const role = isFirst ? "admin" : "member";
-      const statusVal = isFirst ? "aktiv" : "blockiert";
+      const allProfiles = await supabaseAPI.fetchData("profiles");
+      const role = allProfiles.length === 0 ? "admin" : "member";
+      const statusVal = allProfiles.length === 0 ? "aktiv" : "blockiert";
 
-      await supabaseAPI.insertData("public.profiles", {
+      await supabaseAPI.insertData("profiles", {
         username,
         rolle: role,
         status: statusVal,
         deleted: false,
-        last_login: null,
       });
     } catch (insErr) {
       console.warn("[Registrierung] Konnte Profil nicht speichern:", insErr);
