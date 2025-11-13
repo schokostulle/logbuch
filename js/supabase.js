@@ -1,16 +1,14 @@
-// /logbuch/js/supabase.js — Version 0.3b (ohne Email-Bestätigung)
-// Zentrale Schnittstelle zwischen Frontend (Index, Dashboard etc.) und Supabase
-// Keine DOM- oder UI-Logik – nur API-Kommunikation
+// /logbuch/js/supabase.js — Version 0.4 (stabil, ohne Email-Bestätigung)
+// Zentrale Schnittstelle zwischen Frontend und Supabase
+// Keine UI- oder DOM-Zugriffe – reine API-Logik
 
 // ==========================
 // Grundkonfiguration
 // ==========================
 
-// !!! Eigene Supabase-Projektwerte einsetzen !!!
 const SUPABASE_URL = "https://bbeczprdumbeqcutqopr.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiZWN6cHJkdW1iZXFjdXRxb3ByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3NjMzMTgsImV4cCI6MjA3NzMzOTMxOH0.j2DiRK_40cSiFOM8KdA9DzjLklC9hXH_Es6mHPOvPQk";
 
-// Supabase-Client (global)
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ==========================
@@ -22,56 +20,75 @@ function makeFakeEmail(username) {
 }
 
 // ==========================
-// Authentifizierung
+// AUTHENTIFIZIERUNG
 // ==========================
 
-/** Registrierung mit Username + Passwort (Fake-Mail) */
+/**
+ * Registrierung mit Username + Passwort (Fake-Mail)
+ * Rückgabe: { user, session }
+ */
 async function registerUser(username, password) {
   const email = makeFakeEmail(username);
+
   const { data, error } = await supabaseClient.auth.signUp({
     email,
     password,
     options: {
-      data: { username },
+      data: { username }, // nur Username, keine Rolle hier!
     },
   });
 
-  if (error) throw new Error(`Registrierung fehlgeschlagen: ${error.message}`);
-  return data;
+  if (error) throw new Error(error.message);
+  return data; // { user, session }
 }
 
-// Login: gibt sowohl data als auch error sauber zurück
+/**
+ * Login: liefert konsistent { data, error }
+ */
 async function loginUser(username, password) {
   const email = makeFakeEmail(username);
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
+
+  const result = await supabaseClient.auth.signInWithPassword({
     email,
-    password
+    password,
   });
-  return { data, error };
+
+  // Supabase liefert { data: {user,session}, error }
+  return result;
 }
 
-/** Logout */
+/**
+ * Logout
+ */
 async function logoutUser() {
   const { error } = await supabaseClient.auth.signOut();
-  if (error) throw new Error(`Logout fehlgeschlagen: ${error.message}`);
+  if (error) throw new Error(error.message);
   return true;
 }
 
-/** Aktive Session abrufen */
+/**
+ * Aktive Session abrufen
+ */
 async function getSession() {
   const { data, error } = await supabaseClient.auth.getSession();
-  if (error) throw new Error(`Sessionabruf fehlgeschlagen: ${error.message}`);
+  if (error) throw new Error(error.message);
   return data?.session || null;
 }
 
 // ==========================
-// CRUD-Funktionen (generisch)
+// CRUD (generisch)
 // ==========================
 
 async function fetchData(table, filter = {}) {
+  // wichtig: KEIN public.public.table !!!
   let query = supabaseClient.from(table).select("*");
-  for (const [key, value] of Object.entries(filter)) query = query.eq(key, value);
+
+  for (const [key, value] of Object.entries(filter)) {
+    query = query.eq(key, value);
+  }
+
   const { data, error } = await query;
+
   if (error) throw new Error(`Fetch fehlgeschlagen: ${error.message}`);
   return data;
 }
@@ -83,7 +100,12 @@ async function insertData(table, values) {
 }
 
 async function updateData(table, id, values) {
-  const { data, error } = await supabaseClient.from(table).update(values).eq("id", id).select();
+  const { data, error } = await supabaseClient
+    .from(table)
+    .update(values)
+    .eq("id", id)
+    .select();
+
   if (error) throw new Error(`Update fehlgeschlagen: ${error.message}`);
   return data;
 }
