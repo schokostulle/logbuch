@@ -82,25 +82,30 @@ registerForm.addEventListener("submit", async (e) => {
     status.show("Bitte alle Felder ausfüllen.", "warn");
     return;
   }
-
   if (pw1 !== pw2) {
     status.show("Passwörter stimmen nicht überein.", "error");
     return;
   }
+  if (pw1.length < 6) {
+    status.show("Passwort: mind. 6 Zeichen.", "warn");
+    return;
+  }
 
   try {
-    const { user, error } = await supabaseAPI.registerUser(username, pw1);
-    if (error || !user) throw error || new Error("Registrierung fehlgeschlagen.");
+    const res = await supabaseAPI.registerUser(username, pw1);
+    if (!res?.ok) throw new Error("Registrierung fehlgeschlagen.");
 
+    // Erfolg: unabhängig davon, ob Supabase bereits user/session liefert
     status.show("Registrierung erfolgreich. Jetzt einloggen.", "ok");
     registerForm.reset();
     fadeSwitch(registerForm, loginForm, tabRegister, tabLogin);
   } catch (err) {
     console.error(err);
     const msg =
-      err.message?.includes("duplicate") || err.message?.includes("unique")
+      (err.message || "").toLowerCase().includes("duplicate") ||
+      (err.message || "").toLowerCase().includes("unique")
         ? "Benutzername existiert bereits."
-        : "Registrierung fehlgeschlagen.";
-    status.show(msg, "warn");
+        : (err.message || "Registrierung fehlgeschlagen.");
+    status.show(msg, "error");
   }
 });
