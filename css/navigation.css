@@ -1,6 +1,6 @@
 /* ============================================================
-   /logbuch/css/navigation.css — Version 1.1 (Marine Logbuch Edition)
-   Dunkle Marinefarben | Metallakzente | Serif + Mono minimalistisch
+   /logbuch/css/navigation.css — Version 1.2 (Marine Logbuch Edition)
+   Icons im Responsive-Modus zentriert
 ============================================================ */
 
 /* =========================================
@@ -40,7 +40,7 @@
 }
 
 /* =========================================
-   NAV-HEADER (Titelbereich)
+   NAV-HEADER
 ========================================= */
 .nav-header {
   padding: 16px;
@@ -91,6 +91,7 @@
 .nav a {
   display: flex;
   align-items: center;
+  justify-content: flex-start; /* Standard: Text + Icon */
   gap: 10px;
 
   padding: 10px 12px;
@@ -129,14 +130,14 @@
 }
 
 /* =========================================
-   RESPONSIVE – Icon Mode
+   RESPONSIVE – ICON-MODUS
 ========================================= */
 @media (max-width: 800px) {
   :root {
     --nav-width: 50px;
   }
 
-  /* Titel ohne Text → nur Icon */
+  /* Titel kein Label */
   .nav-title .label {
     display: none;
   }
@@ -149,8 +150,15 @@
     font-size: 22px;
   }
 
-  /* Menüeinträge ohne Label */
+  /* Menüeinträge nur Icon */
   .nav a .label {
     display: none;
+  }
+
+  /* 🔥 Icons sauber zentrieren */
+  .nav a {
+    justify-content: center;
+    gap: 0;           /* Keine Lücke ohne Label */
+    padding: 12px 0;  /* Vertikal zentrieren */
   }
 }
