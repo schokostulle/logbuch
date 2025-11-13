@@ -75,6 +75,27 @@ button:hover {
   background: #3b4148;
 }
 
+.auth-tabs button {
+  flex: 1;
+  padding: 10px;
+  background: #1a2027;
+  border: 1px solid #3a444f;
+  color: #e2e8f0;
+  cursor: pointer;
+  font-family: "Merriweather", serif;
+}
+
+.auth-tabs button.active {
+  background: #0f1317;
+  border-color: #b48a3c; /* Bronze */
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+.auth-tabs button:hover {
+  background: #232c35;
+}
+
 /* =========================================
    Sichtbarkeitssteuerung für Index-Formulare
 ========================================= */
