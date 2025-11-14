@@ -1,10 +1,7 @@
 /* ============================================================
-   /logbuch/css/style.css — Version 1.2 (Marine Logbuch Edition)
+   /logbuch/css/style.css — Version 1.3 (Marine Logbuch Edition)
 ============================================================ */
 
-/* =========================================
-   VARIABLEN – Navigation global steuern
-========================================= */
 :root {
   --nav-width: clamp(160px, 18vw, 240px);
 }
@@ -12,10 +9,16 @@
 /* =========================================
    GRUNDLAGEN
 ========================================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 html, body {
   width: 100%;
   height: 100%;
-  font-family: "Quintessential", serif; /* TEXT */
+  font-family: "Quintessential", serif;
   background: #0a0f1a;
   color: #c8cdd4;
   overflow: hidden;
@@ -24,56 +27,248 @@ html, body {
 /* =========================================
    INDEX & GATE
 ========================================= */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.auth-card {
+  background: #1b1f24;
+  border: 1px solid #3b4148;
+  border-radius: 4px;
+  padding: 26px 24px;
+  width: 380px;
+  max-width: 90vw;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .auth-card h1 {
-  font-family: "UnifrakturCook", cursive; /* TITEL */
+  font-family: "UnifrakturCook", cursive;
+  color: #d1b87b;
+  font-size: 32px;
+  letter-spacing: 1px;
 }
 
 /* Tabs */
-.auth-tabs button {
-  font-family: "Almendra SC", serif; /* ÜBERSCHRIFTEN */
+.auth-tabs {
+  display: flex;
+  gap: 10px;
 }
 
-/* Formular */
+.auth-tabs button {
+  flex: 1;
+  padding: 10px;
+  background: #1a2027;
+  border: 1px solid #3a444f;
+  color: #e2e8f0;
+  cursor: pointer;
+  font-family: "Almendra SC", serif;
+}
+
+.auth-tabs button.active {
+  background: #0f1317;
+  border-color: #b48a3c;
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+.auth-tabs button:hover {
+  background: #232c35;
+}
+
+/* FORM */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 label {
+  text-align: left;
+  font-size: 14px;
   font-family: "Quintessential", serif;
 }
 
 input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #3b4148;
+  background: #0f141d;
+  color: #eee;
   font-family: "Quintessential", serif;
+}
+
+.auth-form input {
+  margin-bottom: 4px;
 }
 
 .auth-form button[type="submit"] {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #2a2f35;
+  border: 1px solid #3b4148;
+  color: #eee;
   font-family: "Quintessential", serif;
 }
 
-/* =========================================
-   NAVIGATION
-========================================= */
-.nav-title {
-  font-family: "UnifrakturCook", cursive; /* TITEL */
+.auth-form button[type="submit"]:hover {
+  background: #3b4148;
 }
 
+.hidden { display: none !important; }
+
 /* =========================================
-   KOPF
+   APP-LAYOUT
 ========================================= */
+body.app-layout {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+
+/* ================================
+   NAVIGATION
+================================ */
+#nav {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+
+  width: var(--nav-width);
+  background: #1b1f24;
+  border-right: 1px solid #3b4148;
+
+  display: flex;
+  flex-direction: column;
+  color: #c8cdd4;
+
+  overflow-y: auto;
+}
+
+.nav-header {
+  padding: 16px 10px;
+  text-align: center;
+  border-bottom: 1px solid #3b4148;
+  background: #1b1f24;
+}
+
+.nav-title {
+  font-family: "UnifrakturCook", cursive;
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: #d1b87b;
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-list.bottom {
+  margin-top: auto;
+  border-top: 1px solid #1b1f24;
+}
+
+.nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 10px;
+  width: 100%;
+
+  text-decoration: none;
+  color: #c8cdd4;
+  border-left: 4px solid transparent;
+
+  transition: background 0.15s ease;
+  font-family: "Quintessential", serif;
+}
+
+.nav a:hover {
+  background: #1b1f24;
+  border-left: 4px solid #b08d57;
+}
+
+/* ================================
+   KOPF
+================================ */
+#kopf {
+  position: fixed;
+  top: 0;
+  left: var(--nav-width);
+  right: 0;
+
+  background: #0f141d;
+  border-bottom: 1px solid #1b1f24;
+  padding: 10px 18px;
+
+  display: flex;
+  flex-direction: column;
+}
+
 .kopf-row.row1 {
-  font-family: "Quintessential", serif; /* TEXT */
+  display: flex;
+  justify-content: flex-end;
+  font-family: "Quintessential", serif;
 }
 
 .kopf-row.row2 {
-  font-family: "UnifrakturCook", cursive; /* TITEL */
+  font-family: "UnifrakturCook", cursive;
+  font-size: 38px;
+  color: #d1b87b;
+  padding-top: 4px;
 }
 
-/* =========================================
+/* ================================
    CONTENT
-========================================= */
+================================ */
 #content {
+  position: absolute;
+  top: 90px;
+  left: var(--nav-width);
+  right: 0;
+  bottom: 0;
+
+  overflow-y: auto;
+  padding: 20px;
+
   font-family: "Quintessential", serif;
 }
 
 /* =========================================
-   RESPONSIVE – Icon Mode
+   RESPONSIVE
 ========================================= */
 @media (max-width: 800px) {
-  /* keine Font-Änderungen nötig */
+  :root {
+    --nav-width: clamp(58px, 15vw, 90px);
+  }
+
+  .nav a .label,
+  .nav-title .label {
+    display: none !important;
+  }
+
+  .nav a {
+    justify-content: center;
+    text-align: center;
+    padding: 14px 0;
+  }
+
+  .nav a .icon {
+    font-size: 22px;
+    min-width: 100%;
+    text-align: center;
+  }
 }
