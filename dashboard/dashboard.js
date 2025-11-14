@@ -1,25 +1,22 @@
-// /logbuch/dashboard/dashboard.js — Version 0.4 (Supabase Onlinebetrieb)
+// /logbuch/dashboard/dashboard.js — Version 0.5 (bereinigt, ohne zusätzliche Ausgaben)
 (async function () {
   const content = document.getElementById("content");
 
-  // 1. Supabase-Session prüfen
   let session = null;
   try {
     session = await supabaseAPI.getSession();
-  } catch (err) {
-    console.error("[Dashboard] Supabase-Sessionprüfung fehlgeschlagen:", err);
+  } catch {
+    window.location.href = "gate.html";
+    return;
   }
 
-  // 2. Ungültige Session → Gate
   if (!session || !session.user) {
     window.location.href = "gate.html";
     return;
   }
 
-  const supaUser = session.user;
-  const username = supaUser.user_metadata?.username || "Unbekannt";
+  const username = session.user.user_metadata?.username || "Unbekannt";
 
-  // 3. Profil aus der DB laden (rolle + status)
   let role = "member";
   let statusVal = "aktiv";
 
@@ -29,11 +26,8 @@
       role = profile[0].rolle || role;
       statusVal = profile[0].status || statusVal;
     }
-  } catch (err) {
-    console.warn("[Dashboard] Profil konnte nicht geladen werden:", err);
-  }
+  } catch {}
 
-  // 4. Blockierte Nutzer sofort rausschmeißen
   if (statusVal !== "aktiv") {
     status.show("Zugang gesperrt. Bitte wende dich an einen Admin.", "error");
     setTimeout(async () => {
@@ -44,17 +38,8 @@
     return;
   }
 
-  // 5. Begrüßung anzeigen
-  if (content) {
-    const info = document.createElement("p");
-    info.textContent = `Angemeldet als: ${username} (${role})`;
-    content.appendChild(info);
-  }
-
-  // 6. SessionStorage für Kopf & Navigation aktualisieren
   sessionStorage.setItem("username", username);
   sessionStorage.setItem("userRole", role);
 
-  // Event senden → Kopf aktualisiert sich automatisch
   window.dispatchEvent(new StorageEvent("storage", { key: "userRole", newValue: role }));
 })();
