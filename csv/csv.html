@@ -1,4 +1,3 @@
-<!-- /logbuch/csv/csv.html — Version 0.1 (Supabase Onlinebetrieb) -->
 <!doctype html>
 <html lang="de">
 <head>
@@ -7,55 +6,48 @@
   <base href="../" />
   <title>Logbuch | CSV</title>
 
-  <!-- Styles -->
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/status.css" />
   <link rel="stylesheet" href="csv/csv.css" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
-
 </head>
 
 <body class="app-layout">
-  <!-- Linkes Navigationsmenü -->
-  <aside id="nav"></aside>
 
-  <!-- Kopfbereich -->
+  <aside id="nav"></aside>
   <header id="kopf"></header>
 
-  <!-- Hauptinhalt -->
   <main id="content">
 
-  <h2>CSV Upload</h2>
+    <h2>CSV Upload</h2>
 
-  <div class="tool-container">
-    <input type="file" id="csv-file" accept=".csv" />
-    <button id="csv-upload-btn">CSV hochladen</button>
-  </div>
+    <div class="tool-container">
+      <input type="file" id="csv-file" accept=".csv" />
+      <button id="csv-upload-btn">CSV hochladen</button>
+    </div>
 
-  <div class="tool-container">
-    <table id="csv-table">
-      <thead>
-        <tr>
-          <th>Oz</th>
-          <th>Ig</th>
-          <th>In</th>
-          <th>l-Name</th>
-          <th>S-ID</th>
-          <th>Name</th>
-          <th>A-ID</th>
-          <th>Akrzl</th>
-          <th>A-Name</th>
-          <th>Punkte</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
+    <div class="tool-container">
+      <table id="csv-table">
+        <thead>
+          <tr>
+            <th class="num">Oz</th>
+            <th class="num">Ig</th>
+            <th class="num">In</th>
+            <th class="txt">l-Name</th>
+            <th class="num">S-ID</th>
+            <th class="txt">Name</th>
+            <th class="num">A-ID</th>
+            <th class="txt">Akrzl</th>
+            <th class="txt">A-Name</th>
+            <th class="num">Punkte</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
-</main>
+  </main>
 
-
-  <!-- Globale Skripte -->
   <script src="js/status.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase.js"></script>
