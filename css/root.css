@@ -1,62 +1,60 @@
 /* ============================================================
-   /logbuch/css/root.css — Version 1.0
-   Zentrales Design-Root für das gesamte Logbuch
+   /logbuch/css/root.css — Version 1.1
+   Zentrales Design-Root – Schriftfamilien aktualisiert
 ============================================================ */
 
 /* -----------------------------------------
    FARBSYSTEM — Marine Logbuch Edition
 ----------------------------------------- */
 :root {
-  /* Hintergrundfarben */
-  --bg-deep: #0a0f1a;       /* Tiefmarine */
-  --bg-dark: #0f141d;       /* Marinegrau */
-  --bg-panel: #141a20;      /* Paneel dunkler */
-  --bg-panel-alt: #1b1f24;  /* Alternative */
+  --bg-deep: #0a0f1a;
+  --bg-dark: #0f141d;
+  --bg-panel: #141a20;
+  --bg-panel-alt: #1b1f24;
 
-  /* Navigation */
   --nav-bg: #0b1017;
   --nav-bg-strong: #04070d;
   --nav-border: #2b323b;
   --nav-hover: #182028;
   --nav-text: #d7dde3;
 
-  /* Metallische Akzente */
   --accent-gold: #d1b87b;
   --accent-bronze: #b08d57;
   --accent-iron: #c8cdd4;
   --accent-steel: #2a323c;
 
-  /* Statusfarben */
   --ok: #16a34a;
   --warn: #f59e0b;
   --error: #dc2626;
 
-  /* Textfarben */
   --text-light: #e2e8f0;
   --text-medium: #cbd3db;
   --text-dark: #9aa2ac;
 
-  /* Tabellenfarben */
   --table-header-bg: #141a20;
   --table-border: #2a323c;
 
-  /* Scrollbar */
   --scroll-thumb: #39424c;
   --scroll-track: #11161b;
 
-  /* Buttonfarben */
   --btn-bg: #2a2f35;
   --btn-hover: #3b4148;
 }
 
-/* =========================================
-   SCHRIFTEN – Logbuch Edition
-========================================= */
+/* -----------------------------------------
+   SCHRIFTEN – aktualisierte Zuordnung
+----------------------------------------- */
 :root {
-  --font-text: "Quintessential", serif;      /* normaler Fließtext */
-  --font-title: "UnifrakturCook", cursive;   /* Seitentitel */
-  --font-heading: "Almendra SC", serif;      /* Überschriften */
-  --font-table: "Cormorant SC", serif;       /* Tabelleninhalt */
+  --font-title: "Almendra SC", serif;         /* Titel */
+  --font-h1: "Almendra SC", serif;            /* H1 */
+  --font-h2: "Kaushan Script", cursive;       /* H2 */
+  --font-h3: "Marck Script", cursive;         /* H3 */
+
+  --font-text: "Kalam", cursive;              /* Fließtext */
+  --font-table-head: "Cormorant SC", serif;   /* Tabellenkopf */
+  --font-table: "Alegreya Sans", sans-serif;  /* Tabelleneinträge */
+
+  --font-comment: "Meddon", cursive;          /* Kommentare/Unterschriften */
 
   --font-size-base: 16px;
   --font-size-large: 1.4rem;
