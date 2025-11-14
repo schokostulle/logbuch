@@ -1,7 +1,6 @@
 /* ============================================================
-   /logbuch/dashboard/dashboard.css — Version 1.0
-   Marine Logbuch Edition
-   Dunkles Blau · Metallisches Grau · Minimalistisch
+   /logbuch/dashboard/dashboard.css — Version 1.1
+   Marine Logbuch Edition – konsistent mit root.css & Typografie
 ============================================================ */
 
 /* =========================================
@@ -17,63 +16,75 @@
 
   box-sizing: border-box;
 
-  /* Marine Hintergrund */
-  background: #0d1218;
-  color: #d7dde3;
-  font-family: "Roboto Mono", monospace;
+  background: var(--bg-deep);
+  color: var(--text-light);
+  font-family: var(--font-text);
 }
 
 /* =========================================
-   ÜBERSCHRIFTEN (Logbuch-Stil)
+   ÜBERSCHRIFTEN
 ========================================= */
+#content h1 {
+  font-family: var(--font-title);
+  font-size: 2.4rem;
+  color: var(--accent-gold);
+  letter-spacing: 1px;
+}
+
 #content h2 {
   margin: 0 0 10px 0;
-  font-size: 1.6em;
-  font-weight: 700;
-  color: #e5eaf0;
-
-  font-family: "Merriweather", serif;
+  font-family: "Kaushan Script", cursive;
+  font-size: 2rem;
+  color: var(--text-light);
   letter-spacing: 0.5px;
 }
 
+#content h3 {
+  margin: 6px 0;
+  font-family: "Marck Script", cursive;
+  font-size: 1.6rem;
+  color: var(--text-medium);
+}
+
 /* =========================================
-   STANDARDELEMENTE / TEXT
+   STANDARDTEXT
 ========================================= */
 #content p {
   line-height: 1.55;
   max-width: 800px;
-  color: #cbd3db;
-  font-size: 1rem;
+  color: var(--text-medium);
+  font-size: 1.05rem;
+  font-family: "Kalam", cursive;
 }
 
 /* =========================================
-   INFO-BOX (Metallrahmen)
+   INFO-BOX
 ========================================= */
 #content .info-box {
-  border: 1px solid #252c35;        /* dunkles Metallgrau */
+  border: var(--border-thin);
   padding: 14px 18px;
-  border-radius: 6px;
+  border-radius: var(--radius-medium);
 
-  background: #141a20;              /* dunkles Blau */
+  background: var(--bg-panel);
   width: 100%;
   max-width: 900px;
 
   box-shadow: 0 1px 3px rgba(0,0,0,0.35);
-  font-family: "Roboto Mono", monospace;
-  color: #d0d7de;
+  font-family: "Kalam", cursive;
+  color: var(--text-light);
 }
 
 /* =========================================
-   TOOL-CONTAINER (für Tabellen/Module)
+   TOOL-CONTAINER (Tabellen / Module)
 ========================================= */
 #content .tool-container {
   width: 100%;
   max-width: 1000px;
 
   overflow-x: auto;
-  background: #0f151c;
-  border: 1px solid #2a323c;
-  border-radius: 6px;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--table-border);
+  border-radius: var(--radius-medium);
 
   padding: 10px;
   box-sizing: border-box;
@@ -81,13 +92,13 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 
-/* Scrollbar optimieren */
+/* Scrollbar */
 #content .tool-container::-webkit-scrollbar {
   height: 8px;
 }
 #content .tool-container::-webkit-scrollbar-thumb {
-  background: #39424c;
+  background: var(--scroll-thumb);
 }
 #content .tool-container::-webkit-scrollbar-track {
-  background: #11161b;
+  background: var(--scroll-track);
 }
