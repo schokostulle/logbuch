@@ -1,7 +1,7 @@
-// /logbuch/js/navigation.js — Version 0.4 (ohne Session-Timeout, responsive Icon-Menü)
+// /logbuch/js/navigation.js — Version 0.5 (stabil, Icon-Responsive, korrekte Pfade)
 (function initNavigation() {
-  let initialized = false;
   let attempts = 0;
+  let initialized = false;
 
   async function renderNavigation() {
     if (initialized) return true;
@@ -9,11 +9,10 @@
     const navContainer = document.getElementById("nav");
     if (!navContainer) return false;
 
-    // Navigation HTML-Struktur aufbauen (ohne Session-Timeout)
     navContainer.innerHTML = `
       <nav class="nav">
 
-        <!-- Header: Titel -->
+        <!-- Header -->
         <div class="nav-header">
           <div class="nav-title">
             <span class="icon">⚓</span>
@@ -21,7 +20,7 @@
           </div>
         </div>
 
-        <!-- Menüeinträge -->
+        <!-- Menü -->
         <ul class="nav-list">
           <li>
             <a href="dashboard/dashboard.html">
@@ -56,16 +55,11 @@
       </nav>
     `;
 
-    // Logout → Gate (Exit)
     const logoutBtn = navContainer.querySelector("#btn-logout");
     if (logoutBtn) {
       logoutBtn.addEventListener("click", async (e) => {
         e.preventDefault();
-        try {
-          await supabaseAPI.logoutUser();
-        } catch (err) {
-          console.warn("[Navigation] Logout fehlgeschlagen:", err);
-        }
+        try { await supabaseAPI.logoutUser(); } catch (_) {}
         sessionStorage.setItem("lastExit", "pending");
         window.location.href = "gate.html";
       });
@@ -75,10 +69,9 @@
     return true;
   }
 
-  // Wiederholungslogik bei Ladeverzögerung
   async function tryRender() {
-    const success = await renderNavigation();
-    if (!success && attempts++ < 10) setTimeout(tryRender, 300);
+    const ok = await renderNavigation();
+    if (!ok && attempts++ < 10) setTimeout(tryRender, 300);
   }
 
   window.addEventListener("load", tryRender);
