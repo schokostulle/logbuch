@@ -19,12 +19,19 @@
 
   <main id="content">
 
-    <h2>CSV Upload</h2>
+    <div class="tool-container csv-controls">
 
-    <div class="tool-container">
-      <input type="file" id="csv-file" accept=".csv" />
-      <button id="csv-upload-btn">CSV hochladen</button>
-    </div>
+  <label class="csv-file-label">
+    📂
+    <input type="file" id="csv-file" accept=".csv" />
+  </label>
+
+  <span id="csv-filename"></span>
+
+  <button id="csv-upload-btn">📤</button>
+  <button id="csv-delete-btn">🗑️</button>
+
+</div>
 
     <div class="tool-container csv-table-wrapper">
       <table id="csv-table">
