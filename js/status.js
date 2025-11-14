@@ -1,21 +1,19 @@
-// /logbuch/js/status.js — Version 0.3 (zentraler Statuscontroller)
+// /logbuch/js/status.js — Version 0.4 (stabil, kompatibel mit status.css)
 /**
- * Globale Statusmeldungen für das Logbuch
- * ----------------------------------------
- * Funktionen:
- *   status.show(message, type?, duration?)
- *   status.clear()
- * ----------------------------------------
+ * Globale Statusmeldungen
+ * -----------------------
+ * status.show(message, type?, duration?)
+ * status.clear()
+ *
  * type: "info" | "ok" | "warn" | "error"
- * duration: ms bis zum automatischen Ausblenden (0 = dauerhaft)
+ * duration: ms (0 = dauerhaft)
  */
 
 const status = (() => {
-  let el;
-  let timeoutId;
+  let el = null;
+  let timer = null;
 
-  function init() {
-    el = document.getElementById("status-bar");
+  function ensureElement() {
     if (!el) {
       el = document.createElement("div");
       el.id = "status-bar";
@@ -25,29 +23,24 @@ const status = (() => {
   }
 
   function show(message, type = "info", duration = 2500) {
-    if (!el) init();
+    ensureElement();
 
-    // Vorherige Ausblendung abbrechen
-    if (timeoutId) clearTimeout(timeoutId);
+    if (timer) clearTimeout(timer);
 
     el.textContent = message;
     el.className = `status ${type}`;
     el.classList.remove("hidden");
-    el.classList.add("show");
 
     if (duration > 0) {
-      timeoutId = setTimeout(() => clear(), duration);
+      timer = setTimeout(clear, duration);
     }
   }
 
   function clear() {
     if (!el) return;
-    el.classList.remove("show");
-    setTimeout(() => {
-      el.classList.add("hidden");
-      el.textContent = "";
-    }, 300);
+    el.classList.add("hidden");
+    el.textContent = "";
   }
 
   return { show, clear };
-})(); // <- wichtig: sofort ausführen!
+})();
