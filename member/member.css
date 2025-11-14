@@ -1,7 +1,7 @@
 /* ============================================================
-   /logbuch/member/member.css — Version 2.0
+   /logbuch/member/member.css — Version 2.1
    Marine Logbuch Edition
-   Dunkles Blau · Metallgrau · Bronzeakzente · Minimalistisch
+   Final: konsistent mit root.css & style.css
 ============================================================ */
 
 /* ============================================
@@ -9,28 +9,29 @@
 ============================================ */
 .member-table-wrapper {
   width: 100%;
-  height: calc(100vh - 150px); /* Kopf + Toolbar */
+  height: calc(100vh - 150px);
+
   overflow-x: auto;
   overflow-y: auto;
 
-  background: #0d1218;                /* tiefes Marineblau */
-  border: 1px solid #252c35;          /* dunkles Metallgrau */
-  border-radius: 6px;
+  background: var(--bg-panel);
+  border: var(--border-table);
+  border-radius: var(--radius-medium);
 
-  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.45);
   position: relative;
 }
 
-/* Scrollbars maritim */
+/* Scrollbar */
 .member-table-wrapper::-webkit-scrollbar {
   height: 8px;
   width: 8px;
 }
 .member-table-wrapper::-webkit-scrollbar-thumb {
-  background: #3b4652;     /* Metallgrau */
+  background: var(--scroll-thumb);
 }
 .member-table-wrapper::-webkit-scrollbar-track {
-  background: #11161b;
+  background: var(--scroll-track);
 }
 
 /* ============================================
@@ -41,9 +42,11 @@
   border-collapse: collapse;
   white-space: nowrap;
 
-  background: #141a20;   /* dunkles Marineblau */
-  color: #d7dde3;        /* helles graublau */
-  font-family: "Roboto Mono", monospace;
+  background: var(--bg-panel);
+  color: var(--text-light);
+
+  font-family: "Alegreya Sans", sans-serif;
+  font-size: 0.95rem;
 }
 
 /* ============================================
@@ -53,16 +56,19 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  background: #1a2027;      /* etwas helleres Blau */
-  border-bottom: 2px solid #36404b;
+
+  background: var(--table-header-bg);
+  border-bottom: 2px solid var(--table-border);
 }
 
 #member-table th {
   padding: 10px 14px;
-  font-weight: 700;
-  font-family: "Merriweather", serif;
-  color: #e5eaf0;
-  border-bottom: 2px solid #3a444f;
+
+  font-family: "Cormorant SC", serif;
+  font-weight: 600;
+  color: var(--accent-gold);
+
+  border-bottom: 2px solid var(--table-border);
 }
 
 /* ============================================
@@ -70,17 +76,9 @@
 ============================================ */
 #member-table td {
   padding: 10px 14px;
-  border-bottom: 1px solid #2a323c;
-  color: #cbd3db;
+  border-bottom: 1px solid var(--table-border);
+  color: var(--text-medium);
 }
-
-/* Optional: Gelöschte User farblich markieren */
-/*
-tr.deleted td {
-  background: rgba(120, 0, 0, 0.15);
-  color: #ffb3b3;
-}
-*/
 
 /* ============================================
    Aktionen
@@ -98,49 +96,51 @@ tr.deleted td {
   background: transparent;
 
   font-size: 20px;
-  color: #d7dde3;
+  color: var(--text-light);
+
   transition: transform 0.15s ease, color 0.2s ease;
 }
 
 #member-table td.actions button:hover {
-  transform: scale(1.15);
-  color: #b48a3c;        /* Bronze-Akzent */
+  transform: scale(1.18);
+  color: var(--accent-bronze);
 }
 
 #member-table td.actions button:disabled {
-  opacity: 0.3;
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
 /* ============================================
-   Toolbar über der Tabelle
+   Toolbar
 ============================================ */
 .member-toolbar {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  margin-bottom: 10px;
-  gap: 12px;
+
+  margin-bottom: 12px;
+  gap: 14px;
 }
 
 .member-toolbar button {
   padding: 6px 14px;
-  border: 1px solid #3a444f;       /* Metallgrau */
-  background: #1a2027;
-  color: #d7dde3;
 
-  white-space: nowrap;
-  flex-shrink: 0;
+  border: 1px solid var(--table-border);
+  background: var(--bg-dark);
+  color: var(--text-light);
 
-  border-radius: 4px;
+  border-radius: var(--radius-small);
   cursor: pointer;
 
-  font-family: "Roboto Mono", monospace;
+  font-family: "Alegreya Sans", sans-serif;
   font-size: 14px;
-  transition: background 0.2s ease, border-color 0.2s ease;
+
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .member-toolbar button:hover {
   background: #232c35;
-  border-color: #b48a3c;          /* Bronze */
+  border-color: var(--accent-bronze);
+  color: var(--accent-gold);
 }
