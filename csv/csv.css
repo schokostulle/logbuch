@@ -1,0 +1,11 @@
+#csv-table {
+  width: max-content;
+  white-space: nowrap;
+  border-collapse: collapse;
+}
+
+#csv-table th,
+#csv-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #2a323c;
+}
