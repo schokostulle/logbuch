@@ -1,41 +1,95 @@
+/* ============================================================
+   /logbuch/csv/csv.css — Version 1.2
+   Marine Logbuch Edition — konsistent mit root.css
+============================================================ */
+
+/* ================================
+   GRUNDSETUP CSV-TABELLE
+================================ */
 #csv-table {
   width: max-content;
   white-space: nowrap;
   border-collapse: collapse;
+
+  font-family: "Alegreya Sans", sans-serif; /* Tabelleneinträge */
+  font-size: 0.95rem;
+  color: var(--text-light);
 }
 
-/* Scroll-Wrapper */
+/* ================================
+   SCROLL-WRAPPER
+================================ */
 .csv-table-wrapper {
   max-height: calc(100vh - 240px);
   overflow-y: auto;
   overflow-x: auto;
   position: relative;
-  border: 1px solid #2a323c;
-  background: #0f151c;
+
+  border: var(--border-table);
+  background: var(--bg-panel);
+  border-radius: var(--radius-small);
+
+  box-shadow: 0 1px 4px rgba(0,0,0,0.45);
 }
 
-/* Sticky Header */
+/* ================================
+   STICKY HEADER
+================================ */
 #csv-table thead {
   position: sticky;
   top: 0;
-  background: #141a20;
   z-index: 10;
+
+  background: var(--table-header-bg);
+  font-family: "Cormorant SC", serif; /* Tabellenkopf */
+  font-size: 1rem;
+  color: var(--accent-gold);
 }
 
-#csv-table th,
+#csv-table th {
+  padding: 8px 12px;
+  border-bottom: var(--border-table);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  background: var(--table-header-bg);
+}
+
+/* ================================
+   ZELLEN
+================================ */
 #csv-table td {
   padding: 6px 10px;
-  border-bottom: 1px solid #2a323c;
+  border-bottom: var(--border-table);
+  color: var(--text-medium);
 }
 
-/* Textspalten */
+/* ================================
+   TEXTSPALTEN
+================================ */
 #csv-table th.txt,
 #csv-table td.txt {
   text-align: left;
 }
 
-/* Zahlenspalten */
+/* ================================
+   ZAHLENSPALTEN
+================================ */
 #csv-table th.num,
 #csv-table td.num {
   text-align: center;
+  font-family: "Alegreya Sans", sans-serif;
+}
+
+/* ================================
+   SCROLLBAR
+================================ */
+.csv-table-wrapper::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.csv-table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+}
+.csv-table-wrapper::-webkit-scrollbar-track {
+  background: var(--scroll-track);
 }
