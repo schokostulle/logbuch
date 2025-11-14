@@ -142,7 +142,7 @@ body.app-layout {
 
   width: var(--nav-width);
   background: #1b1f24;
-  border-right: 1px solid #1b1f24;
+  border-right: 1px solid #3b4148;
 
   display: flex;
   flex-direction: column;
