@@ -1,4 +1,4 @@
-<!-- /logbuch/dashboard/dashboard.html — Version 0.4 (Maritime Typo-Auswahl) -->
+<!-- /logbuch/dashboard/dashboard.html — Version 0.5 (Typo Showcase) -->
 <!doctype html>
 <html lang="de">
 <head>
@@ -8,14 +8,18 @@
 
   <title>Logbuch | Dashboard</title>
 
-  <!-- Stylebasis -->
+  <!-- Styles -->
   <link rel="stylesheet" href="css/root.css" />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/status.css" />
   <link rel="stylesheet" href="dashboard/dashboard.css" />
 
-  <!-- Font Imports -->
-  <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Almendra+SC:wght@400;600&family=Playfair+Display+SC:wght@400;700&family=Marck+Script&family=Spectral:wght@300;400;500&family=Alegreya+Sans+SC:wght@300;400;500&family=Cormorant+SC:wght@400;600&family=Meddon&display=swap" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Almendra+SC:wght@400;600&family=Playfair+Display+SC:wght@400;700&family=Marck+Script&family=Kalam:wght@300;400&family=Patrick+Hand&family=Handlee&family=Alegreya+Sans:wght@300;400&family=Alegreya+Sans+SC:wght@300;400&family=Cormorant+SC:wght@400;600&family=Meddon&display=swap" rel="stylesheet">
+
+  <!-- UnifrakturMaguntia (nicht bei Google Fonts verfügbar → Bunny Fonts) -->
+  <link href="https://fonts.bunny.net/css?family=unifrakturmaguntia:400" rel="stylesheet" />
+
 </head>
 
 <body class="app-layout">
@@ -25,36 +29,36 @@
 
   <main id="content" class="content">
 
-    <!-- Titel -->
-    <h1 style="font-family:'UnifrakturCook',cursive;font-size:48px;margin-bottom:20px;">
+    <!-- TITEL -->
+    <h1 style="font-family:'UnifrakturMaguntia',cursive;font-size:48px;margin-bottom:20px;">
       Logbuch der Fregatte „Sturmkrähe“
     </h1>
 
-    <!-- H1-Beispiel -->
-    <h1 style="font-family:'Almendra SC',serif;font-size:40px;margin:10px 0;">
+    <!-- H1 -->
+    <h1 style="font-family:'Almendra SC',serif;font-size:40px;margin:12px 0;">
       Aktuelles Logbuch
     </h1>
 
-    <!-- H2-Beispiel -->
+    <!-- H2 -->
     <h2 style="font-family:'Playfair Display SC',serif;font-size:32px;margin:12px 0;">
       Mannschaftsübersicht
     </h2>
 
-    <!-- H3-Beispiel -->
-    <h3 style="font-family:'Marck Script',cursive;font-size:26px;margin:8px 0;">
+    <!-- H3 -->
+    <h3 style="font-family:'Marck Script',cursive;font-size:26px;margin:10px 0;">
       Decksordnung
     </h3>
 
-    <!-- Fließtext -->
-    <p style="font-family:'Spectral',serif;font-size:18px;line-height:1.6;margin-top:10px;">
+    <!-- FLIESSTEXTE -->
+    <p style="font-family:'Kalam',serif;font-size:18px;line-height:1.6;margin-top:10px;">
       Die Aufzeichnungen dieser Reise wurden während schwerer See, rauer Nächte und stürmischer Winde geführt.
     </p>
 
-    <p style="font-family:'Spectral',serif;font-size:16px;line-height:1.6;">
+    <p style="font-family:'Patrick Hand',serif;font-size:17px;line-height:1.6;">
       Jeder Eintrag dokumentiert die Stärke der Besatzung, die Bewegungen der Flotte sowie besondere Vorkommnisse.
     </p>
 
-    <!-- Tabellenbeispiel -->
+    <!-- TABELLENBEISPIEL -->
     <div style="margin:20px 0;">
       <table style="border-collapse:collapse;font-family:'Cormorant SC',serif;font-size:18px;">
         <thead style="font-weight:600;background:#1a1f2a;color:#d1b87b;">
@@ -64,7 +68,8 @@
             <th style="padding:6px 12px;border-bottom:1px solid #444;">Dienstgrad</th>
           </tr>
         </thead>
-        <tbody style="font-family:'Alegreya Sans SC',sans-serif;">
+
+        <tbody style="font-family:'Alegreya Sans',sans-serif;">
           <tr>
             <td style="padding:6px 12px;">Ausguck</td>
             <td style="padding:6px 12px;">H. Mertens</td>
@@ -79,7 +84,7 @@
       </table>
     </div>
 
-    <!-- Kommentare -->
+    <!-- KOMMENTAR -->
     <p style="font-family:'Meddon',cursive;font-size:20px;margin-top:30px;">
       „Wind frisch aus West. Segel gesetzt. Kurs gehalten.“
     </p>
