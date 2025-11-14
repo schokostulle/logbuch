@@ -1,4 +1,4 @@
-<!-- /logbuch/index.html — Version 0.3 (Supabase Onlinebetrieb, GitHub Pages-kompatibel) -->
+<!-- /logbuch/index.html — Version 0.4 (bereinigt, konsistente Fonts/Styles, GitHub Pages-kompatibel) -->
 <!doctype html>
 <html lang="de">
 <head>
@@ -8,10 +8,11 @@
   <title>Logbuch | Login</title>
 
   <!-- Styles -->
-  <link rel="stylesheet" href="/logbuch/css/style.css" />
-  <link rel="stylesheet" href="/logbuch/css/status.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/status.css" />
 
+  <!-- Fonts (global) -->
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Almendra+SC:wght@400;600&family=Kalam:wght@300;400&family=Patrick+Hand&family=Handlee&family=Alegreya+Sans:wght@300;400&family=Cormorant+SC:wght@400;600&family=Meddon&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -19,13 +20,12 @@
     <section class="auth-card">
       <h1>Logbuch</h1>
 
-      <!-- Tabs -->
       <div class="auth-tabs">
         <button id="tab-login" class="active">Login</button>
         <button id="tab-register">Registrierung</button>
       </div>
 
-      <!-- Login -->
+      <!-- LOGIN -->
       <form id="login-form" class="auth-form">
         <label>Nutzername
           <input id="login-username" type="text" required />
@@ -37,7 +37,7 @@
         <p id="login-msg" class="msg"></p>
       </form>
 
-      <!-- Registrierung -->
+      <!-- REGISTRIERUNG -->
       <form id="register-form" class="auth-form hidden">
         <label>Nutzername
           <input id="reg-username" type="text" required />
@@ -51,14 +51,14 @@
         <button type="submit">Registrieren</button>
         <p id="register-msg" class="msg"></p>
       </form>
+
     </section>
   </main>
 
-  
-  <script src="/logbuch/js/status.js"></script>
+  <script src="js/status.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/logbuch/js/supabase.js"></script>
-  <script src="/logbuch/js/index.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/index.js"></script>
 
 </body>
 </html>
