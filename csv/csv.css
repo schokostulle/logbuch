@@ -4,8 +4,25 @@
   border-collapse: collapse;
 }
 
+#csv-table thead {
+  position: sticky;
+  top: 0;
+  background: #141a20;
+  z-index: 5;
+}
+
 #csv-table th,
 #csv-table td {
   padding: 6px 10px;
   border-bottom: 1px solid #2a323c;
+}
+
+#csv-table th.txt,
+#csv-table td.txt {
+  text-align: left;
+}
+
+#csv-table th.num,
+#csv-table td.num {
+  text-align: center;
 }
