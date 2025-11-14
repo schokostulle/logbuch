@@ -4,11 +4,21 @@
   border-collapse: collapse;
 }
 
+/* Wrapper zwingend: verhindert Überscrollen */
+.csv-table-wrapper {
+  max-height: calc(100vh - 240px);
+  overflow-y: auto;
+  overflow-x: auto;
+  position: relative;
+  border: 1px solid #2a323c;
+  background: #0f151c;
+}
+
 #csv-table thead {
   position: sticky;
   top: 0;
   background: #141a20;
-  z-index: 5;
+  z-index: 10;
 }
 
 #csv-table th,
