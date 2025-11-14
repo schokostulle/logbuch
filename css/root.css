@@ -49,13 +49,14 @@
   --btn-hover: #3b4148;
 }
 
-/* -----------------------------------------
-   SCHRIFTEN
------------------------------------------ */
+/* =========================================
+   SCHRIFTEN – Logbuch Edition
+========================================= */
 :root {
-  --font-serif: "Cormorant SC", serif;  /* Logbuch Titel */
-  --font-mono: "Roboto Mono", monospace; /* UI / Zahlen */
-  --font-serif-body: "Merriweather", serif; /* edler Text */
+  --font-text: "Quintessential", serif;      /* normaler Fließtext */
+  --font-title: "UnifrakturCook", cursive;   /* Seitentitel */
+  --font-heading: "Almendra SC", serif;      /* Überschriften */
+  --font-table: "Cormorant SC", serif;       /* Tabelleninhalt */
 
   --font-size-base: 16px;
   --font-size-large: 1.4rem;
