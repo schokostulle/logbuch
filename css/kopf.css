@@ -1,6 +1,6 @@
 /* ============================================================
-   /logbuch/css/kopf.css — Version 1.0 (Marine Logbuch Edition)
-   Dunkle Marinefarben | Metallakzente | Serifen & Monospace
+   /logbuch/css/kopf.css — Version 1.1 (Marine Logbuch Edition)
+   Konsistent mit root.css + neuer Typografie
 ============================================================ */
 
 /* =========================================
@@ -9,24 +9,23 @@
 #kopf {
   position: fixed;
   top: 0;
-  left: clamp(160px, 20vw, 240px);
+  left: var(--nav-width);
   right: 0;
 
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: stretch;
 
-  min-height: 80px;
-  background: #0f141d;        /* tiefmarine */
-  border-bottom: 1px solid #1c2129; /* dunkles Metall */
+  min-height: var(--kopf-height);
+  background: var(--bg-dark);
+  border-bottom: var(--border-thin);
 
-  color: #d7dde3;             /* helles Eisen */
+  color: var(--text-light);
   box-sizing: border-box;
   z-index: 5;
 
-  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
-  font-family: "Merriweather", serif;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+
+  font-family: var(--font-text);
 }
 
 /* =========================================
@@ -35,67 +34,57 @@
 .kopf-row {
   display: flex;
   align-items: center;
-  padding: 8px 16px;
+  padding: 8px 18px;
   width: 100%;
   box-sizing: border-box;
 }
 
-/* Zeile 1: rechtsbündig — User, Rolle, Zeit */
+/* Zeile 1: User, Rolle, Session */
 .kopf-row.row1 {
   justify-content: flex-end;
-  font-family: "Roboto Mono", monospace;
-  font-size: 14px;
-  letter-spacing: 0.4px;
-  color: #aeb7c2;             /* gedämpftes helles Eisen */
+  font-family: "Kalam", cursive;
+  font-size: 15px;
+  color: var(--text-medium);
 }
 
-/* Zeile 2: linksbündig — Seitentitel */
+/* Zeile 2: Titel (maritim, klar) */
 .kopf-row.row2 {
   justify-content: flex-start;
-  font-size: 20px;
-  font-weight: 600;
-  color: #e1e6eb;             /* helles Stahlgrau */
-}
-
-/* Links/Rechts Container */
-.kopf-row .left,
-.kopf-row .right {
-  flex: 1;
-  display: flex;
-  align-items: center;
+  font-family: "Almendra SC", serif;
+  font-size: 38px;
+  color: var(--accent-gold);
+  padding-top: 2px;
+  letter-spacing: 1px;
 }
 
 /* =========================================
    CONTENTBEREICH
 ========================================= */
 #content {
-  position: relative;
+  position: absolute;
+  top: var(--kopf-height);
+  left: var(--nav-width);
+  right: 0;
+  bottom: 0;
 
-  margin-left: clamp(160px, 20vw, 240px);
-  padding-top: 80px; /* Platz für Kopfbereich */
-
-  width: calc(100% - clamp(160px, 20vw, 240px));
-  height: calc(100vh - 80px);
-
-  display: flex;
-  flex-direction: column;
+  padding: 20px;
   overflow-y: auto;
 
-  background: #11161f;     /* tiefer Marinehintergrund */
-  color: #d7dde3;          /* helles Eisen */
-  box-sizing: border-box;
+  background: var(--bg-deep);
+  color: var(--text-light);
+  font-family: var(--font-text);
 }
 
 /* =========================================
    RESPONSIV
 ========================================= */
 @media (max-width: 800px) {
+
   #kopf {
-    left: 50px; /* Navigation im Icon-Modus */
+    left: var(--nav-width-small);
   }
 
   #content {
-    margin-left: 50px;
-    width: calc(100% - 50px);
+    left: var(--nav-width-small);
   }
 }
