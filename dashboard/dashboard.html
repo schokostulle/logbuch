@@ -1,118 +1,91 @@
-<!-- /logbuch/dashboard/dashboard.html — Version 0.3 (Supabase Onlinebetrieb) -->
+<!-- /logbuch/dashboard/dashboard.html — Version 0.4 (Maritime Typo-Auswahl) -->
 <!doctype html>
 <html lang="de">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <base href="../" />
+
   <title>Logbuch | Dashboard</title>
 
-  <!-- Styles -->
+  <!-- Stylebasis -->
   <link rel="stylesheet" href="css/root.css" />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/status.css" />
   <link rel="stylesheet" href="dashboard/dashboard.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Pirata+One&family=IM+Fell+English+SC&family=Cinzel+Decorative:wght@400;700&family=Marck+Script&family=Kaushan+Script&family=Fjord+One&family=Almendra+SC:wght@400;600&family=Spectral:wght@400;500&family=Alegreya:wght@400;500&family=Meddon&display=swap" rel="stylesheet">
-
+  <!-- Font Imports -->
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Almendra+SC:wght@400;600&family=Playfair+Display+SC:wght@400;700&family=Marck+Script&family=Spectral:wght@300;400;500&family=Alegreya+Sans+SC:wght@300;400;500&family=Cormorant+SC:wght@400;600&family=Meddon&display=swap" rel="stylesheet">
 </head>
 
 <body class="app-layout">
-  <!-- Linkes Navigationsmenü -->
-  <aside id="nav"></aside>
 
-  <!-- Kopfbereich -->
+  <aside id="nav"></aside>
   <header id="kopf"></header>
 
-  <!-- Hauptinhalt -->
   <main id="content" class="content">
 
+    <!-- Titel -->
+    <h1 style="font-family:'UnifrakturCook',cursive;font-size:48px;margin-bottom:20px;">
+      Logbuch der Fregatte „Sturmkrähe“
+    </h1>
 
-<!-- Titel (opulent) -->
-<h1 style="font-family:'UnifrakturCook',cursive;font-size:48px;margin-bottom:20px;">
-  Logbuch der Fregatte „Sturmkrähe“
-</h1>
+    <!-- H1-Beispiel -->
+    <h1 style="font-family:'Almendra SC',serif;font-size:40px;margin:10px 0;">
+      Aktuelles Logbuch
+    </h1>
 
-<h1 style="font-family:'Pirata One',cursive;font-size:48px;margin-bottom:20px;">
-  Logbuch der Fregatte „Sturmkrähe“
-</h1>
+    <!-- H2-Beispiel -->
+    <h2 style="font-family:'Playfair Display SC',serif;font-size:32px;margin:12px 0;">
+      Mannschaftsübersicht
+    </h2>
 
-<h1 style="font-family:'IM Fell English SC',serif;font-size:48px;margin-bottom:20px;">
-  Logbuch der Fregatte „Sturmkrähe“
-</h1>
+    <!-- H3-Beispiel -->
+    <h3 style="font-family:'Marck Script',cursive;font-size:26px;margin:8px 0;">
+      Decksordnung
+    </h3>
 
-<h1 style="font-family:'Cinzel Decorative',serif;font-size:48px;margin-bottom:20px;">
-  Logbuch der Fregatte „Sturmkrähe“
-</h1>
+    <!-- Fließtext -->
+    <p style="font-family:'Spectral',serif;font-size:18px;line-height:1.6;margin-top:10px;">
+      Die Aufzeichnungen dieser Reise wurden während schwerer See, rauer Nächte und stürmischer Winde geführt.
+    </p>
 
+    <p style="font-family:'Spectral',serif;font-size:16px;line-height:1.6;">
+      Jeder Eintrag dokumentiert die Stärke der Besatzung, die Bewegungen der Flotte sowie besondere Vorkommnisse.
+    </p>
 
-<!-- Überschriften (edel, maritim) -->
-<h2 style="font-family:'Marck Script',serif;font-size:32px;margin:12px 0;">
-  Mannschaftsübersicht
-</h2>
+    <!-- Tabellenbeispiel -->
+    <div style="margin:20px 0;">
+      <table style="border-collapse:collapse;font-family:'Cormorant SC',serif;font-size:18px;">
+        <thead style="font-weight:600;background:#1a1f2a;color:#d1b87b;">
+          <tr>
+            <th style="padding:6px 12px;border-bottom:1px solid #444;">Posten</th>
+            <th style="padding:6px 12px;border-bottom:1px solid #444;">Name</th>
+            <th style="padding:6px 12px;border-bottom:1px solid #444;">Dienstgrad</th>
+          </tr>
+        </thead>
+        <tbody style="font-family:'Alegreya Sans SC',sans-serif;">
+          <tr>
+            <td style="padding:6px 12px;">Ausguck</td>
+            <td style="padding:6px 12px;">H. Mertens</td>
+            <td style="padding:6px 12px;">Matrose</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 12px;">Steuermann</td>
+            <td style="padding:6px 12px;">J. Arendt</td>
+            <td style="padding:6px 12px;">Bootsmann</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-<h2 style="font-family:'Kaushan Script',serif;font-size:32px;margin:12px 0;">
-  Mannschaftsübersicht
-</h2>
-
-<h2 style="font-family:'Fjord One',serif;font-size:32px;margin:12px 0;">
-  Mannschaftsübersicht
-</h2>
-
-
-<!-- Unterüberschrift -->
-<h3 style="font-family:'Almendra SC',serif;font-size:26px;margin:8px 0;">
-  Decksordnung
-</h3>
-
-
-<!-- Texte (handschriftlich / lesbar) -->
-<p style="font-family:'Spectral',serif;font-size:18px;line-height:1.5;">
-  Die Aufzeichnungen dieser Reise wurden während schwerer See, rauer Nächte und stürmischer Winde geführt.
-</p>
-
-<p style="font-family:'Alegreya',serif;font-size:16px;line-height:1.5;">
-  Jeder Eintrag dokumentiert die Stärke der Besatzung, die Bewegungen der Flotte sowie besondere Vorkommnisse.
-</p>
-
-
-<!-- Tabellenkopf / Tabellenbeispiele -->
-<div style="margin:20px 0;">
-  <table style="border-collapse:collapse;font-family:'Cormorant SC',serif;font-size:18px;">
-    <thead style="font-weight:600;background:#1a1f2a;color:#d1b87b;">
-      <tr>
-        <th style="padding:6px 12px;border-bottom:1px solid #444;">Posten</th>
-        <th style="padding:6px 12px;border-bottom:1px solid #444;">Name</th>
-        <th style="padding:6px 12px;border-bottom:1px solid #444;">Dienstgrad</th>
-      </tr>
-    </thead>
-
-    <tbody style="font-family:'Alegreya',serif;">
-      <tr>
-        <td style="padding:6px 12px;">Ausguck</td>
-        <td style="padding:6px 12px;">H. Mertens</td>
-        <td style="padding:6px 12px;">Matrose</td>
-      </tr>
-      <tr>
-        <td style="padding:6px 12px;">Steuermann</td>
-        <td style="padding:6px 12px;">J. Arendt</td>
-        <td style="padding:6px 12px;">Bootsmann</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-
-<!-- Kommentare -->
-<p style="font-family:'Meddon',cursive;font-size:20px;font-style:italic;margin-top:24px;">
-  „Wind frisch aus West. Segel gesetzt. Kurs gehalten.“ — Handschrift des Kapitäns
-</p>
+    <!-- Kommentare -->
+    <p style="font-family:'Meddon',cursive;font-size:20px;margin-top:30px;">
+      „Wind frisch aus West. Segel gesetzt. Kurs gehalten.“
+    </p>
 
   </main>
 
- 
-  <!-- Globale Skripte -->
   <script src="js/status.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase.js"></script>
