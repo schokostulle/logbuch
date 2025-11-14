@@ -1,45 +1,30 @@
-<!doctype html>
-<html lang="de">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<main id="content">
 
-  <!-- Wichtig für GitHub Pages -->
-  <base href="../" />
+  <h2>CSV Upload</h2>
 
-  <title>CSV Import/Export</title>
+  <div class="tool-container">
+    <input type="file" id="csv-file" accept=".csv" />
+    <button id="csv-upload-btn">CSV hochladen</button>
+  </div>
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="csv/csv.css" />
-  <link rel="stylesheet" href="css/status.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
-</head>
+  <div class="tool-container">
+    <table id="csv-table">
+      <thead>
+        <tr>
+          <th>Oz</th>
+          <th>Ig</th>
+          <th>In</th>
+          <th>l-Name</th>
+          <th>S-ID</th>
+          <th>Name</th>
+          <th>A-ID</th>
+          <th>Akrzl</th>
+          <th>A-Name</th>
+          <th>Punkte</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
-<body>
-  <!-- Navigation & Kopf -->
-  <aside id="nav"></aside>
-  <header id="kopf"></header>
-
-  <main id="content">
-
-  </main>
-
-  <!-- Globale Statusanzeige -->
-  <script src="js/status.js"></script>
-
-  <!-- Supabase zuerst laden -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- Supabase Schnittstelle -->
-  <script src="js/supabase.js"></script>
-
-  <!-- Layout-Komponenten -->
-  <script src="js/navigation.js"></script>
-  <script src="js/kopf.js"></script>
-  <script src="js/timeout.js"></script>
-
-  <!-- CSV-Logik -->
-  <script src="csv/csv.js"></script>
-</body>
-</html>
+</main>
