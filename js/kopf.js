@@ -1,11 +1,7 @@
-// /logbuch/js/kopf.js — Version 0.8 (ohne Datum/Uhrzeit, mit Rollen-Icon)
-(function buildKopf() {
-  let initialized = false;
+// /logbuch/js/kopf.js — Version 0.9 (stabil, ohne Datum/Uhrzeit, Rollen-Icon fix)
+(function () {
   let tries = 0;
 
-  // ----------------------------------------------------------
-  // Kopf rendern
-  // ----------------------------------------------------------
   async function renderKopf() {
     const kopf = document.getElementById("kopf");
     if (!kopf) return false;
@@ -13,30 +9,28 @@
     let username = sessionStorage.getItem("username") || "Gast";
     let role = sessionStorage.getItem("userRole") || "member";
 
-    // Supabase-Session prüfen (optional)
+    // Supabase-Session optional prüfen
     try {
-      const data = await supabaseAPI.getSession();
-      const user = data?.user;
+      const session = await supabaseAPI.getSession();
+      const user = session?.user;
       if (user) {
         username = user.user_metadata?.username || username;
         role = user.user_metadata?.role || role;
       }
-    } catch (err) {
-      console.warn("[Kopf] Supabase-Session konnte nicht geprüft werden:", err);
-    }
+    } catch (_) {}
 
-    // Rollen-Icon
     const roleIcon = role === "admin" ? "🎖️" : "🪖";
 
-    // Titel anhand der Seite
-    const path = window.location.pathname;
-    let appTitle = "Logbuch";
-    if (path.includes("dashboard.html")) appTitle = "Dashboard";
-    else if (path.includes("member.html")) appTitle = "Member";
-    else if (path.includes("gate.html")) appTitle = "Zugangskontrolle";
-    else if (path.includes("index.html")) appTitle = "Login & Registrierung";
+    // Titel anhand Dateiname
+    const file = location.pathname.split("/").pop();
+    let appTitle =
+      file === "dashboard.html" ? "Dashboard" :
+      file === "member.html"    ? "Memberverwaltung" :
+      file === "csv.html"       ? "CSV-Import" :
+      file === "gate.html"      ? "Zugangskontrolle" :
+      file === "index.html"     ? "Login & Registrierung" :
+      "Logbuch";
 
-    // Kopfbereich setzen
     kopf.innerHTML = `
       <div class="kopf-row row1">
         <div class="right">${roleIcon} ${username} (${role})</div>
@@ -46,27 +40,17 @@
       </div>
     `;
 
-    initialized = true;
     return true;
   }
 
-  // ----------------------------------------------------------
-  // Reaktion auf Rollen-/Benutzeränderungen
-  // ----------------------------------------------------------
   window.addEventListener("storage", (e) => {
-    if (["username", "userRole"].includes(e.key)) {
-      console.log("[Kopf] Session-Änderung erkannt → neu rendern");
-      renderKopf();
-    }
+    if (e.key === "username" || e.key === "userRole") renderKopf();
   });
 
-  // ----------------------------------------------------------
-  // Initialisierung mit Fallback
-  // ----------------------------------------------------------
-  async function tryRender() {
-    const success = await renderKopf();
-    if (!success && tries++ < 10) setTimeout(tryRender, 300);
+  async function init() {
+    const ok = await renderKopf();
+    if (!ok && tries++ < 10) setTimeout(init, 300);
   }
 
-  window.addEventListener("load", tryRender);
+  window.addEventListener("load", init);
 })();
