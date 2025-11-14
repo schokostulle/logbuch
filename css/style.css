@@ -276,9 +276,3 @@ body.app-layout {
 
   /* Kopf passt sich automatisch an, da left: var(--nav-width); */
 }
-
-/* ===== TEST BACKGROUND: Kapitänsmesse (leicht entfernbar) ===== */
-body.index-bg {
-  background: url("img/file_000000004dbc720a901c6b4e7a938e8b.png") center/cover no-repeat fixed;
-  background-color: #0a0f1a; /* angenehmer Übergang zum Marine-Theme */
-}
