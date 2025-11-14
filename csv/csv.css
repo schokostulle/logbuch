@@ -4,7 +4,7 @@
   border-collapse: collapse;
 }
 
-/* Wrapper zwingend: verhindert Überscrollen */
+/* Scroll-Wrapper */
 .csv-table-wrapper {
   max-height: calc(100vh - 240px);
   overflow-y: auto;
@@ -14,6 +14,7 @@
   background: #0f151c;
 }
 
+/* Sticky Header */
 #csv-table thead {
   position: sticky;
   top: 0;
@@ -27,11 +28,13 @@
   border-bottom: 1px solid #2a323c;
 }
 
+/* Textspalten */
 #csv-table th.txt,
 #csv-table td.txt {
   text-align: left;
 }
 
+/* Zahlenspalten */
 #csv-table th.num,
 #csv-table td.num {
   text-align: center;
