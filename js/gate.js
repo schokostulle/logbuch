@@ -1,4 +1,4 @@
-// /logbuch/js/gate.js — Version 2.1 (Schleifenfrei)
+// /logbuch/js/gate.js — Version 2.2 (bereinigt, konsistent, schleifenfrei)
 (async function () {
   const title = document.getElementById("gate-title");
   const msg = document.getElementById("gate-msg");
@@ -40,10 +40,6 @@
     const res = await supabaseAPI.fetchData("profiles", { username });
     profile = res?.[0] || null;
   } catch (err) {
-    console.warn("[Gate] DB-Fehler → sichere Rückleitung:", err);
-
-    // ❗ KEIN redirect zum Dashboard, sonst Loop!
-    // Zurück zum Login.
     sessionStorage.clear();
     title.textContent = "Zugriff verweigert";
     msg.textContent = "Profil konnte nicht geladen werden.";
@@ -51,7 +47,7 @@
   }
 
   // --------------------------------------------
-  // 4. Profil überhaupt vorhanden?
+  // 4. Profil nicht vorhanden
   // --------------------------------------------
   if (!profile) {
     sessionStorage.clear();
@@ -71,7 +67,7 @@
   }
 
   // --------------------------------------------
-  // 6. Finale Weiterleitung (einmalig)
+  // 6. Weiterleitung zum Dashboard
   // --------------------------------------------
   sessionStorage.setItem("userRole", profile.rolle);
 
