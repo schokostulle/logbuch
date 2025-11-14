@@ -1,5 +1,6 @@
 /* ============================================================
    /logbuch/css/style.css — Version 1.3 (Marine Logbuch Edition)
+   Schriftfamilien korrigiert gemäß finaler Typo-Strategie
 ============================================================ */
 
 :root {
@@ -18,7 +19,7 @@
 html, body {
   width: 100%;
   height: 100%;
-  font-family: "Quintessential", serif;
+  font-family: "Kalam", cursive;
   background: #0a0f1a;
   color: #c8cdd4;
   overflow: hidden;
@@ -48,7 +49,7 @@ html, body {
 }
 
 .auth-card h1 {
-  font-family: "UnifrakturCook", cursive;
+  font-family: "Almendra SC", serif;
   color: #d1b87b;
   font-size: 32px;
   letter-spacing: 1px;
@@ -91,7 +92,7 @@ html, body {
 label {
   text-align: left;
   font-size: 14px;
-  font-family: "Quintessential", serif;
+  font-family: "Kalam", cursive;
 }
 
 input {
@@ -100,7 +101,7 @@ input {
   border: 1px solid #3b4148;
   background: #0f141d;
   color: #eee;
-  font-family: "Quintessential", serif;
+  font-family: "Kalam", cursive;
 }
 
 .auth-form input {
@@ -113,7 +114,7 @@ input {
   background: #2a2f35;
   border: 1px solid #3b4148;
   color: #eee;
-  font-family: "Quintessential", serif;
+  font-family: "Kalam", cursive;
 }
 
 .auth-form button[type="submit"]:hover {
@@ -159,7 +160,7 @@ body.app-layout {
 }
 
 .nav-title {
-  font-family: "UnifrakturCook", cursive;
+  font-family: "Almendra SC", serif;
   font-size: 20px;
   letter-spacing: 1px;
   color: #d1b87b;
@@ -193,7 +194,7 @@ body.app-layout {
   border-left: 4px solid transparent;
 
   transition: background 0.15s ease;
-  font-family: "Quintessential", serif;
+  font-family: "Kalam", cursive;
 }
 
 .nav a:hover {
@@ -221,11 +222,11 @@ body.app-layout {
 .kopf-row.row1 {
   display: flex;
   justify-content: flex-end;
-  font-family: "Quintessential", serif;
+  font-family: "Kalam", cursive;
 }
 
 .kopf-row.row2 {
-  font-family: "UnifrakturCook", cursive;
+  font-family: "Almendra SC", serif;
   font-size: 38px;
   color: #d1b87b;
   padding-top: 4px;
@@ -244,7 +245,7 @@ body.app-layout {
   overflow-y: auto;
   padding: 20px;
 
-  font-family: "Quintessential", serif;
+  font-family: "Kalam", cursive;
 }
 
 /* =========================================
