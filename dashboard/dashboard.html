@@ -1,4 +1,4 @@
-<!-- /logbuch/dashboard/dashboard.html — Version 0.5 (Typo Showcase) -->
+<!-- /logbuch/dashboard/dashboard.html — Version 0.6 (Typo Showcase, korrigiert) -->
 <!doctype html>
 <html lang="de">
 <head>
@@ -17,9 +17,6 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Almendra+SC:wght@400;600&family=Playfair+Display+SC:wght@400;700&family=Marck+Script&family=Kalam:wght@300;400&family=Patrick+Hand&family=Handlee&family=Alegreya+Sans:wght@300;400&family=Alegreya+Sans+SC:wght@300;400&family=Cormorant+SC:wght@400;600&family=Meddon&display=swap" rel="stylesheet">
 
-  <!-- UnifrakturMaguntia (nicht bei Google Fonts verfügbar → Bunny Fonts) -->
-  <link href="https://fonts.bunny.net/css?family=unifrakturmaguntia:400" rel="stylesheet" />
-
 </head>
 
 <body class="app-layout">
@@ -28,23 +25,26 @@
   <header id="kopf"></header>
 
   <main id="content" class="content">
-<h1>Dashboard</h1>
-<h2>Logbucheintrag</h2>
-<h3>Freitag, 14.11.2025</h3>
-<p>Warum bin ich so fröhlich, so fröhlich, so fröhlich - bin ausgesprochen fröhlich, so fröhlich war ich nie!</p>
-   
+
+    <!-- TITEL / H1 / H2 / H3 / TEXT / TABELLEN / KOMMENTARE -->
+    <h1>Dashboard</h1>
+    <h2>Logbucheintrag</h2>
+    <h3>Freitag, 14.11.2025</h3>
+
+    <p>
+      Warum bin ich so fröhlich, so fröhlich, so fröhlich – bin ausgesprochen fröhlich, so fröhlich war ich nie!
+    </p>
 
     <!-- TABELLENBEISPIEL -->
     <div style="margin:20px 0;">
       <table>
-        <thead style="font-weight:600;background:#1a1f2a;color:#d1b87b;">
+        <thead>
           <tr>
-            <th style="padding:6px 12px;border-bottom:1px solid #444;">Name</th>
-            <th style="padding:6px 12px;border-bottom:1px solid #444;">Datum</th>
-            <th style="padding:6px 12px;border-bottom:1px solid #444;">Rang</th>
+            <th>Name</th>
+            <th>Datum</th>
+            <th>Rang</th>
           </tr>
         </thead>
-
         <tbody>
           <tr>
             <td>Ausguck</td>
@@ -61,7 +61,7 @@
     </div>
 
     <!-- KOMMENTAR -->
-    <p>- krake</p>
+    <p class="kommentar">– krake</p>
 
   </main>
 
