@@ -160,31 +160,52 @@ h1, h2 {
 
 
 /* =========================================================
-   TABELLEN
+   TABELLEN – Schöne Spaltenunterteilung
    ========================================================= */
 
 table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;           /* wichtig für vertikale Linien */
+    border-spacing: 0;
     margin-top: var(--space-m);
     background: var(--color-bg-secondary);
     border-radius: var(--radius-s);
     overflow: hidden;
+    box-shadow: var(--shadow-s);
 }
 
+/* Kopfzeilen */
 table th {
     background: var(--color-ocean-dark);
     color: white;
     padding: var(--space-s);
     text-align: left;
+    border-right: 1px solid rgba(255,255,255,0.15); /* neue Spaltenlinie */
+    font-family: var(--font-serif);
 }
 
+/* letzte Kopfzelle ohne Linie */
+table th:last-child {
+    border-right: none;
+}
+
+/* Zellen */
 table td {
     padding: var(--space-s);
-    border-bottom: 1px solid rgba(0,0,0,0.1);
+    border-bottom: 1px solid rgba(0,0,0,0.1);       /* horizontale Linie */
+    border-right: 1px solid rgba(0,0,0,0.08);       /* neue Spaltenlinie */
 }
 
+/* letzte Zelle ohne Linie */
+table td:last-child {
+    border-right: none;
+}
 
+/* Zeilen-Hover für Lesbarkeit */
+table tbody tr:hover {
+    background: rgba(255,255,255,0.35);
+    transition: background var(--animation-fast);
+}
 
 /* =========================================================
    FORMULARE
@@ -343,6 +364,7 @@ input:focus, select:focus, textarea:focus {
                 <th>Insel</th>
                 <th>Spieler</th>
                 <th>Allianz</th>
+                <th>Punkte</th>
             </tr>
         </thead>
         <tbody>
@@ -350,16 +372,23 @@ input:focus, select:focus, textarea:focus {
                 <td>Alpha</td>
                 <td>Seefahrer X</td>
                 <td>AID 12</td>
+                <td>4.520</td>
             </tr>
             <tr>
                 <td>Beta</td>
                 <td>Entdecker Y</td>
                 <td>AID 44</td>
+                <td>5.880</td>
+            </tr>
+            <tr>
+                <td>Gamma</td>
+                <td>Pirat Z</td>
+                <td>AID 92</td>
+                <td>3.270</td>
             </tr>
         </tbody>
     </table>
 </div>
-
 
 
 <!-- =========================================================
