@@ -1,17 +1,29 @@
 // js/auth.js
 //
-// Zentrale Authentifizierung + Profilprüfung
-// Nutzt supabase.js für die Verbindung
+// Authentifizierung mit Username + Passwort (sichtbar für User)
+// Intern für Supabase wird username@logbuch.fake genutzt
 
 import { supabase } from "./supabase.js";
 
 
 /* ==========================================================================
-   Login
+   Hilfsfunktion: Fake-Mail generieren
    ========================================================================== */
 
-export async function loginUser(email, password) {
+function toFakeMail(username) {
+    return `${username.toLowerCase()}@logbuch.fake`;
+}
+
+
+
+/* ==========================================================================
+   LOGIN
+   ========================================================================== */
+
+export async function loginUser(username, password) {
     try {
+        const email = toFakeMail(username);
+
         const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password
@@ -21,13 +33,13 @@ export async function loginUser(email, password) {
             return { error: error.message };
         }
 
-        // Erfolg → Profilprüfung
+        // Profil prüfen
         const profileCheck = await fetchUserProfile(data.user.id);
+
         if (profileCheck.error) {
             return { error: profileCheck.error };
         }
 
-        // Nur aktive User dürfen rein
         if (profileCheck.status !== "aktiv") {
             await supabase.auth.signOut();
             return { error: "Account nicht aktiv (blockiert oder gelöscht)." };
@@ -43,11 +55,13 @@ export async function loginUser(email, password) {
 
 
 /* ==========================================================================
-   Registrierung
+   REGISTRIERUNG
    ========================================================================== */
 
-export async function registerUser(email, password) {
+export async function registerUser(username, password) {
     try {
+        const email = toFakeMail(username);
+
         const { data, error } = await supabase.auth.signUp({
             email,
             password
@@ -57,8 +71,9 @@ export async function registerUser(email, password) {
             return { error: error.message };
         }
 
-        // Profil wird durch deinen Trigger später automatisch erzeugt
-        // Solange RLS/Trigger aus: Profile wird evtl. manuell gepflegt
+        // Falls RLS/Trigger deaktiviert sind:
+        // Profil manuell anlegen, falls nicht vorhanden
+        await ensureProfileExists(data.user.id, username);
 
         return { user: data.user };
 
@@ -70,7 +85,39 @@ export async function registerUser(email, password) {
 
 
 /* ==========================================================================
-   Aktuellen User laden
+   PROFIL ANLEGEN (nur falls kein Trigger aktiv)
+   ========================================================================== */
+
+async function ensureProfileExists(userId, username) {
+    try {
+        // Prüfen, ob Profil existiert
+        const { data } = await supabase
+            .from("profiles")
+            .select("id")
+            .eq("id", userId)
+            .single();
+
+        if (data) return; // existiert bereits
+
+        // Neues Profil anlegen: Standard Member + blockiert
+        await supabase
+            .from("profiles")
+            .insert({
+                id: userId,
+                username: username,
+                role: "Member",
+                status: "blockiert"
+            });
+
+    } catch (e) {
+        console.warn("Profil konnte nicht automatisch angelegt werden.");
+    }
+}
+
+
+
+/* ==========================================================================
+   AKTIVEN USER LADEN
    ========================================================================== */
 
 export async function getCurrentUser() {
@@ -79,11 +126,9 @@ export async function getCurrentUser() {
 
     const user = data.user;
 
-    // Profil prüfen
     const profile = await fetchUserProfile(user.id);
     if (profile.error) return null;
 
-    // Blockierte/gelöschte User erhalten keinen Zugriff
     if (profile.status !== "aktiv") {
         await supabase.auth.signOut();
         return null;
@@ -95,14 +140,14 @@ export async function getCurrentUser() {
 
 
 /* ==========================================================================
-   Profil laden
+   PROFIL LADEN
    ========================================================================== */
 
 async function fetchUserProfile(userId) {
     try {
         const { data, error } = await supabase
             .from("profiles")
-            .select("role, status")
+            .select("username, role, status")
             .eq("id", userId)
             .single();
 
@@ -120,7 +165,7 @@ async function fetchUserProfile(userId) {
 
 
 /* ==========================================================================
-   Logout
+   LOGOUT
    ========================================================================== */
 
 export async function logoutUser() {
