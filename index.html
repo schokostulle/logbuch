@@ -1,1 +1,117 @@
 
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Login & Registrierung – Community Webapp</title>
+
+<link rel="stylesheet" href="css/root.css">
+<link rel="stylesheet" href="css/style.css">
+
+<!-- index-spezifisches Styling kann in style.css ergänzt werden -->
+<style>
+/* Zentriertes Layout für äußere Startseite */
+.auth-container {
+    max-width: 420px;
+    margin: 80px auto;
+    padding: var(--space-xl);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-l);
+    box-shadow: var(--shadow-l);
+    border-left: 6px solid var(--color-wood);
+}
+
+.auth-title {
+    font-family: var(--font-serif);
+    text-align: center;
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-xl);
+    color: var(--color-ocean-dark);
+}
+
+.auth-tabs {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-m);
+    margin-bottom: var(--space-l);
+}
+
+.auth-tabs button {
+    padding: var(--space-s) var(--space-m);
+    border-radius: var(--radius-s);
+    background: var(--color-ocean-light);
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-serif);
+    box-shadow: var(--shadow-s);
+}
+
+.auth-tabs button.active {
+    background: var(--color-ocean);
+    color: white;
+}
+
+.auth-form {
+    display: none;
+}
+
+.auth-form.active {
+    display: block;
+}
+
+#status {
+    margin-top: var(--space-m);
+    font-size: var(--font-size-s);
+    color: var(--color-text);
+    text-align: center;
+}
+</style>
+
+</head>
+<body>
+
+<div class="auth-container">
+
+    <div class="auth-title">Community Webapp</div>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+        <button id="tab-login" class="active">Login</button>
+        <button id="tab-register">Registrieren</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form id="login-form" class="auth-form active">
+        <label>Email</label>
+        <input type="email" name="email" required>
+
+        <label>Passwort</label>
+        <input type="password" name="password" required>
+
+        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:var(--space-m);">
+            Login
+        </button>
+    </form>
+
+    <!-- REGISTRATION FORM -->
+    <form id="register-form" class="auth-form">
+        <label>Email</label>
+        <input type="email" name="email" required>
+
+        <label>Passwort</label>
+        <input type="password" name="password" required>
+
+        <button type="submit" class="btn btn-secondary" style="width:100%; margin-top:var(--space-m);">
+            Registrieren
+        </button>
+    </form>
+
+    <div id="status"></div>
+
+</div>
+
+<!-- JS -->
+<script type="module" src="js/index.js"></script>
+
+</body>
+</html>
