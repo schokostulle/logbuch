@@ -7,138 +7,110 @@
 <link rel="stylesheet" href="css/root.css">
 
 <style>
-    /* Minimaler Basisstil für die Vorschau */
+body {
+    background: var(--color-bg);
+    padding: 20px;
+    font-family: var(--font-base);
+}
 
-    body {
-        font-family: var(--font-base);
-        background: var(--color-bg);
-        color: var(--color-text);
-        padding: var(--space-xl);
-        line-height: var(--line-height);
-    }
+/* Abschnitt */
+.section { margin-bottom: 40px; }
 
-    h1, h2, h3 {
-        font-family: var(--font-serif);
-        margin-bottom: var(--space-m);
-    }
+/* Überschriften */
+h1, h2 {
+    font-family: var(--font-serif);
+    margin-bottom: 20px;
+}
 
-    .section {
-        margin-bottom: var(--space-xxl);
-    }
+/* GRID mit Fallback */
+.color-grid {
+    display: grid;
+    gap: 16px;
 
-    .color-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-        gap: var(--space-m);
-    }
+    /* Wichtig für Mobile! */
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
 
-    .color-box {
-        padding: var(--space-l);
-        border-radius: var(--radius-s);
-        box-shadow: var(--shadow-s);
-        border: 1px solid rgba(0,0,0,0.1);
-    }
+/* FARBFELDER */
+.color-box {
+    min-height: 90px;                 /* ← verhindert Kollaps */
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: var(--shadow-s);
+    background: rgba(255,255,255,0.5); /* default, falls Var fehlt */
+    border: 1px solid rgba(0,0,0,0.1);
 
-    .button-row {
-        display: flex;
-        gap: var(--space-m);
-    }
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
 
-    .btn {
-        padding: var(--space-s) var(--space-l);
-        border-radius: var(--radius-s);
-        border: 1px solid transparent;
-        cursor: pointer;
-        font-size: var(--font-size-m);
-        transition: var(--animation-fast);
-        box-shadow: var(--shadow-s);
-    }
-
-    .btn:hover { opacity: var(--hover-opacity); }
-
-    .btn-primary {
-        background: var(--color-ocean);
-        color: white;
-    }
-
-    .btn-secondary {
-        background: var(--color-brass);
-        color: #fff;
-    }
-
-    .btn-danger {
-        background: var(--color-error);
-        color: white;
-    }
-
-    .card {
-        padding: var(--space-l);
-        background: var(--color-bg-secondary);
-        border-radius: var(--radius-m);
-        box-shadow: var(--shadow-m);
-        border-left: 4px solid var(--color-wood);
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: var(--space-m);
-        background: var(--color-bg-secondary);
-    }
-
-    table th {
-        background: var(--color-ocean-dark);
-        color: white;
-        padding: var(--space-s);
-        font-family: var(--font-serif);
-        text-align: left;
-    }
-
-    table td {
-        padding: var(--space-s);
-        border-bottom: 1px solid rgba(0,0,0,0.1);
-    }
-
-    .nav-sample {
-        width: 220px;
-        background: var(--color-wood-dark);
-        color: white;
-        padding: var(--space-l);
-        border-radius: var(--radius-m);
-        box-shadow: var(--shadow-m);
-        font-family: var(--font-serif);
-    }
-
-    .nav-sample .item {
-        margin-bottom: var(--space-s);
-        padding: var(--space-s);
-        border-radius: var(--radius-s);
-        background: rgba(255,255,255,0.15);
-    }
-
-    .header-sample {
-        background: var(--color-bg-secondary);
-        padding: var(--space-l);
-        border-radius: var(--radius-m);
-        border-bottom: 4px solid var(--color-brass);
-        box-shadow: var(--shadow-s);
-    }
-
+/* TEXT FÜR DEMO */
+.color-box strong {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 6px;
+}
 </style>
 
 </head>
-
 <body>
 
 <h1>Maritime Theme – Live Preview</h1>
 
-<!-- COLORS -->
 <div class="section">
     <h2>Farben</h2>
+
     <div class="color-grid">
 
         <div class="color-box" style="background: var(--color-bg);">
-            <strong>--color-bg</strong><br>Hintergrund
+            <strong>--color-bg</strong>
+            Hintergrund
         </div>
 
-        <div class="color-box" style="background
+        <div class="color-box" style="background: var(--color-bg-secondary);">
+            <strong>--color-bg-secondary</strong>
+            Sekundär
+        </div>
+
+        <div class="color-box" style="background: var(--color-ocean); color:white;">
+            <strong>--color-ocean</strong>
+            Ozean
+        </div>
+
+        <div class="color-box" style="background: var(--color-ocean-light);">
+            <strong>--color-ocean-light</strong>
+            Ozean hell
+        </div>
+
+        <div class="color-box" style="background: var(--color-ocean-dark); color:white;">
+            <strong>--color-ocean-dark</strong>
+            Ozean dunkel
+        </div>
+
+        <div class="color-box" style="background: var(--color-wood); color:white;">
+            <strong>--color-wood</strong>
+            Holz
+        </div>
+
+        <div class="color-box" style="background: var(--color-brass);">
+            <strong>--color-brass</strong>
+            Messing
+        </div>
+
+        <div class="color-box" style="background: var(--color-success-bg);">
+            <strong>--color-success-bg</strong>
+            Erfolg
+        </div>
+
+        <div class="color-box" style="background: var(--color-error-bg);">
+            <strong>--color-error-bg</strong>
+            Fehler
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
