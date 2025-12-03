@@ -29,7 +29,6 @@ function showStatus(message, type = "info") {
     statusBox.className = `status-box ${type}`;
     statusBox.style.display = "block";
 
-    // Auto-Fade-Out nach 4s
     setTimeout(() => {
         statusBox.style.display = "none";
     }, 4000);
@@ -68,22 +67,22 @@ if (showRegisterLink) {
 
 
 /* ==========================================================================
-   FORMULAR: Login
+   FORMULAR: Login (USERNAME + PASSWORT)
    ========================================================================== */
 
 if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const email = loginForm.email.value.trim();
+        const username = loginForm.username.value.trim();
         const password = loginForm.password.value.trim();
 
-        if (!email || !password) {
-            showStatus("Bitte E-Mail und Passwort eingeben.", "error");
+        if (!username || !password) {
+            showStatus("Bitte Benutzername und Passwort eingeben.", "error");
             return;
         }
 
-        const result = await loginUser(email, password);
+        const result = await loginUser(username, password);
 
         if (result.error) {
             showStatus(result.error, "error");
@@ -92,7 +91,6 @@ if (loginForm) {
 
         showStatus("Login erfolgreich!", "success");
 
-        // Weiterleitung ins Dashboard
         window.location.href = "dashboard/dashboard.html";
     });
 }
@@ -100,22 +98,22 @@ if (loginForm) {
 
 
 /* ==========================================================================
-   FORMULAR: Registrierung
+   FORMULAR: Registrierung (USERNAME + PASSWORT)
    ========================================================================== */
 
 if (registerForm) {
     registerForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const email = registerForm.email.value.trim();
+        const username = registerForm.username.value.trim();
         const password = registerForm.password.value.trim();
 
-        if (!email || !password) {
+        if (!username || !password) {
             showStatus("Bitte alle Felder ausfüllen.", "error");
             return;
         }
 
-        const result = await registerUser(email, password);
+        const result = await registerUser(username, password);
 
         if (result.error) {
             showStatus(result.error, "error");
@@ -124,7 +122,6 @@ if (registerForm) {
 
         showStatus("Registrierung erfolgreich! Du kannst dich jetzt einloggen.", "success");
 
-        // automatisch zurück zum Login
         switchToLogin();
     });
 }
@@ -139,7 +136,6 @@ if (registerForm) {
     const user = await getCurrentUser();
 
     if (user) {
-        // User schon eingeloggt → direkt ins Dashboard
         window.location.href = "dashboard/dashboard.html";
     }
 })();
