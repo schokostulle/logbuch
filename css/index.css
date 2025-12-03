@@ -1,0 +1,173 @@
+/* ==========================================================================
+   INDEX.CSS — Startseite (Login & Registrierung)
+   Keine Navigation, kein Dashboard-Layout
+   ========================================================================== */
+
+/* Grundlayout */
+body {
+    background: var(--color-bg);
+    margin: 0;
+    padding: var(--space-xl);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+
+    /* Pergament-Optik */
+    background: linear-gradient(
+        to bottom,
+        #f7f3e8 0%,
+        #ece3d1 100%
+    );
+    background-attachment: fixed;
+    color: var(--color-text);
+    font-family: var(--font-base);
+}
+
+/* Wrapper für Login/Registrierung */
+.auth-wrapper {
+    width: 100%;
+    max-width: 420px;
+
+    background: var(--color-bg-secondary);
+    padding: var(--space-xl);
+    border-radius: var(--radius-l);
+    box-shadow: var(--shadow-l);
+
+    border: 2px solid rgba(139, 94, 60, 0.25); /* Holzfarbener Rahmen */
+}
+
+/* Header */
+.auth-header {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+}
+
+.auth-header h1 {
+    font-family: var(--font-serif);
+    color: var(--color-ocean-dark);
+    margin-bottom: var(--space-s);
+}
+
+.auth-header .subtitle {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+}
+
+/* Sektionen */
+.auth-section {
+    margin-bottom: var(--space-xl);
+}
+
+.auth-section.hidden {
+    display: none;
+}
+
+.auth-section h2 {
+    font-family: var(--font-serif);
+    color: var(--color-ocean);
+    margin-bottom: var(--space-m);
+    text-align: center;
+}
+
+/* Formularelemente */
+label {
+    display: block;
+    margin-bottom: var(--space-xs);
+    font-size: var(--font-size-s);
+    color: var(--color-text-muted);
+}
+
+input {
+    width: 100%;
+    padding: var(--space-s);
+    margin-bottom: var(--space-m);
+
+    background: var(--color-bg);
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: var(--radius-s);
+    font-size: var(--font-size-m);
+}
+
+input:focus {
+    outline: 2px solid var(--color-ocean-light);
+}
+
+/* Buttons */
+button.btn {
+    width: 100%;
+    padding: var(--space-m);
+    border-radius: var(--radius-m);
+    font-size: var(--font-size-m);
+    cursor: pointer;
+    border: none;
+    transition: var(--animation-fast);
+    box-shadow: var(--shadow-s);
+}
+
+.btn-primary {
+    background: var(--color-ocean);
+    color: white;
+}
+
+.btn-secondary {
+    background: var(--color-brass);
+    color: white;
+}
+
+button:hover {
+    opacity: var(--hover-opacity);
+}
+
+/* Link zum Umschalten Login ↔ Registrierung */
+.switch {
+    text-align: center;
+    font-size: var(--font-size-s);
+}
+
+.switch a {
+    color: var(--color-ocean-dark);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.switch a:hover {
+    opacity: var(--hover-opacity);
+}
+
+/* Statusbox */
+.status-box {
+    margin-top: var(--space-l);
+    padding: var(--space-m);
+    border-radius: var(--radius-m);
+    font-size: var(--font-size-s);
+    text-align: center;
+    display: none; /* per JS sichtbar */
+}
+
+.status-box.success {
+    background: var(--color-success-bg);
+    color: var(--color-success);
+}
+
+.status-box.error {
+    background: var(--color-error-bg);
+    color: var(--color-error);
+}
+
+.status-box.info {
+    background: var(--color-info-bg);
+    color: var(--color-info);
+}
+
+/* Mobile Optimierung */
+@media (max-width: 480px) {
+    body {
+        padding: var(--space-m);
+    }
+
+    .auth-wrapper {
+        padding: var(--space-l);
+        border-width: 1px;
+    }
+}
