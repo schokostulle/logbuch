@@ -1,0 +1,97 @@
+/* ==========================================================================
+   Global Design Tokens – Maritime Theme (Age of Discovery)
+   Diese Datei liefert NUR Variablen (Farben, Abstände, Fonts, Schatten)
+   ========================================================================== */
+
+:root {
+
+    /* --------------------------------------------------------------
+       FARBPALETTE
+       Maritime, gedämpfte Töne: Holz, Pergament, See, Messing
+       -------------------------------------------------------------- */
+
+    /* Grundfarben */
+    --color-bg: #f4efe5;           /* Helles Pergament */
+    --color-bg-secondary: #e8e1d4; /* leicht dunkleres Pergament */
+
+    --color-text: #2b2b2b;         /* dunkle Tinte */
+    --color-text-muted: #5e5a54;   /* leicht verblasste Tinte */
+
+    /* Maritime Akzentfarben */
+    --color-ocean: #3a6478;        /* tiefes Blaugrün */
+    --color-ocean-light: #6c9fb3;  /* helleres See-Blau */
+    --color-ocean-dark: #244250;   /* fast sturmgrau-blau */
+
+    /* Holz- und Messingfarben */
+    --color-wood: #8b5e3c;         /* warmes Holz */
+    --color-wood-dark: #5e3e26;    /* dunkleres Holz */
+    --color-brass: #bfa66b;        /* Messing / Schiffsgerätschaften */
+    --color-brass-dark: #a28846;   /* dunkleres Messing */
+
+    /* Statusfarben */
+    --color-success: #3f7f5f;
+    --color-success-bg: #dfeee7;
+
+    --color-error: #8f2f2f;
+    --color-error-bg: #f3e0dd;
+
+    --color-info: #3e5f8c;
+    --color-info-bg: #dfe5f3;
+
+    /* --------------------------------------------------------------
+       TYPOGRAFIE
+       Schriften an historische Seekarten angelehnt (Serif für Titel)
+       -------------------------------------------------------------- */
+
+    --font-base: "Inter", Arial, sans-serif;
+    --font-serif: "Merriweather", "Georgia", serif; /* für Titel */
+
+    --font-size-xs: 0.75rem;
+    --font-size-s:  0.875rem;
+    --font-size-m:  1rem;
+    --font-size-l:  1.25rem;
+    --font-size-xl: 1.5rem;
+    --font-size-xxl: 2rem;
+
+    --line-height: 1.5;
+
+    /* --------------------------------------------------------------
+       ABSTÄNDE (für Layout-Consistency)
+       -------------------------------------------------------------- */
+
+    --space-xxs: 2px;
+    --space-xs:  4px;
+    --space-s:   8px;
+    --space-m:   12px;
+    --space-l:   16px;
+    --space-xl:  24px;
+    --space-xxl: 32px;
+
+    /* --------------------------------------------------------------
+       RADIUS (abgerundete Kanten)
+       -------------------------------------------------------------- */
+
+    --radius-xs: 2px;
+    --radius-s:  4px;
+    --radius-m:  8px;
+    --radius-l:  12px;
+
+    /* --------------------------------------------------------------
+       SCHATTEN (leichter Tinten-/Holzschatten)
+       -------------------------------------------------------------- */
+
+    --shadow-s: 0 1px 2px rgba(0, 0, 0, 0.15);
+    --shadow-m: 0 2px 6px rgba(0, 0, 0, 0.2);
+    --shadow-l: 0 4px 12px rgba(0, 0, 0, 0.25);
+
+    /* --------------------------------------------------------------
+       ANIMATIONEN
+       -------------------------------------------------------------- */
+
+    --animation-fast: 120ms ease-out;
+    --animation-normal: 200ms ease-out;
+    --animation-slow: 350ms ease;
+
+    /* leichte Opazität für Hover-Effekte */
+    --hover-opacity: 0.85;
+}
