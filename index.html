@@ -1,116 +1,84 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Login & Registrierung – Community Webapp</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Community Webapp – Login</title>
+
+<!-- Global Design Tokens -->
 <link rel="stylesheet" href="css/root.css">
-<link rel="stylesheet" href="css/style.css">
 
-<!-- index-spezifisches Styling kann in style.css ergänzt werden -->
-<style>
-/* Zentriertes Layout für äußere Startseite */
-.auth-container {
-    max-width: 420px;
-    margin: 80px auto;
-    padding: var(--space-xl);
-    background: var(--color-bg-secondary);
-    border-radius: var(--radius-l);
-    box-shadow: var(--shadow-l);
-    border-left: 6px solid var(--color-wood);
-}
-
-.auth-title {
-    font-family: var(--font-serif);
-    text-align: center;
-    font-size: var(--font-size-xl);
-    margin-bottom: var(--space-xl);
-    color: var(--color-ocean-dark);
-}
-
-.auth-tabs {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-m);
-    margin-bottom: var(--space-l);
-}
-
-.auth-tabs button {
-    padding: var(--space-s) var(--space-m);
-    border-radius: var(--radius-s);
-    background: var(--color-ocean-light);
-    border: none;
-    cursor: pointer;
-    font-family: var(--font-serif);
-    box-shadow: var(--shadow-s);
-}
-
-.auth-tabs button.active {
-    background: var(--color-ocean);
-    color: white;
-}
-
-.auth-form {
-    display: none;
-}
-
-.auth-form.active {
-    display: block;
-}
-
-#status {
-    margin-top: var(--space-m);
-    font-size: var(--font-size-s);
-    color: var(--color-text);
-    text-align: center;
-}
-</style>
+<!-- Spezielles Layout für Startseite -->
+<link rel="stylesheet" href="css/index.css">
 
 </head>
 <body>
 
-<div class="auth-container">
+<div class="auth-wrapper">
 
-    <div class="auth-title">Community Webapp</div>
+    <!-- Branding / Kopfbereich -->
+    <header class="auth-header">
+        <h1>Community Webapp</h1>
+        <p class="subtitle">Login & Registrierung</p>
+    </header>
 
-    <!-- Tabs -->
-    <div class="auth-tabs">
-        <button id="tab-login" class="active">Login</button>
-        <button id="tab-register">Registrieren</button>
-    </div>
 
-    <!-- LOGIN FORM -->
-    <form id="login-form" class="auth-form active">
-        <label>Email</label>
-        <input type="email" name="email" required>
+    <!-- Login-Formular -->
+    <section class="auth-section" id="login-section">
+        <h2>Login</h2>
 
-        <label>Passwort</label>
-        <input type="password" name="password" required>
+        <form id="login-form">
 
-        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:var(--space-m);">
-            Login
-        </button>
-    </form>
+            <label for="login-email">E-Mail</label>
+            <input type="email" id="login-email" name="email" required>
 
-    <!-- REGISTRATION FORM -->
-    <form id="register-form" class="auth-form">
-        <label>Email</label>
-        <input type="email" name="email" required>
+            <label for="login-password">Passwort</label>
+            <input type="password" id="login-password" name="password" required>
 
-        <label>Passwort</label>
-        <input type="password" name="password" required>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
 
-        <button type="submit" class="btn btn-secondary" style="width:100%; margin-top:var(--space-m);">
-            Registrieren
-        </button>
-    </form>
+        <p class="switch">
+            Noch keinen Account?
+            <a href="#" id="show-register">Jetzt registrieren</a>
+        </p>
+    </section>
 
-    <div id="status"></div>
+
+
+    <!-- Registrierung-Formular -->
+    <section class="auth-section hidden" id="register-section">
+        <h2>Registrierung</h2>
+
+        <form id="register-form">
+
+            <label for="reg-email">E-Mail</label>
+            <input type="email" id="reg-email" name="email" required>
+
+            <label for="reg-password">Passwort</label>
+            <input type="password" id="reg-password" name="password" required>
+
+            <button type="submit" class="btn btn-secondary">Registrieren</button>
+        </form>
+
+        <p class="switch">
+            Bereits registriert?
+            <a href="#" id="show-login">Zum Login</a>
+        </p>
+    </section>
+
+
+
+    <!-- Statusausgabe -->
+    <div id="auth-status" class="status-box"></div>
 
 </div>
 
+
 <!-- JS -->
+<script type="module" src="js/supabase.js"></script>
+<script type="module" src="js/auth.js"></script>
 <script type="module" src="js/index.js"></script>
 
 </body>
