@@ -7,50 +7,71 @@
 <link rel="stylesheet" href="css/root.css">
 
 <style>
+/* =========================================================
+   Grundlayout
+   ========================================================= */
 body {
     background: var(--color-bg);
-    padding: 20px;
+    padding: var(--space-xl);
     font-family: var(--font-base);
+    color: var(--color-text);
+    line-height: var(--line-height);
 }
 
-/* Abschnitt */
-.section { margin-bottom: 40px; }
+.section {
+    margin-bottom: var(--space-xxl);
+}
 
 /* Überschriften */
 h1, h2 {
     font-family: var(--font-serif);
-    margin-bottom: 20px;
+    margin-bottom: var(--space-l);
+    color: var(--color-ocean-dark);
 }
 
-/* GRID mit Fallback */
+/* =========================================================
+   Farb-Grid
+   ========================================================= */
+
 .color-grid {
     display: grid;
-    gap: 16px;
-
-    /* Wichtig für Mobile! */
+    gap: var(--space-m);
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
 
 /* FARBFELDER */
 .color-box {
-    min-height: 90px;                 /* ← verhindert Kollaps */
-    border-radius: 8px;
-    padding: 12px;
+    min-height: 110px;
+    border-radius: var(--radius-m);
+    padding: var(--space-m);
     box-shadow: var(--shadow-s);
-    background: rgba(255,255,255,0.5); /* default, falls Var fehlt */
-    border: 1px solid rgba(0,0,0,0.1);
+    border: 1px solid rgba(0,0,0,0.12);
+    background: rgba(255,255,255,0.35);
 
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-/* TEXT FÜR DEMO */
+/* Label für Variablennamen */
 .color-box strong {
     font-family: var(--font-serif);
-    font-size: 1rem;
+    font-size: var(--font-size-m);
+    margin-bottom: var(--space-xs);
     display: block;
-    margin-bottom: 6px;
+    color: var(--color-text);
+}
+
+/* Beschreibungstext */
+.color-box span {
+    font-size: var(--font-size-s);
+    color: var(--color-text-muted);
+}
+
+/* Extra: Bessere Kontur bei dunklen Hintergründen */
+.color-box[style*="color:white"] strong,
+.color-box[style*="color:white"] span {
+    color: rgba(255,255,255,0.95);
 }
 </style>
 
@@ -66,47 +87,47 @@ h1, h2 {
 
         <div class="color-box" style="background: var(--color-bg);">
             <strong>--color-bg</strong>
-            Hintergrund
+            <span>Hintergrund</span>
         </div>
 
         <div class="color-box" style="background: var(--color-bg-secondary);">
             <strong>--color-bg-secondary</strong>
-            Sekundär
+            <span>Zweit-Hintergrund</span>
         </div>
 
         <div class="color-box" style="background: var(--color-ocean); color:white;">
             <strong>--color-ocean</strong>
-            Ozean
+            <span>Ozean</span>
         </div>
 
         <div class="color-box" style="background: var(--color-ocean-light);">
             <strong>--color-ocean-light</strong>
-            Ozean hell
+            <span>Ozean hell</span>
         </div>
 
         <div class="color-box" style="background: var(--color-ocean-dark); color:white;">
             <strong>--color-ocean-dark</strong>
-            Ozean dunkel
+            <span>Ozean dunkel</span>
         </div>
 
         <div class="color-box" style="background: var(--color-wood); color:white;">
             <strong>--color-wood</strong>
-            Holz
+            <span>Holz</span>
         </div>
 
         <div class="color-box" style="background: var(--color-brass);">
             <strong>--color-brass</strong>
-            Messing
+            <span>Messing</span>
         </div>
 
         <div class="color-box" style="background: var(--color-success-bg);">
             <strong>--color-success-bg</strong>
-            Erfolg
+            <span>Erfolg</span>
         </div>
 
         <div class="color-box" style="background: var(--color-error-bg);">
             <strong>--color-error-bg</strong>
-            Fehler
+            <span>Fehler</span>
         </div>
 
     </div>
