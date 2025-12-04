@@ -51,6 +51,9 @@ body {
     font-size: var(--font-size-l);
     font-weight: bold;
     letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
 }
 
 /* Navigationseinträge */
@@ -61,17 +64,33 @@ body {
     flex-grow: 1;
 }
 
+/* Ein Menüpunkt */
 .nav-item {
     padding: var(--space-m) var(--space-l);
     cursor: pointer;
     border-bottom: var(--border-width-thin) var(--border-style) var(--border-color);
     font-size: var(--font-size-m);
     font-family: var(--font-deco);
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
 }
 
 .nav-item:hover {
     background: var(--color-overlay-light);
     opacity: var(--hover-opacity);
+}
+
+/* Icon vor Text */
+.nav-icon {
+    font-size: var(--font-size-l);
+    width: 26px;               /* sorgt für saubere Ausrichtung */
+    text-align: center;
+}
+
+/* Textlabel – später ausblendbar für Mobile */
+.nav-label {
+    white-space: nowrap;
 }
 
 /* Adminbereich */
@@ -84,27 +103,16 @@ body {
     font-family: var(--font-smallcaps);
 }
 
-/* Logout */
-.nav-footer {
-    padding: var(--space-l);
-    border-top: var(--border-width-thin) var(--border-style) var(--border-color);
-}
 
-.logout-btn {
-    width: 100%;
-    padding: var(--space-m);
-    border: none;
-    border-radius: var(--radius-m);
-    cursor: pointer;
-    font-size: var(--font-size-m);
-    background: var(--color-ocean-dark);
-    color: var(--color-text-on-dark);
-    box-shadow: var(--shadow-s);
-    font-family: var(--font-deco);
-}
 
-.logout-btn:hover {
-    opacity: var(--hover-opacity);
+/* ==========================================================================
+   LOGOUT (als normaler Menüpunkt)
+   ========================================================================== */
+
+/* kein eigener Container mehr – Logout ist ein .nav-item */
+.nav-item.logout {
+    font-weight: bold;
+    color: var(--color-text-on-wood);
 }
 
 
@@ -153,13 +161,11 @@ body {
 /* Tooltitel in dekorativer oder Small-Caps Schrift */
 .tool-title {
     font-family: var(--font-smallcaps);
-    /* Alternative:
-       font-family: var(--font-deco);
-    */
     font-size: var(--font-size-xl);
     letter-spacing: 1px;
     color: var(--color-ocean-dark);
 }
+
 
 
 /* ==========================================================================
@@ -174,6 +180,7 @@ body {
 }
 
 
+
 /* ==========================================================================
    GENERISCHE ELEMENTE
    ========================================================================== */
@@ -186,7 +193,7 @@ body {
     font-size: var(--font-size-m);
     box-shadow: var(--shadow-s);
     transition: var(--animation-fast);
-    font-family: var(--font-smallcaps); /* maritime, klare Buttons */
+    font-family: var(--font-smallcaps);
 }
 
 .btn-primary {
@@ -204,7 +211,11 @@ body {
 }
 
 
-/* Status-/Info-Boxen */
+
+/* ==========================================================================
+   Status-/Info-Boxen
+   ========================================================================== */
+
 .info-box,
 .error-box,
 .success-box {
