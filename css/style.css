@@ -25,6 +25,7 @@ body {
 }
 
 
+
 /* ==========================================================================
    NAVIGATION LINKS
    ========================================================================== */
@@ -37,7 +38,7 @@ body {
     box-shadow: var(--shadow-m);
     padding: var(--space-m) 0;
 
-    /* 20 % der Breite, aber geschützt durch min/max */
+    /* 20 % der Breite, durch min/max begrenzt */
     width: 20%;
     min-width: 240px;
     max-width: 320px;
@@ -69,7 +70,7 @@ body {
     flex-grow: 1;
 }
 
-/* Eintragen */
+/* Eintrag */
 .nav-item {
     padding: var(--space-m) var(--space-l);
     cursor: pointer;
@@ -94,12 +95,12 @@ body {
     text-align: center;
 }
 
-/* Label – wird später ausgeblendet */
+/* Label – wird für Mobile ausgeblendet */
 .nav-label {
     white-space: nowrap;
 }
 
-/* Adminbereichstitel */
+/* Adminbereich */
 .nav-section-title {
     margin-top: var(--space-l);
     padding: var(--space-s) var(--space-l);
@@ -118,21 +119,27 @@ body {
 .nav-item.logout {
     font-weight: bold;
     color: var(--color-text-on-wood);
-    background: none;
 }
 
 
 
 /* ==========================================================================
    CONTENTBEREICH (80 %)
+   -> jetzt mit klarer Begrenzung rechts!
    ========================================================================== */
 
 .content-area {
     display: flex;
     flex-direction: column;
     background: var(--color-bg);
+
     width: 80%;
     flex-grow: 1;
+
+    /* WICHTIG: verhindert, dass Content weiter nach rechts geht */
+    max-width: calc(100vw - 240px);
+
+    overflow-x: hidden;
 }
 
 
@@ -143,6 +150,9 @@ body {
 
 #kopf-container {
     width: 100%;
+    max-width: inherit;       /* folgt Begrenzung des Parents */
+    overflow-x: hidden;
+
     background: var(--color-bg-secondary);
     border-bottom: var(--border-width) var(--border-style) var(--border-color);
     padding: var(--space-s) var(--space-l);
@@ -183,7 +193,9 @@ body {
     flex-grow: 1;
     padding: var(--space-xl);
     overflow-y: auto;
+    overflow-x: hidden;
     font-family: var(--font-base);
+    max-width: inherit; /* verhindert rechts Überlauf */
 }
 
 
@@ -261,19 +273,22 @@ body {
         padding: var(--space-s) 0;
     }
 
-    /* Keine Labels → nur Icons */
+    /* neue Berechnung rechts */
+    .content-area {
+        max-width: calc(100vw - 64px);
+    }
+
+    /* Labels verstecken */
     .nav-label {
         display: none !important;
     }
 
-    /* Zentrieren */
     .nav-item {
         justify-content: center;
         padding-left: 0;
         padding-right: 0;
     }
 
-    /* Adminsection ausblenden */
     .nav-section-title {
         display: none !important;
     }
