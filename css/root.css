@@ -1,30 +1,40 @@
 /* ==========================================================================
    Global Design Tokens – Maritime Theme (Age of Discovery)
-   Nur Variablen für Layout, Farben, Typografie, Schatten, Border
+   Enthält ausschließlich Variablen:
+   Farben, Transparenzen, Typografie, Abstände, Radius, Schatten, Border, Animationen
    ========================================================================== */
 
 :root {
 
-    /* --------------------------------------------------------------
-       FARBPALETTE (bestehend – unverändert)
-       -------------------------------------------------------------- */
+    /* ==============================================================
+       FARBPALETTE
+       (Alle Farben inkl. Transparenzvarianten NUR HIER!)
+       ============================================================== */
 
+    /* Grundflächen (Pergament) */
     --color-bg: #f4efe5;
     --color-bg-secondary: #e8e1d4;
 
+    /* Tinte / Text */
     --color-text: #2b2b2b;
     --color-text-muted: #5e5a54;
+    --color-text-on-dark: #ffffff;
+    --color-text-on-wood: #ffffff;
 
+    /* Ozean */
     --color-ocean: #3a6478;
     --color-ocean-light: #6c9fb3;
     --color-ocean-dark: #244250;
 
+    /* Holz */
     --color-wood: #8b5e3c;
     --color-wood-dark: #5e3e26;
 
+    /* Metall / Messing */
     --color-brass: #bfa66b;
     --color-brass-dark: #a28846;
 
+    /* Statusfarben */
     --color-success: #3f7f5f;
     --color-success-bg: #dfeee7;
 
@@ -34,13 +44,26 @@
     --color-info: #3e5f8c;
     --color-info-bg: #dfe5f3;
 
+    /* Neutrale Tintentransparenzen (global verwendbar) */
+    --color-ink-very-light: rgba(0,0,0,0.05);
+    --color-ink-light:      rgba(0,0,0,0.12);
+    --color-ink-medium:     rgba(0,0,0,0.25);
+    --color-ink-strong:     rgba(0,0,0,0.40);
 
-    /* --------------------------------------------------------------
+    /* Helle Lichtüberlagerung (z. B. Hover auf Holz oder Pergament) */
+    --color-overlay-light: rgba(255,255,255,0.15);
+    --color-overlay-strong: rgba(255,255,255,0.25);
+
+    /* Dunkle Überlagerung (z. B. Hover auf hellen Flächen) */
+    --color-overlay-dark: rgba(0,0,0,0.15);
+
+
+    /* ==============================================================
        TYPOGRAFIE
-       -------------------------------------------------------------- */
+       ============================================================== */
 
     --font-base: "Inter", Arial, sans-serif;
-    --font-serif: "Merriweather", "Georgia", serif;
+    --font-serif: "Merriweather", Georgia, serif;
 
     --font-size-xs: 0.75rem;
     --font-size-s:  0.875rem;
@@ -52,9 +75,9 @@
     --line-height: 1.5;
 
 
-    /* --------------------------------------------------------------
+    /* ==============================================================
        ABSTÄNDE
-       -------------------------------------------------------------- */
+       ============================================================== */
 
     --space-xxs: 2px;
     --space-xs:  4px;
@@ -65,9 +88,9 @@
     --space-xxl: 32px;
 
 
-    /* --------------------------------------------------------------
-       RADIEN
-       -------------------------------------------------------------- */
+    /* ==============================================================
+       RADIUS
+       ============================================================== */
 
     --radius-xs: 2px;
     --radius-s:  4px;
@@ -75,43 +98,34 @@
     --radius-l:  12px;
 
 
-    /* --------------------------------------------------------------
+    /* ==============================================================
        SCHATTEN
-       -------------------------------------------------------------- */
+       ============================================================== */
 
     --shadow-s: 0 1px 2px rgba(0, 0, 0, 0.15);
-    --shadow-m: 0 2px 6px rgba(0, 0, 0, 0.2);
+    --shadow-m: 0 2px 6px rgba(0, 0, 0, 0.20);
     --shadow-l: 0 4px 12px rgba(0, 0, 0, 0.25);
 
 
-    /* --------------------------------------------------------------
-       BORDER-SYSTEM (ohne neue Farben!)
-       -------------------------------------------------------------- */
+    /* ==============================================================
+       BORDER-SYSTEM
+       (keine Farben definiert, nutzt Farbpalette)
+       ============================================================== */
 
-    /* Stärke */
     --border-width-thin: 1px;
     --border-width:      2px;
     --border-width-thick:3px;
 
-    /* Stil */
     --border-style: solid;
 
-    /* Farbe → nutzt EXISTIERENDE Palette */
-    --border-color: rgba(0,0,0,0.15);        /* neutrales Pergament-Kontur */
-    --border-color-strong: rgba(0,0,0,0.35); /* stärkere Kontur, kein neuer Farbton */
+    /* Verwendet ausschließlich vorhandene Farben! */
+    --border-color: var(--color-ink-light);
+    --border-color-strong: var(--color-ink-medium);
 
 
-    /* --------------------------------------------------------------
-       OVERLAY / TRANSPARENZ
-       (ebenfalls ohne neue Farben)
-       -------------------------------------------------------------- */
-
-    --overlay-light: rgba(255,255,255,0.15);
-    --overlay-dark:  rgba(0,0,0,0.15);
-
-    /* --------------------------------------------------------------
-       ANIMATIONEN
-       -------------------------------------------------------------- */
+    /* ==============================================================
+       ANIMATIONEN / INTERACTION
+       ============================================================== */
 
     --animation-fast: 120ms ease-out;
     --animation-normal: 200ms ease-out;
