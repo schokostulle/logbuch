@@ -80,7 +80,7 @@ async function buildNavigation() {
         <div class="nav-header">
             <span class="nav-title">
                 <span class="nav-icon">${icons.header}</span>
-                <span class="nav-label">Community Webapp</span>
+                <span class="nav-label">Logbuch</span>
             </span>
         </div>
 
