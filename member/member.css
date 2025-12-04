@@ -1,0 +1,136 @@
+/* ==========================================================================
+   MEMBER TOOL – Maritime Style
+   Stützt sich komplett auf root.css + style.css (Farben, Radius, Schatten)
+   ========================================================================== */
+
+
+/* Wrapper */
+.member-wrapper {
+    padding: var(--space-l);
+    font-family: var(--font-base);
+}
+
+
+/* Überschrift */
+.member-wrapper h2 {
+    font-family: var(--font-deco);
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-l);
+    color: var(--color-ocean-dark);
+}
+
+
+
+/* ==========================================================================
+   STATUSAUSGABE
+   ========================================================================== */
+
+#member-status {
+    margin-bottom: var(--space-m);
+}
+
+
+
+/* ==========================================================================
+   TABELLE
+   ========================================================================== */
+
+.member-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    box-shadow: var(--shadow-s);
+    margin-bottom: var(--space-xl);
+}
+
+/* Kopf */
+.member-table th {
+    background: var(--color-ocean-dark);
+    color: var(--color-text-on-dark);
+    padding: var(--space-s) var(--space-m);
+    font-family: var(--font-smallcaps);
+    text-align: left;
+    border-right: var(--border-width-thin) var(--border-style) var(--color-overlay-light);
+}
+
+.member-table th:last-child {
+    border-right: none;
+}
+
+/* Zeilen */
+.member-table td {
+    padding: var(--space-m);
+    border-bottom: var(--border-width-thin) var(--border-style) var(--color-ink-light);
+    border-right: var(--border-width-thin) var(--border-style) var(--color-ink-light);
+}
+
+.member-table td:last-child {
+    border-right: none;
+}
+
+/* Hover */
+.member-table tbody tr:hover {
+    background: var(--color-overlay-light);
+    transition: background var(--animation-fast);
+}
+
+
+
+/* ==========================================================================
+   FORM ELEMENTE (Select)
+   ========================================================================== */
+
+.member-table select {
+    width: 100%;
+    padding: var(--space-s);
+    font-size: var(--font-size-m);
+    border-radius: var(--radius-s);
+    background: var(--color-bg);
+    border: var(--border-width-thin) var(--border-style) var(--border-color);
+    cursor: pointer;
+}
+
+.member-table select:disabled {
+    background: var(--color-ink-very-light);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+
+
+/* ==========================================================================
+   SPEICHER-BUTTON (pro Zeile)
+   ========================================================================== */
+
+.save-btn {
+    width: 100%;
+    text-align: center;
+}
+
+.save-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 700px) {
+
+    /* Tabelle scrollbar statt zerstört */
+    .member-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .member-table th,
+    .member-table td {
+        white-space: nowrap;
+    }
+}
