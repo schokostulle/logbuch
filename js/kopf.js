@@ -45,12 +45,10 @@ async function buildHeader() {
     const username = profile.username;
     const role = profile.role;
 
-    // HTML-Struktur: 2 Zeilen
+    // HTML (2 Zeilen)
     kopfContainer.innerHTML = `
         <div class="kopf-zeile oben">
-            <div class="user-info">
-                ${username} (${role})
-            </div>
+            <div class="user-info">${username} (${role})</div>
         </div>
 
         <div class="kopf-zeile unten">
@@ -67,15 +65,19 @@ async function buildHeader() {
 
 window.setToolTitle = function (toolName) {
 
-    // Titelbereich
     const titleElement = document.getElementById("tool-title");
     if (!titleElement) return;
 
-    // Navigationseintrag finden
+    // Nav-Element finden
     const navItem = document.querySelector(`.nav-item[data-tool="${toolName}"]`);
+    if (!navItem) {
+        titleElement.textContent = toolName;
+        return;
+    }
 
-    // Beschriftung extrahieren
-    const label = navItem ? navItem.textContent.trim() : toolName;
+    // NUR den Label-Text ziehen, NICHT das Icon
+    const labelElement = navItem.querySelector(".nav-label");
+    const label = labelElement ? labelElement.textContent.trim() : toolName;
 
     titleElement.textContent = label;
 };
