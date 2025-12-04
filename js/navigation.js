@@ -152,3 +152,24 @@ export async function loadToolContent(toolName) {
 buildNavigation();
 
 export default buildNavigation;
+
+/* ==========================================================================
+   Icon-Mapping für Navigation
+   ========================================================================== */
+
+const icons = {
+    dashboard: "📜",
+    flotte: "⛵",
+    reports: "⚔️",
+    map: "🗺️",
+    reservation: "📌",
+    calculation: "⚓",
+    
+    member: "👥",
+    csv: "📂",
+    diplomacy: "🤝",
+    chrono: "⏳",
+
+    logout: "🚪",
+    header: "🧭"
+};
