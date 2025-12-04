@@ -1,0 +1,268 @@
+/* ==========================================================================
+   GLOBALS – für alle internen Tools (Dashboard, Fleet, Reports, …)
+   Grundlayout: Navigation links, Header oben, Contentbereich rechts
+   ========================================================================== */
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--color-bg);
+    font-family: var(--font-base);
+    color: var(--color-text);
+    line-height: var(--line-height);
+    display: flex;
+    min-height: 100vh;
+}
+
+
+/* ==========================================================================
+   Hauptlayout
+   ========================================================================== */
+
+.layout-container {
+    display: flex;
+    width: 100%;
+}
+
+
+/* ==========================================================================
+   NAVIGATION LINKS
+   ========================================================================== */
+
+#nav-container {
+    width: 240px;
+    background: var(--color-wood);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-m);
+    padding: var(--space-m) 0;
+}
+
+/* Titel der Webapp */
+.nav-header {
+    padding: var(--space-m) var(--space-l);
+    margin-bottom: var(--space-m);
+}
+
+.nav-title {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-l);
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* Links */
+.nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.nav-item {
+    padding: var(--space-m) var(--space-l);
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    font-size: var(--font-size-m);
+}
+
+.nav-item:hover {
+    background: rgba(255,255,255,0.15);
+    opacity: var(--hover-opacity);
+}
+
+/* Admin-Bereich Überschrift */
+.nav-section-title {
+    margin-top: var(--space-l);
+    padding: var(--space-s) var(--space-l);
+    font-size: var(--font-size-s);
+    opacity: 0.8;
+    text-transform: uppercase;
+}
+
+/* Logout unten */
+.nav-footer {
+    padding: var(--space-l);
+    border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+.logout-btn {
+    width: 100%;
+    padding: var(--space-m);
+    border: none;
+    border-radius: var(--radius-m);
+    cursor: pointer;
+    font-size: var(--font-size-m);
+    background: var(--color-ocean-dark);
+    color: white;
+    box-shadow: var(--shadow-s);
+}
+
+.logout-btn:hover {
+    opacity: var(--hover-opacity);
+}
+
+
+
+/* ==========================================================================
+   CONTENTBEREICH RECHTS
+   ========================================================================== */
+
+.content-area {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg);
+}
+
+
+/* ==========================================================================
+   KOPFZEILE (Header mit 2 Zeilen)
+   ========================================================================== */
+
+#kopf-container {
+    width: 100%;
+    background: var(--color-bg-secondary);
+    border-bottom: 2px solid rgba(0,0,0,0.1);
+    padding: var(--space-s) var(--space-l);
+    box-shadow: var(--shadow-s);
+}
+
+/* Zeile 1 oben: Userinfo rechts */
+.kopf-zeile.oben {
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: var(--space-xs);
+    font-size: var(--font-size-s);
+    color: var(--color-text-muted);
+}
+
+/* Zeile 2 unten: Tool-Titel links */
+.kopf-zeile.unten {
+    display: flex;
+    justify-content: flex-start;
+    padding-top: var(--space-xs);
+}
+
+.tool-title {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-xl);
+    color: var(--color-ocean-dark);
+}
+
+
+/* ==========================================================================
+   TOOL-INHALT
+   ========================================================================== */
+
+.tool-content {
+    flex-grow: 1;
+    padding: var(--space-xl);
+    overflow-y: auto;
+}
+
+
+/* ==========================================================================
+   GENERISCHE ELEMENTE (Buttons, Karten, Boxen)
+   ========================================================================== */
+
+.btn {
+    padding: var(--space-m) var(--space-l);
+    border-radius: var(--radius-m);
+    border: none;
+    cursor: pointer;
+    font-size: var(--font-size-m);
+    box-shadow: var(--shadow-s);
+    transition: var(--animation-fast);
+}
+
+.btn-primary {
+    background: var(--color-ocean);
+    color: white;
+}
+
+.btn-secondary {
+    background: var(--color-brass);
+    color: white;
+}
+
+.btn:hover {
+    opacity: var(--hover-opacity);
+}
+
+
+/* Info-/Warn-/Fehlerboxen für Tools */
+.info-box,
+.error-box,
+.success-box {
+    padding: var(--space-m);
+    border-radius: var(--radius-m);
+    margin-bottom: var(--space-m);
+}
+
+.info-box {
+    background: var(--color-info-bg);
+    color: var(--color-info);
+}
+
+.error-box {
+    background: var(--color-error-bg);
+    color: var(--color-error);
+}
+
+.success-box {
+    background: var(--color-success-bg);
+    color: var(--color-success);
+}
+
+
+/* ==========================================================================
+   RESPONSIV
+   ========================================================================== */
+
+@media (max-width: 800px) {
+
+    #nav-container {
+        width: 190px;
+    }
+
+    .tool-title {
+        font-size: var(--font-size-l);
+    }
+
+    .tool-content {
+        padding: var(--space-m);
+    }
+}
+
+@media (max-width: 600px) {
+
+    /* Navigation klappt oben hin */
+    .layout-container {
+        flex-direction: column;
+    }
+
+    #nav-container {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .nav-item {
+        display: inline-block;
+        border-bottom: none;
+        border-right: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .nav-footer {
+        display: none;
+    }
+
+    #kopf-container {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+}
