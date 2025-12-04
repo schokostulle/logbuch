@@ -1,14 +1,13 @@
 /* ==========================================================================
    Global Design Tokens – Maritime Theme (Age of Discovery)
-   Enthält ausschließlich Variablen:
-   Farben, Transparenzen, Typografie, Abstände, Radius, Schatten, Border, Animationen
+   Variablen für Farben, Transparenzen, Typografie, Abstände, Radius,
+   Schatten, Border, Animationen, Light/Dark Mode
    ========================================================================== */
 
 :root {
 
     /* ==============================================================
-       FARBPALETTE
-       (Alle Farben inkl. Transparenzvarianten NUR HIER!)
+       FARBPALETTE – Light Mode (Default)
        ============================================================== */
 
     /* Grundflächen (Pergament) */
@@ -34,7 +33,7 @@
     --color-brass: #bfa66b;
     --color-brass-dark: #a28846;
 
-    /* Statusfarben */
+    /* Status */
     --color-success: #3f7f5f;
     --color-success-bg: #dfeee7;
 
@@ -44,26 +43,31 @@
     --color-info: #3e5f8c;
     --color-info-bg: #dfe5f3;
 
-    /* Neutrale Tintentransparenzen (global verwendbar) */
+    /* Transparenzen (global) */
     --color-ink-very-light: rgba(0,0,0,0.05);
     --color-ink-light:      rgba(0,0,0,0.12);
     --color-ink-medium:     rgba(0,0,0,0.25);
     --color-ink-strong:     rgba(0,0,0,0.40);
 
-    /* Helle Lichtüberlagerung (z. B. Hover auf Holz oder Pergament) */
     --color-overlay-light: rgba(255,255,255,0.15);
     --color-overlay-strong: rgba(255,255,255,0.25);
-
-    /* Dunkle Überlagerung (z. B. Hover auf hellen Flächen) */
     --color-overlay-dark: rgba(0,0,0,0.15);
 
 
     /* ==============================================================
        TYPOGRAFIE
-       ============================================================== */
+       ==============================================================
+       Maritime Fonts:
+       - Cinzel → Gravuren, Navigation
+       - IM Fell English SC → Seekarten, Historisch
+       - Cormorant Garamond → elegante Serif
+       - Inter → UI Text/Fliestext
+    ============================================================== */
 
     --font-base: "Inter", Arial, sans-serif;
-    --font-serif: "Merriweather", Georgia, serif;
+    --font-serif: "Cormorant Garamond", "Georgia", serif;
+    --font-deco: "Cinzel", serif;
+    --font-script: "IM Fell English SC", serif;
 
     --font-size-xs: 0.75rem;
     --font-size-s:  0.875rem;
@@ -108,8 +112,7 @@
 
 
     /* ==============================================================
-       BORDER-SYSTEM
-       (keine Farben definiert, nutzt Farbpalette)
+       BORDER SYSTEM
        ============================================================== */
 
     --border-width-thin: 1px;
@@ -118,7 +121,6 @@
 
     --border-style: solid;
 
-    /* Verwendet ausschließlich vorhandene Farben! */
     --border-color: var(--color-ink-light);
     --border-color-strong: var(--color-ink-medium);
 
@@ -132,4 +134,43 @@
     --animation-slow: 350ms ease;
 
     --hover-opacity: 0.85;
+}
+
+
+
+/* ==========================================================================
+   DARK MODE – sauberer Override aller relevanten Farben
+   ========================================================================== */
+
+body.dark {
+
+    /* Flächen */
+    --color-bg: #1e2428;
+    --color-bg-secondary: #2a3136;
+
+    /* Text */
+    --color-text: #e8e8e8;
+    --color-text-muted: #c0c0c0;
+
+    /* Ozean */
+    --color-ocean: #557f92;
+    --color-ocean-light: #7fb4c8;
+    --color-ocean-dark: #0f1e26;
+
+    /* Holz */
+    --color-wood: #5a3a22;
+    --color-wood-dark: #3c2618;
+
+    /* Messing */
+    --color-brass: #a48b55;
+    --color-brass-dark: #8a7448;
+
+    /* Transparenzen im dunklen Kontext */
+    --color-overlay-light: rgba(255,255,255,0.08);
+    --color-overlay-strong: rgba(255,255,255,0.15);
+    --color-overlay-dark: rgba(0,0,0,0.35);
+
+    /* Borders */
+    --border-color: rgba(255,255,255,0.15);
+    --border-color-strong: rgba(255,255,255,0.35);
 }
