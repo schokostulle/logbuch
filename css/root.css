@@ -49,48 +49,41 @@
     --color-ink-medium:     rgba(0,0,0,0.25);
     --color-ink-strong:     rgba(0,0,0,0.40);
 
-    --color-overlay-light: rgba(255,255,255,0.15);
+    --color-overlay-light:  rgba(255,255,255,0.15);
     --color-overlay-strong: rgba(255,255,255,0.25);
-    --color-overlay-dark: rgba(0,0,0,0.15);
+    --color-overlay-dark:   rgba(0,0,0,0.15);
 
 
     /* ==============================================================
-   TYPOGRAFIE
-   ==============================================================
+       TYPOGRAFIE – Maritime Fontset
+       ============================================================== */
 
-   Maritime Fonts:
+    /* UI-Basis (Forms, Content) */
+    --font-base: "Inter", Arial, sans-serif;
 
-   - Estonia → elegante Schreibschrift (für dekorative Labels)
-   - Almendra SC → historische Antiqua (für Kapitel, Überschriften)
-   - Cormorant Garamond → Serifenschrift für Texte/Legenden
-   - Cinzel → Gravur/Schriftzug, perfekt für Navigation und Titel
-   - Inter → neutrales UI für Inhalt und Formulare
+    /* Serif (Lesetext, Infoboxen) */
+    --font-serif: "Cormorant Garamond", "Georgia", serif;
 
-============================================================== */
+    /* Schreibschrift – dekorativ */
+    --font-script: "Estonia", "IM Fell English SC", serif;
 
---font-base: "Inter", Arial, sans-serif;
+    /* Historische Small-Caps (Navigation, Überschriften) */
+    --font-smallcaps: "Almendra SC", serif;
 
-/* Serif (Lesetext, Infoboxen) */
---font-serif: "Cormorant Garamond", "Georgia", serif;
+    /* Gravur – perfekt für Titel */
+    --font-deco: "Cinzel", serif;
 
-/* Dekorativ / Seekartenstil */
---font-script: "Estonia", "IM Fell English SC", serif;
+    --font-size-xs: 0.75rem;
+    --font-size-s:  0.875rem;
+    --font-size-m:  1rem;
+    --font-size-l:  1.25rem;
+    --font-size-xl: 1.5rem;
+    --font-size-xxl: 2rem;
 
-/* Historische Small-Caps (Navigation, Kapitelüberschriften) */
---font-smallcaps: "Almendra SC", serif;
+    --line-height: 1.5;
 
-/* Gravur / Schiffsplaketten / Tool-Titel */
---font-deco: "Cinzel", serif;
 
---font-size-xs: 0.75rem;
---font-size-s:  0.875rem;
---font-size-m:  1rem;
---font-size-l:  1.25rem;
---font-size-xl: 1.5rem;
---font-size-xxl: 2rem;
-
---line-height: 1.5;
- ==============================================================
+    /* ==============================================================
        ABSTÄNDE
        ============================================================== */
 
@@ -128,7 +121,7 @@
 
     --border-width-thin: 1px;
     --border-width:      2px;
-    --border-width-thick:3px;
+    --border-width-thick: 3px;
 
     --border-style: solid;
 
@@ -150,38 +143,33 @@
 
 
 /* ==========================================================================
-   DARK MODE – sauberer Override aller relevanten Farben
+   DARK MODE – überschreibt ausschließlich Farben
    ========================================================================== */
 
 body.dark {
 
-    /* Flächen */
     --color-bg: #1e2428;
     --color-bg-secondary: #2a3136;
 
-    /* Text */
     --color-text: #e8e8e8;
     --color-text-muted: #c0c0c0;
+    --color-text-on-dark: #ffffff;
+    --color-text-on-wood: #ffffff;
 
-    /* Ozean */
     --color-ocean: #557f92;
     --color-ocean-light: #7fb4c8;
     --color-ocean-dark: #0f1e26;
 
-    /* Holz */
     --color-wood: #5a3a22;
     --color-wood-dark: #3c2618;
 
-    /* Messing */
     --color-brass: #a48b55;
     --color-brass-dark: #8a7448;
 
-    /* Transparenzen im dunklen Kontext */
     --color-overlay-light: rgba(255,255,255,0.08);
     --color-overlay-strong: rgba(255,255,255,0.15);
     --color-overlay-dark: rgba(0,0,0,0.35);
 
-    /* Borders */
     --border-color: rgba(255,255,255,0.15);
     --border-color-strong: rgba(255,255,255,0.35);
 }
