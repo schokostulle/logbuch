@@ -45,8 +45,9 @@ body {
     margin-bottom: var(--space-m);
 }
 
+/* Titel in dekorativer Gravur-Schrift */
 .nav-title {
-    font-family: var(--font-serif);
+    font-family: var(--font-deco);
     font-size: var(--font-size-l);
     font-weight: bold;
     letter-spacing: 1px;
@@ -65,6 +66,7 @@ body {
     cursor: pointer;
     border-bottom: var(--border-width-thin) var(--border-style) var(--border-color);
     font-size: var(--font-size-m);
+    font-family: var(--font-deco);
 }
 
 .nav-item:hover {
@@ -79,6 +81,7 @@ body {
     font-size: var(--font-size-s);
     opacity: 0.8;
     text-transform: uppercase;
+    font-family: var(--font-smallcaps);
 }
 
 /* Logout */
@@ -97,11 +100,13 @@ body {
     background: var(--color-ocean-dark);
     color: var(--color-text-on-dark);
     box-shadow: var(--shadow-s);
+    font-family: var(--font-deco);
 }
 
 .logout-btn:hover {
     opacity: var(--hover-opacity);
 }
+
 
 
 /* ==========================================================================
@@ -135,6 +140,7 @@ body {
     padding-bottom: var(--space-xs);
     font-size: var(--font-size-s);
     color: var(--color-text-muted);
+    font-family: var(--font-serif);
 }
 
 /* Zeile 2 – linksbündiger Tool-Titel */
@@ -144,9 +150,14 @@ body {
     padding-top: var(--space-xs);
 }
 
+/* Tooltitel in dekorativer oder Small-Caps Schrift */
 .tool-title {
-    font-family: var(--font-serif);
+    font-family: var(--font-smallcaps);
+    /* Alternative:
+       font-family: var(--font-deco);
+    */
     font-size: var(--font-size-xl);
+    letter-spacing: 1px;
     color: var(--color-ocean-dark);
 }
 
@@ -159,6 +170,7 @@ body {
     flex-grow: 1;
     padding: var(--space-xl);
     overflow-y: auto;
+    font-family: var(--font-base);
 }
 
 
@@ -174,6 +186,7 @@ body {
     font-size: var(--font-size-m);
     box-shadow: var(--shadow-s);
     transition: var(--animation-fast);
+    font-family: var(--font-smallcaps); /* maritime, klare Buttons */
 }
 
 .btn-primary {
@@ -198,6 +211,7 @@ body {
     padding: var(--space-m);
     border-radius: var(--radius-m);
     margin-bottom: var(--space-m);
+    font-family: var(--font-serif);
 }
 
 .info-box {
