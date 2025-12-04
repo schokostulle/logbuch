@@ -30,13 +30,16 @@ body {
    ========================================================================== */
 
 #nav-container {
-    width: 240px;
     background: var(--color-wood);
     color: var(--color-text-on-wood);
     display: flex;
     flex-direction: column;
     box-shadow: var(--shadow-m);
     padding: var(--space-m) 0;
+    width: 20%;
+    min-width: 240px; /* Standardbreite */
+    max-width: 320px;
+    transition: width var(--animation-normal);
 }
 
 /* Kopf der Navigation */
@@ -122,10 +125,11 @@ body {
    ========================================================================== */
 
 .content-area {
-    flex-grow: 1;
     display: flex;
     flex-direction: column;
     background: var(--color-bg);
+    width: 80%;
+    flex-grow: 1;
 }
 
 
