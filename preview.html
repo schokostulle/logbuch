@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="css/root.css">
 
 <!-- Maritime Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@400;600&family=IM+Fell+English+SC&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Estonia&family=Almendra+SC&family=Cormorant+Garamond:wght@400;600&family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
 
@@ -59,7 +59,6 @@ h1, h2 {
 .color-box strong {
     font-family: var(--font-serif);
     font-size: var(--font-size-m);
-    margin-bottom: var(--space-xs);
 }
 
 .color-box span {
@@ -77,17 +76,14 @@ h1, h2 {
 }
 
 .btn {
-    padding: var(--space-s) var(--space-l);
-    border-radius: var(--radius-s);
-    font-size: var(--font-size-m);
+    padding: var(--space-m) var(--space-l);
+    border-radius: var(--radius-m);
     cursor: pointer;
     border: none;
     box-shadow: var(--shadow-s);
     transition: var(--animation-fast);
-}
-
-.btn:hover {
-    opacity: var(--hover-opacity);
+    font-family: var(--font-smallcaps);
+    font-size: var(--font-size-m);
 }
 
 .btn-primary {
@@ -105,6 +101,10 @@ h1, h2 {
     color: var(--color-text-on-dark);
 }
 
+.btn:hover {
+    opacity: var(--hover-opacity);
+}
+
 
 /* =========================================================
    Navigation (Vorschau)
@@ -116,14 +116,14 @@ h1, h2 {
     padding: var(--space-l);
     border-radius: var(--radius-m);
     box-shadow: var(--shadow-m);
-    font-family: var(--font-serif);
 }
 
 .nav-preview .nav-item {
-    padding: var(--space-s);
+    padding: var(--space-m);
     margin-bottom: var(--space-s);
     border-radius: var(--radius-s);
     background: var(--color-overlay-light);
+    font-family: var(--font-deco);
 }
 
 .nav-preview .logout {
@@ -147,12 +147,13 @@ h1, h2 {
 .header-preview .top {
     text-align: right;
     font-size: var(--font-size-s);
+    font-family: var(--font-serif);
     color: var(--color-text-muted);
 }
 
 .header-preview .bottom {
-    font-size: var(--font-size-l);
-    font-family: var(--font-serif);
+    font-size: var(--font-size-xl);
+    font-family: var(--font-smallcaps);
     color: var(--color-ocean-dark);
 }
 
@@ -166,7 +167,7 @@ table {
     border-spacing: 0;
     margin-top: var(--space-m);
     background: var(--color-bg-secondary);
-    border-radius: var(--radius-s);
+    border-radius: var(--radius-m);
     overflow: hidden;
     box-shadow: var(--shadow-s);
 }
@@ -175,8 +176,7 @@ table th {
     background: var(--color-ocean-dark);
     color: var(--color-text-on-dark);
     padding: var(--space-s);
-    text-align: left;
-    font-family: var(--font-serif);
+    font-family: var(--font-smallcaps);
     border-right: var(--border-width-thin) var(--border-style) var(--color-overlay-light);
 }
 
@@ -188,6 +188,7 @@ table td {
     padding: var(--space-s);
     border-bottom: var(--border-width-thin) var(--border-style) var(--color-ink-light);
     border-right: var(--border-width-thin) var(--border-style) var(--color-ink-light);
+    font-family: var(--font-base);
 }
 
 table td:last-child {
@@ -196,7 +197,6 @@ table td:last-child {
 
 table tbody tr:hover {
     background: var(--color-overlay-light);
-    transition: background var(--animation-fast);
 }
 
 
@@ -208,6 +208,7 @@ input, select, textarea {
     padding: var(--space-s);
     margin-bottom: var(--space-m);
     font-size: var(--font-size-m);
+    font-family: var(--font-base);
     border-radius: var(--radius-s);
     border: var(--border-width-thin) var(--border-style) var(--color-ink-medium);
     background: var(--color-bg-secondary);
@@ -227,32 +228,37 @@ input:focus, select:focus, textarea:focus {
     border-left: var(--border-width-thick) var(--border-style) var(--color-wood);
     border-radius: var(--radius-m);
     box-shadow: var(--shadow-m);
+    font-family: var(--font-serif);
 }
 
 
 /* =========================================================
-   Maritime Schriftarten Showcase
+   Schriftarten-Showcase
    ========================================================= */
 
-.font-sample-title {
-    font-family: 'IM Fell English SC', serif;
+.font-sample-script {
+    font-family: var(--font-script);
     font-size: var(--font-size-xl);
 }
 
-.font-sample-cinzel {
-    font-family: 'Cinzel', serif;
+.font-sample-deco {
+    font-family: var(--font-deco);
     font-size: var(--font-size-xl);
 }
 
-.font-sample-cormorant {
-    font-family: 'Cormorant Sc', serif;
+.font-sample-serif {
+    font-family: var(--font-serif);
     font-size: var(--font-size-xl);
 }
 
+.font-sample-base {
+    font-family: var(--font-base);
+    font-size: var(--font-size-m);
+}
 
 
 /* =========================================================
-   Darkmode Toggle Button Fix
+   Darkmode Toggle Button
    ========================================================= */
 #theme-toggle {
     position: fixed;
@@ -276,13 +282,11 @@ input:focus, select:focus, textarea:focus {
 ========================================================= -->
 <div class="section">
     <h2>Schriftarten</h2>
-
-    <div class="font-sample-title">The Logbook of the Seven Seas</div>
-    <div class="font-sample-cinzel">NAVIGATIO · MARIS · AETERNUM</div>
-    <div class="font-sample-cormorant">Discovery, Trade & Empire</div>
-    <div style="font-family:'Inter',sans-serif">Dies ist moderner Fließtext.</div>
+    <div class="font-sample-script">Estonia – Maritime Script</div>
+    <div class="font-sample-deco">Cinzel – Gravur / Navigation</div>
+    <div class="font-sample-serif">Cormorant Garamond – Serif</div>
+    <div class="font-sample-base">Inter – Fließtext</div>
 </div>
-
 
 
 <!-- =========================================================
@@ -290,46 +294,18 @@ input:focus, select:focus, textarea:focus {
 ========================================================= -->
 <div class="section">
     <h2>Farben</h2>
-
     <div class="color-grid">
-        <div class="color-box" style="background: var(--color-bg);">
-            <strong>--color-bg</strong> <span>Hintergrund</span>
-        </div>
-
-        <div class="color-box" style="background: var(--color-bg-secondary);">
-            <strong>--color-bg-secondary</strong> <span>Zweit-Hintergrund</span>
-        </div>
-
-        <div class="color-box" style="background: var(--color-ocean); color:white;">
-            <strong>--color-ocean</strong> <span>Ozean</span>
-        </div>
-
-        <div class="color-box" style="background: var(--color-ocean-light);">
-            <strong>--color-ocean-light</strong> <span>Ozean hell</span>
-        </div>
-
-        <div class="color-box" style="background: var(--color-ocean-dark); color:white;">
-            <strong>--color-ocean-dark</strong> <span>Ozean dunkel</span>
-        </div>
-
-        <div class="color-box" style="background: var(--color-wood); color:white;">
-            <strong>--color-wood</strong> <span>Holz</span>
-        </div>
-
-        <div class="color-box" style="background: var(--color-brass);">
-            <strong>--color-brass</strong> <span>Messing</span>
-        </div>
-
-        <div class="color-box" style="background: var(--color-success-bg);">
-            <strong>--color-success-bg</strong> <span>Erfolg</span>
-        </div>
-
-        <div class="color-box" style="background: var(--color-error-bg);">
-            <strong>--color-error-bg</strong> <span>Fehler</span>
-        </div>
+        <div class="color-box" style="background: var(--color-bg);"><strong>--color-bg</strong></div>
+        <div class="color-box" style="background: var(--color-bg-secondary);"><strong>--color-bg-secondary</strong></div>
+        <div class="color-box" style="background: var(--color-ocean); color: white;"><strong>--color-ocean</strong></div>
+        <div class="color-box" style="background: var(--color-ocean-light);"><strong>--color-ocean-light</strong></div>
+        <div class="color-box" style="background: var(--color-ocean-dark); color: white;"><strong>--color-ocean-dark</strong></div>
+        <div class="color-box" style="background: var(--color-wood); color: white;"><strong>--color-wood</strong></div>
+        <div class="color-box" style="background: var(--color-brass);"><strong>--color-brass</strong></div>
+        <div class="color-box" style="background: var(--color-success-bg);"><strong>--color-success-bg</strong></div>
+        <div class="color-box" style="background: var(--color-error-bg);"><strong>--color-error-bg</strong></div>
     </div>
 </div>
-
 
 
 <!-- =========================================================
@@ -351,7 +327,6 @@ input:focus, select:focus, textarea:focus {
 <div class="section">
     <h2>Navigation</h2>
     <div class="nav-preview">
-        <div class="nav-item">Webapp Name</div>
         <div class="nav-item">Dashboard</div>
         <div class="nav-item">Fleet</div>
         <div class="nav-item">Reports</div>
@@ -370,7 +345,7 @@ input:focus, select:focus, textarea:focus {
      HEADER
 ========================================================= -->
 <div class="section">
-    <h2>Header (2 Zeilen)</h2>
+    <h2>Header</h2>
     <div class="header-preview">
         <div class="top">Captain Nemo (Admin)</div>
         <div class="bottom">Dashboard</div>
@@ -383,7 +358,6 @@ input:focus, select:focus, textarea:focus {
 ========================================================= -->
 <div class="section">
     <h2>Tabellen</h2>
-
     <table>
         <thead>
             <tr>
@@ -408,11 +382,8 @@ input:focus, select:focus, textarea:focus {
 <div class="section">
     <h2>Formulare</h2>
     <input type="text" placeholder="Textfeld">
-    <select>
-        <option>Option A</option>
-        <option>Option B</option>
-    </select>
-    <textarea placeholder="Textarea" rows="4"></textarea>
+    <select><option>Option A</option><option>Option B</option></select>
+    <textarea rows="3" placeholder="Textarea"></textarea>
 </div>
 
 
@@ -423,17 +394,14 @@ input:focus, select:focus, textarea:focus {
     <h2>Karten / Panels</h2>
     <div class="card">
         <strong>Beispielkarte</strong><br>
-        Ein stilisiertes UI-Panel basierend auf Holz- & Pergamentfarben.
+        Dies ist eine Vorschau einer typischen UI-Karte im maritimen Theme.
     </div>
 </div>
 
 
-<!-- =========================================================
-   Darkmode Script
-========================================================= -->
+<!-- DARKMODE LOGIK -->
 <script>
 const toggle = document.getElementById("theme-toggle");
-
 toggle.addEventListener("click", () => {
     document.body.classList.toggle("dark");
     toggle.textContent = document.body.classList.contains("dark")
