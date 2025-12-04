@@ -19,12 +19,12 @@ const icons = {
     reservation: "📌",
     calculation: "⚓",
 
-    member:      "👥",
+    member:      "🪖",
     csv:         "📂",
-    diplomacy:   "🤝",
+    diplomacy:   "🕊️",
     chrono:      "⏳",
 
-    logout:      "🚪",
+    logout:      "⛩️",
     header:      "🧭"
 };
 
