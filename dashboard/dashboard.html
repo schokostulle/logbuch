@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard – Community Webapp</title>
+
+<!-- Global Theme -->
+<link rel="stylesheet" href="../css/root.css">
+<link rel="stylesheet" href="../css/style.css">
+
+</head>
+<body>
+
+<div class="layout-container">
+
+    <!-- Navigation links -->
+    <nav id="nav-container"></nav>
+
+    <!-- Hauptbereich -->
+    <main class="content-area">
+
+        <!-- Kopfbereich -->
+        <header id="kopf-container"></header>
+
+        <!-- Contentbereich -->
+        <section id="tool-content" class="tool-content">
+            <!-- Tools werden hier dynamisch geladen -->
+        </section>
+
+    </main>
+
+</div>
+
+<!-- JS -->
+<script type="module" src="../js/supabase.js"></script>
+<script type="module" src="../js/auth.js"></script>
+<script type="module" src="../js/navigation.js"></script>
+<script type="module" src="../js/kopf.js"></script>
+<script type="module" src="../js/dashboard.js"></script>
+
+</body>
+</html>
