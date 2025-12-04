@@ -1,10 +1,32 @@
 // js/navigation.js
 //
 // Navigation links + Tool-Ladefunktion
-// Rolle bestimmt, welche Tools sichtbar sind
+// mit Symbolen vor jedem Menüpunkt
 
 import { getCurrentUser, logoutUser } from "./auth.js";
 import { supabase } from "./supabase.js";
+
+
+/* ==========================================================================
+   Icons
+   ========================================================================== */
+
+const icons = {
+    dashboard:   "📜",
+    flotte:      "⛵",
+    reports:     "⚔️",
+    map:         "🗺️",
+    reservation: "📌",
+    calculation: "⚓",
+
+    member:      "👥",
+    csv:         "📂",
+    diplomacy:   "🤝",
+    chrono:      "⏳",
+
+    logout:      "🚪",
+    header:      "🧭"
+};
 
 
 /* ==========================================================================
@@ -28,6 +50,7 @@ const toolsAdmin = [
 ];
 
 
+
 /* ==========================================================================
    Navigation generieren
    ========================================================================== */
@@ -40,7 +63,6 @@ async function buildNavigation() {
         return;
     }
 
-    // Profil abrufen
     const { data: profile } = await supabase
         .from("profiles")
         .select("username, role")
@@ -53,42 +75,60 @@ async function buildNavigation() {
     if (!nav) return;
 
 
-    /* Navigation HTML */
+    /* Header */
     let html = `
         <div class="nav-header">
-            <span class="nav-title">Community Webapp</span>
+            <span class="nav-title">
+                <span class="nav-icon">${icons.header}</span>
+                <span class="nav-label">Community Webapp</span>
+            </span>
         </div>
 
         <ul class="nav-links">
     `;
 
-    // Tools für alle
+    /* Tools für alle */
     toolsAll.forEach(tool => {
-        html += `<li data-tool="${tool.id}" class="nav-item">${tool.label}</li>`;
+        html += `
+        <li data-tool="${tool.id}" class="nav-item">
+            <span class="nav-icon">${icons[tool.id]}</span>
+            <span class="nav-label">${tool.label}</span>
+        </li>`;
     });
 
-    // Adminbereich
+    /* Adminbereich */
     if (isAdmin) {
-        html += `<li class="nav-section-title">Administration</li>`;
+        html += `
+            <li class="nav-section-title">Administration</li>
+        `;
+
         toolsAdmin.forEach(tool => {
-            html += `<li data-tool="${tool.id}" class="nav-item">${tool.label}</li>`;
+            html += `
+            <li data-tool="${tool.id}" class="nav-item">
+                <span class="nav-icon">${icons[tool.id]}</span>
+                <span class="nav-label">${tool.label}</span>
+            </li>`;
         });
     }
 
-    // Logout als normaler Navigationseintrag
+    /* Logout */
     html += `
-        <li class="nav-item logout" data-logout="true">Logout</li>
-        </ul>
+        <li class="nav-item logout" data-logout="true">
+            <span class="nav-icon">${icons.logout}</span>
+            <span class="nav-label">Logout</span>
+        </li>
     `;
 
+    html += `</ul>`;
     nav.innerHTML = html;
 
     activateNavigation();
 }
 
 
+
 /* ==========================================================================
-   Click-Handler aktivieren
+   Click-Handler
    ========================================================================== */
 
 function activateNavigation() {
@@ -97,7 +137,7 @@ function activateNavigation() {
 
     items.forEach(item => {
 
-        // Logout separat behandeln
+        // Logout
         if (item.dataset.logout === "true") {
             item.addEventListener("click", async () => {
                 await logoutUser();
@@ -106,18 +146,18 @@ function activateNavigation() {
             return;
         }
 
-        // Normale Tools laden
+        // Normale Tools
         item.addEventListener("click", () => {
             const tool = item.getAttribute("data-tool");
             loadToolContent(tool);
 
-            // Titel setzen falls vorhanden
             if (window.setToolTitle) {
                 window.setToolTitle(tool);
             }
         });
     });
 }
+
 
 
 /* ==========================================================================
@@ -130,14 +170,12 @@ export async function loadToolContent(toolName) {
 
     try {
         const response = await fetch(`../${toolName}/${toolName}.html`);
-
         if (!response.ok) {
             container.innerHTML = `<p>Fehler: Tool konnte nicht geladen werden.</p>`;
             return;
         }
 
-        const html = await response.text();
-        container.innerHTML = html;
+        container.innerHTML = await response.text();
 
     } catch {
         container.innerHTML = `<p>Fehler beim Laden des Tools.</p>`;
@@ -146,30 +184,9 @@ export async function loadToolContent(toolName) {
 
 
 /* ==========================================================================
-   Navigation starten
+   Start
    ========================================================================== */
 
 buildNavigation();
 
 export default buildNavigation;
-
-/* ==========================================================================
-   Icon-Mapping für Navigation
-   ========================================================================== */
-
-const icons = {
-    dashboard: "📜",
-    flotte: "⛵",
-    reports: "⚔️",
-    map: "🗺️",
-    reservation: "📌",
-    calculation: "⚓",
-    
-    member: "👥",
-    csv: "📂",
-    diplomacy: "🤝",
-    chrono: "⏳",
-
-    logout: "🚪",
-    header: "🧭"
-};
