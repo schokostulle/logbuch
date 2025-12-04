@@ -1,6 +1,5 @@
 /* ==========================================================================
-   GLOBALS – für alle internen Tools
-   Navigation links, Header oben, Content rechts
+   GLOBALS – interne Tools (Navigation, Kopf, Content)
    ========================================================================== */
 
 body {
@@ -15,8 +14,9 @@ body {
 }
 
 
+
 /* ==========================================================================
-   Hauptlayout
+   LAYOUT 20/80
    ========================================================================== */
 
 .layout-container {
@@ -36,9 +36,12 @@ body {
     flex-direction: column;
     box-shadow: var(--shadow-m);
     padding: var(--space-m) 0;
+
+    /* 20 % der Breite, aber geschützt durch min/max */
     width: 20%;
-    min-width: 240px; /* Standardbreite */
+    min-width: 240px;
     max-width: 320px;
+
     transition: width var(--animation-normal);
 }
 
@@ -48,7 +51,6 @@ body {
     margin-bottom: var(--space-m);
 }
 
-/* Titel in dekorativer Gravur-Schrift */
 .nav-title {
     font-family: var(--font-deco);
     font-size: var(--font-size-l);
@@ -59,7 +61,7 @@ body {
     gap: var(--space-s);
 }
 
-/* Navigationseinträge */
+/* Linkliste */
 .nav-links {
     list-style: none;
     padding: 0;
@@ -67,13 +69,14 @@ body {
     flex-grow: 1;
 }
 
-/* Ein Menüpunkt */
+/* Eintragen */
 .nav-item {
     padding: var(--space-m) var(--space-l);
     cursor: pointer;
     border-bottom: var(--border-width-thin) var(--border-style) var(--border-color);
     font-size: var(--font-size-m);
     font-family: var(--font-deco);
+
     display: flex;
     align-items: center;
     gap: var(--space-s);
@@ -84,19 +87,19 @@ body {
     opacity: var(--hover-opacity);
 }
 
-/* Icon vor Text */
+/* Icon vor Label */
 .nav-icon {
     font-size: var(--font-size-l);
-    width: 26px;               /* sorgt für saubere Ausrichtung */
+    width: 26px;
     text-align: center;
 }
 
-/* Textlabel – später ausblendbar für Mobile */
+/* Label – wird später ausgeblendet */
 .nav-label {
     white-space: nowrap;
 }
 
-/* Adminbereich */
+/* Adminbereichstitel */
 .nav-section-title {
     margin-top: var(--space-l);
     padding: var(--space-s) var(--space-l);
@@ -109,19 +112,19 @@ body {
 
 
 /* ==========================================================================
-   LOGOUT (als normaler Menüpunkt)
+   LOGOUT als normaler Menüpunkt
    ========================================================================== */
 
-/* kein eigener Container mehr – Logout ist ein .nav-item */
 .nav-item.logout {
     font-weight: bold;
     color: var(--color-text-on-wood);
+    background: none;
 }
 
 
 
 /* ==========================================================================
-   CONTENTBEREICH
+   CONTENTBEREICH (80 %)
    ========================================================================== */
 
 .content-area {
@@ -133,8 +136,9 @@ body {
 }
 
 
+
 /* ==========================================================================
-   KOPFZEILE (2 Zeilen)
+   KOPFZEILE
    ========================================================================== */
 
 #kopf-container {
@@ -145,7 +149,7 @@ body {
     box-shadow: var(--shadow-s);
 }
 
-/* Zeile 1 – rechtsbündige Userinfo */
+/* Zeile 1 – Userinfo */
 .kopf-zeile.oben {
     display: flex;
     justify-content: flex-end;
@@ -155,14 +159,13 @@ body {
     font-family: var(--font-serif);
 }
 
-/* Zeile 2 – linksbündiger Tool-Titel */
+/* Zeile 2 – Tooltitel */
 .kopf-zeile.unten {
     display: flex;
     justify-content: flex-start;
     padding-top: var(--space-xs);
 }
 
-/* Tooltitel in dekorativer oder Small-Caps Schrift */
 .tool-title {
     font-family: var(--font-smallcaps);
     font-size: var(--font-size-xl);
@@ -186,7 +189,7 @@ body {
 
 
 /* ==========================================================================
-   GENERISCHE ELEMENTE
+   BUTTONS
    ========================================================================== */
 
 .btn {
@@ -217,7 +220,7 @@ body {
 
 
 /* ==========================================================================
-   Status-/Info-Boxen
+   STATUSBOXEN
    ========================================================================== */
 
 .info-box,
@@ -242,4 +245,36 @@ body {
 .success-box {
     background: var(--color-success-bg);
     color: var(--color-success);
+}
+
+
+
+/* ==========================================================================
+   RESPONSIVE – Menü kompakt (< 900px)
+   ========================================================================== */
+
+@media (max-width: 900px) {
+
+    #nav-container {
+        width: 64px !important;
+        min-width: 64px !important;
+        padding: var(--space-s) 0;
+    }
+
+    /* Keine Labels → nur Icons */
+    .nav-label {
+        display: none !important;
+    }
+
+    /* Zentrieren */
+    .nav-item {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    /* Adminsection ausblenden */
+    .nav-section-title {
+        display: none !important;
+    }
 }
