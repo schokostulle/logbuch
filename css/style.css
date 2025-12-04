@@ -13,6 +13,10 @@ body {
     min-height: 100vh;
 }
 
+/* Dynamische Breitensteuerung */
+:root {
+    --nav-width: 240px;   /* Standard */
+}
 
 
 /* ==========================================================================
@@ -23,7 +27,6 @@ body {
     display: flex;
     width: 100%;
 }
-
 
 
 /* ==========================================================================
@@ -38,14 +41,13 @@ body {
     box-shadow: var(--shadow-m);
     padding: var(--space-m) 0;
 
-    width: 20%;
+    width: var(--nav-width);
     min-width: 240px;
     max-width: 320px;
 
     transition: width var(--animation-normal);
 }
 
-/* Navigation – unverändert */
 .nav-header {
     padding: var(--space-m) var(--space-l);
     margin-bottom: var(--space-m);
@@ -74,6 +76,7 @@ body {
     border-bottom: var(--border-width-thin) var(--border-style) var(--border-color);
     font-size: var(--font-size-m);
     font-family: var(--font-deco);
+
     display: flex;
     align-items: center;
     gap: var(--space-s);
@@ -109,7 +112,6 @@ body {
 }
 
 
-
 /* ==========================================================================
    CONTENTBEREICH
    ========================================================================== */
@@ -117,37 +119,31 @@ body {
 .content-area {
     display: flex;
     flex-direction: column;
-    background: var(--color-bg);
 
-    width: 80%;
+    width: calc(100vw - var(--nav-width));
     flex-grow: 1;
 
-    /* Begrenzung abhängig von min. Navi-Breite */
-    max-width: calc(100vw - 240px);
-
-    overflow-x: hidden;
+    background: var(--color-bg);
+    overflow: hidden; /* verhindert Layoutsprung */
 }
 
 
-
 /* ==========================================================================
-   KOPFZEILE – FIX: darf nicht abgeschnitten werden
+   KOPFZEILE
    ========================================================================== */
 
 #kopf-container {
     width: 100%;
+    flex-shrink: 0; /* verhindert Abschneiden */
+
     background: var(--color-bg-secondary);
     border-bottom: var(--border-width) var(--border-style) var(--border-color);
     padding: var(--space-s) var(--space-l);
     box-shadow: var(--shadow-s);
 
-    /* WICHTIG: verhindert Abschneiden durch Flex-Layout */
-    flex-shrink: 0;
-
-    /* Kein max-width mehr! */
+    overflow-x: hidden;
 }
 
-/* Zeile 1 */
 .kopf-zeile.oben {
     display: flex;
     justify-content: flex-end;
@@ -157,7 +153,6 @@ body {
     font-family: var(--font-serif);
 }
 
-/* Zeile 2 */
 .kopf-zeile.unten {
     display: flex;
     justify-content: flex-start;
@@ -172,9 +167,8 @@ body {
 }
 
 
-
 /* ==========================================================================
-   TOOL-INHALT – FIX: Inhalt darf breit sein, Header bleibt stabil
+   TOOL-INHALT
    ========================================================================== */
 
 .tool-content {
@@ -182,17 +176,14 @@ body {
     padding: var(--space-xl);
 
     overflow-y: auto;
-
-    /* WICHTIG: Horizontalen Overflow erlauben statt Layout zerstören */
     overflow-x: auto;
 
     font-family: var(--font-base);
 }
 
 
-
 /* ==========================================================================
-   BUTTONS & STATUSBOXEN – unverändert
+   BUTTONS & STATUSBOXEN
    ========================================================================== */
 
 .btn {
@@ -245,12 +236,15 @@ body {
 }
 
 
-
 /* ==========================================================================
    RESPONSIVE – Menü kompakt (< 900px)
    ========================================================================== */
 
 @media (max-width: 900px) {
+
+    :root {
+        --nav-width: 64px;
+    }
 
     #nav-container {
         width: 64px !important;
@@ -259,7 +253,7 @@ body {
     }
 
     .content-area {
-        max-width: calc(100vw - 64px);
+        width: calc(100vw - 64px);
     }
 
     .nav-label {
@@ -274,5 +268,22 @@ body {
 
     .nav-section-title {
         display: none !important;
+    }
+
+    /* Header skalieren */
+    #kopf-container {
+        padding: var(--space-xs) var(--space-m);
+    }
+
+    .tool-title {
+        font-size: var(--font-size-l);
+        letter-spacing: 0.5px;
+        word-break: break-word;
+    }
+
+    .kopf-zeile.oben {
+        font-size: var(--font-size-xs);
+        flex-wrap: wrap;
+        text-align: right;
     }
 }
