@@ -1,6 +1,6 @@
 /* ==========================================================================
-   GLOBALS – für alle internen Tools (Dashboard, Fleet, Reports, …)
-   Grundlayout: Navigation links, Header oben, Contentbereich rechts
+   GLOBALS – für alle internen Tools
+   Navigation links, Header oben, Content rechts
    ========================================================================== */
 
 body {
@@ -32,14 +32,14 @@ body {
 #nav-container {
     width: 240px;
     background: var(--color-wood);
-    color: white;
+    color: var(--color-text-on-wood);
     display: flex;
     flex-direction: column;
     box-shadow: var(--shadow-m);
     padding: var(--space-m) 0;
 }
 
-/* Titel der Webapp */
+/* Kopf der Navigation */
 .nav-header {
     padding: var(--space-m) var(--space-l);
     margin-bottom: var(--space-m);
@@ -52,7 +52,7 @@ body {
     letter-spacing: 1px;
 }
 
-/* Links */
+/* Navigationseinträge */
 .nav-links {
     list-style: none;
     padding: 0;
@@ -63,16 +63,16 @@ body {
 .nav-item {
     padding: var(--space-m) var(--space-l);
     cursor: pointer;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
+    border-bottom: var(--border-width-thin) var(--border-style) var(--border-color);
     font-size: var(--font-size-m);
 }
 
 .nav-item:hover {
-    background: rgba(255,255,255,0.15);
+    background: var(--color-overlay-light);
     opacity: var(--hover-opacity);
 }
 
-/* Admin-Bereich Überschrift */
+/* Adminbereich */
 .nav-section-title {
     margin-top: var(--space-l);
     padding: var(--space-s) var(--space-l);
@@ -81,10 +81,10 @@ body {
     text-transform: uppercase;
 }
 
-/* Logout unten */
+/* Logout */
 .nav-footer {
     padding: var(--space-l);
-    border-top: 1px solid rgba(255,255,255,0.2);
+    border-top: var(--border-width-thin) var(--border-style) var(--border-color);
 }
 
 .logout-btn {
@@ -95,7 +95,7 @@ body {
     cursor: pointer;
     font-size: var(--font-size-m);
     background: var(--color-ocean-dark);
-    color: white;
+    color: var(--color-text-on-dark);
     box-shadow: var(--shadow-s);
 }
 
@@ -104,9 +104,8 @@ body {
 }
 
 
-
 /* ==========================================================================
-   CONTENTBEREICH RECHTS
+   CONTENTBEREICH
    ========================================================================== */
 
 .content-area {
@@ -118,18 +117,18 @@ body {
 
 
 /* ==========================================================================
-   KOPFZEILE (Header mit 2 Zeilen)
+   KOPFZEILE (2 Zeilen)
    ========================================================================== */
 
 #kopf-container {
     width: 100%;
     background: var(--color-bg-secondary);
-    border-bottom: 2px solid rgba(0,0,0,0.1);
+    border-bottom: var(--border-width) var(--border-style) var(--border-color);
     padding: var(--space-s) var(--space-l);
     box-shadow: var(--shadow-s);
 }
 
-/* Zeile 1 oben: Userinfo rechts */
+/* Zeile 1 – rechtsbündige Userinfo */
 .kopf-zeile.oben {
     display: flex;
     justify-content: flex-end;
@@ -138,7 +137,7 @@ body {
     color: var(--color-text-muted);
 }
 
-/* Zeile 2 unten: Tool-Titel links */
+/* Zeile 2 – linksbündiger Tool-Titel */
 .kopf-zeile.unten {
     display: flex;
     justify-content: flex-start;
@@ -164,7 +163,7 @@ body {
 
 
 /* ==========================================================================
-   GENERISCHE ELEMENTE (Buttons, Karten, Boxen)
+   GENERISCHE ELEMENTE
    ========================================================================== */
 
 .btn {
@@ -179,12 +178,12 @@ body {
 
 .btn-primary {
     background: var(--color-ocean);
-    color: white;
+    color: var(--color-text-on-dark);
 }
 
 .btn-secondary {
     background: var(--color-brass);
-    color: white;
+    color: var(--color-text-on-dark);
 }
 
 .btn:hover {
@@ -192,7 +191,7 @@ body {
 }
 
 
-/* Info-/Warn-/Fehlerboxen für Tools */
+/* Status-/Info-Boxen */
 .info-box,
 .error-box,
 .success-box {
@@ -215,4 +214,3 @@ body {
     background: var(--color-success-bg);
     color: var(--color-success);
 }
-
