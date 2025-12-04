@@ -28,7 +28,6 @@ const toolsAdmin = [
 ];
 
 
-
 /* ==========================================================================
    Navigation generieren
    ========================================================================== */
@@ -41,7 +40,7 @@ async function buildNavigation() {
         return;
     }
 
-    // Profil laden
+    // Profil abrufen
     const { data: profile } = await supabase
         .from("profiles")
         .select("username, role")
@@ -53,7 +52,8 @@ async function buildNavigation() {
     const nav = document.getElementById("nav-container");
     if (!nav) return;
 
-    /* Header */
+
+    /* Navigation HTML */
     let html = `
         <div class="nav-header">
             <span class="nav-title">Community Webapp</span>
@@ -62,12 +62,12 @@ async function buildNavigation() {
         <ul class="nav-links">
     `;
 
-    /* Tools für alle */
+    // Tools für alle
     toolsAll.forEach(tool => {
         html += `<li data-tool="${tool.id}" class="nav-item">${tool.label}</li>`;
     });
 
-    /* Tools nur für Admin */
+    // Adminbereich
     if (isAdmin) {
         html += `<li class="nav-section-title">Administration</li>`;
         toolsAdmin.forEach(tool => {
@@ -75,19 +75,16 @@ async function buildNavigation() {
         });
     }
 
+    // Logout als normaler Navigationseintrag
     html += `
+        <li class="nav-item logout" data-logout="true">Logout</li>
         </ul>
-
-        <div class="nav-footer">
-            <button id="logout-btn" class="logout-btn">Logout</button>
-        </div>
     `;
 
     nav.innerHTML = html;
 
     activateNavigation();
 }
-
 
 
 /* ==========================================================================
@@ -99,26 +96,28 @@ function activateNavigation() {
     const items = document.querySelectorAll(".nav-item");
 
     items.forEach(item => {
+
+        // Logout separat behandeln
+        if (item.dataset.logout === "true") {
+            item.addEventListener("click", async () => {
+                await logoutUser();
+                window.location.href = "../index.html";
+            });
+            return;
+        }
+
+        // Normale Tools laden
         item.addEventListener("click", () => {
             const tool = item.getAttribute("data-tool");
-
             loadToolContent(tool);
 
+            // Titel setzen falls vorhanden
             if (window.setToolTitle) {
                 window.setToolTitle(tool);
             }
         });
     });
-
-    const logoutBtn = document.getElementById("logout-btn");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", async () => {
-            await logoutUser();
-            window.location.href = "../index.html";
-        });
-    }
 }
-
 
 
 /* ==========================================================================
@@ -131,6 +130,7 @@ export async function loadToolContent(toolName) {
 
     try {
         const response = await fetch(`../${toolName}/${toolName}.html`);
+
         if (!response.ok) {
             container.innerHTML = `<p>Fehler: Tool konnte nicht geladen werden.</p>`;
             return;
@@ -139,11 +139,10 @@ export async function loadToolContent(toolName) {
         const html = await response.text();
         container.innerHTML = html;
 
-    } catch (e) {
+    } catch {
         container.innerHTML = `<p>Fehler beim Laden des Tools.</p>`;
     }
 }
-
 
 
 /* ==========================================================================
