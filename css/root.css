@@ -55,31 +55,42 @@
 
 
     /* ==============================================================
-       TYPOGRAFIE
-       ==============================================================
-       Maritime Fonts:
-       - Cinzel → Gravuren, Navigation
-       - IM Fell English SC → Seekarten, Historisch
-       - Cormorant Garamond → elegante Serif
-       - Inter → UI Text/Fliestext
-    ============================================================== */
+   TYPOGRAFIE
+   ==============================================================
 
-    --font-base: "Inter", Arial, sans-serif;
-    --font-serif: "Cormorant Garamond", "Georgia", serif;
-    --font-deco: "Cinzel", serif;
-    --font-script: "IM Fell English SC", serif;
+   Maritime Fonts:
 
-    --font-size-xs: 0.75rem;
-    --font-size-s:  0.875rem;
-    --font-size-m:  1rem;
-    --font-size-l:  1.25rem;
-    --font-size-xl: 1.5rem;
-    --font-size-xxl: 2rem;
+   - Estonia → elegante Schreibschrift (für dekorative Labels)
+   - Almendra SC → historische Antiqua (für Kapitel, Überschriften)
+   - Cormorant Garamond → Serifenschrift für Texte/Legenden
+   - Cinzel → Gravur/Schriftzug, perfekt für Navigation und Titel
+   - Inter → neutrales UI für Inhalt und Formulare
 
-    --line-height: 1.5;
+============================================================== */
 
+--font-base: "Inter", Arial, sans-serif;
 
-    /* ==============================================================
+/* Serif (Lesetext, Infoboxen) */
+--font-serif: "Cormorant Garamond", "Georgia", serif;
+
+/* Dekorativ / Seekartenstil */
+--font-script: "Estonia", "IM Fell English SC", serif;
+
+/* Historische Small-Caps (Navigation, Kapitelüberschriften) */
+--font-smallcaps: "Almendra SC", serif;
+
+/* Gravur / Schiffsplaketten / Tool-Titel */
+--font-deco: "Cinzel", serif;
+
+--font-size-xs: 0.75rem;
+--font-size-s:  0.875rem;
+--font-size-m:  1rem;
+--font-size-l:  1.25rem;
+--font-size-xl: 1.5rem;
+--font-size-xxl: 2rem;
+
+--line-height: 1.5;
+ ==============================================================
        ABSTÄNDE
        ============================================================== */
 
