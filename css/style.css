@@ -38,7 +38,6 @@ body {
     box-shadow: var(--shadow-m);
     padding: var(--space-m) 0;
 
-    /* 20 % der Breite, durch min/max begrenzt */
     width: 20%;
     min-width: 240px;
     max-width: 320px;
@@ -46,7 +45,7 @@ body {
     transition: width var(--animation-normal);
 }
 
-/* Kopf der Navigation */
+/* Navigation – unverändert */
 .nav-header {
     padding: var(--space-m) var(--space-l);
     margin-bottom: var(--space-m);
@@ -62,7 +61,6 @@ body {
     gap: var(--space-s);
 }
 
-/* Linkliste */
 .nav-links {
     list-style: none;
     padding: 0;
@@ -70,14 +68,12 @@ body {
     flex-grow: 1;
 }
 
-/* Eintrag */
 .nav-item {
     padding: var(--space-m) var(--space-l);
     cursor: pointer;
     border-bottom: var(--border-width-thin) var(--border-style) var(--border-color);
     font-size: var(--font-size-m);
     font-family: var(--font-deco);
-
     display: flex;
     align-items: center;
     gap: var(--space-s);
@@ -88,19 +84,16 @@ body {
     opacity: var(--hover-opacity);
 }
 
-/* Icon vor Label */
 .nav-icon {
     font-size: var(--font-size-l);
     width: 26px;
     text-align: center;
 }
 
-/* Label – wird für Mobile ausgeblendet */
 .nav-label {
     white-space: nowrap;
 }
 
-/* Adminbereich */
 .nav-section-title {
     margin-top: var(--space-l);
     padding: var(--space-s) var(--space-l);
@@ -110,12 +103,6 @@ body {
     font-family: var(--font-smallcaps);
 }
 
-
-
-/* ==========================================================================
-   LOGOUT als normaler Menüpunkt
-   ========================================================================== */
-
 .nav-item.logout {
     font-weight: bold;
     color: var(--color-text-on-wood);
@@ -124,8 +111,7 @@ body {
 
 
 /* ==========================================================================
-   CONTENTBEREICH (80 %)
-   -> jetzt mit klarer Begrenzung rechts!
+   CONTENTBEREICH
    ========================================================================== */
 
 .content-area {
@@ -136,7 +122,7 @@ body {
     width: 80%;
     flex-grow: 1;
 
-    /* WICHTIG: verhindert, dass Content weiter nach rechts geht */
+    /* Begrenzung abhängig von min. Navi-Breite */
     max-width: calc(100vw - 240px);
 
     overflow-x: hidden;
@@ -145,21 +131,23 @@ body {
 
 
 /* ==========================================================================
-   KOPFZEILE
+   KOPFZEILE – FIX: darf nicht abgeschnitten werden
    ========================================================================== */
 
 #kopf-container {
     width: 100%;
-    max-width: inherit;       /* folgt Begrenzung des Parents */
-    overflow-x: hidden;
-
     background: var(--color-bg-secondary);
     border-bottom: var(--border-width) var(--border-style) var(--border-color);
     padding: var(--space-s) var(--space-l);
     box-shadow: var(--shadow-s);
+
+    /* WICHTIG: verhindert Abschneiden durch Flex-Layout */
+    flex-shrink: 0;
+
+    /* Kein max-width mehr! */
 }
 
-/* Zeile 1 – Userinfo */
+/* Zeile 1 */
 .kopf-zeile.oben {
     display: flex;
     justify-content: flex-end;
@@ -169,7 +157,7 @@ body {
     font-family: var(--font-serif);
 }
 
-/* Zeile 2 – Tooltitel */
+/* Zeile 2 */
 .kopf-zeile.unten {
     display: flex;
     justify-content: flex-start;
@@ -186,22 +174,25 @@ body {
 
 
 /* ==========================================================================
-   TOOL-INHALT
+   TOOL-INHALT – FIX: Inhalt darf breit sein, Header bleibt stabil
    ========================================================================== */
 
 .tool-content {
     flex-grow: 1;
     padding: var(--space-xl);
+
     overflow-y: auto;
-    overflow-x: hidden;
+
+    /* WICHTIG: Horizontalen Overflow erlauben statt Layout zerstören */
+    overflow-x: auto;
+
     font-family: var(--font-base);
-    max-width: inherit; /* verhindert rechts Überlauf */
 }
 
 
 
 /* ==========================================================================
-   BUTTONS
+   BUTTONS & STATUSBOXEN – unverändert
    ========================================================================== */
 
 .btn {
@@ -228,12 +219,6 @@ body {
 .btn:hover {
     opacity: var(--hover-opacity);
 }
-
-
-
-/* ==========================================================================
-   STATUSBOXEN
-   ========================================================================== */
 
 .info-box,
 .error-box,
@@ -273,12 +258,10 @@ body {
         padding: var(--space-s) 0;
     }
 
-    /* neue Berechnung rechts */
     .content-area {
         max-width: calc(100vw - 64px);
     }
 
-    /* Labels verstecken */
     .nav-label {
         display: none !important;
     }
