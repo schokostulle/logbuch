@@ -1,0 +1,90 @@
+/* ==========================================================================
+   Grundlayout – Navigation links, Kopf + Content rechts
+   ========================================================================== */
+
+/* Die gesamte App */
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--color-bg);
+    font-family: var(--font-base);
+    color: var(--color-text);
+    line-height: var(--line-height);
+    display: flex;
+    min-height: 100vh;
+}
+
+
+/* ==========================================================================
+   Layout-Container
+   ========================================================================== */
+
+.layout-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+
+
+/* ==========================================================================
+   Linkes Menü – feste Spalte
+   ========================================================================== */
+
+#nav-container {
+    background: var(--color-wood);
+    color: var(--color-text-on-wood);
+
+    /* Layoutbreite */
+    width: 20%;         /* relativer Rahmen */
+    max-width: 320px;   /* absolute Begrenzung */
+    min-width: 240px;   /* absolute Mindestbreite */
+
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-m);
+    padding: var(--space-m) 0;
+}
+
+
+/* ==========================================================================
+   Rechter Hauptbereich: Kopf + Inhalt
+   ========================================================================== */
+
+.content-area {
+    flex-grow: 1;
+    background: var(--color-bg);
+
+    /* sicheres Minimum: mindestens 80% */
+    width: 80%;
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+
+/* ==========================================================================
+   Kopfbereich (2 Zeilen) – kopf.js füllt Inhalt
+   ========================================================================== */
+
+#kopf-container {
+    width: 100%;
+    background: var(--color-bg-secondary);
+    border-bottom: var(--border-width) var(--border-style) var(--border-color);
+    padding: var(--space-s) var(--space-l);
+    box-shadow: var(--shadow-s);
+    flex-shrink: 0;
+}
+
+
+/* ==========================================================================
+   Tool-Contentbereich
+   ========================================================================== */
+
+.tool-content {
+    flex-grow: 1;
+    padding: var(--space-xl);
+    overflow-y: auto;
+    overflow-x: auto;
+    background: var(--color-bg);
+}
