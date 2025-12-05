@@ -1,71 +1,80 @@
 /* ==========================================================================
-   Grundlayout – Navigation links, Kopf + Content rechts
+   GLOBAL LAYOUT
    ========================================================================== */
 
-body {
-    margin: 0;
-    padding: 0;
-    background: var(--color-bg);
-    font-family: var(--font-base);
-    color: var(--color-text);
-    line-height: var(--line-height);
-    display: flex;
-    min-height: 100vh;
-}
-
-/* Layout-Wrapper */
 .layout-container {
     display: flex;
     width: 100%;
-    height: 100vh;
+    height: 100vh; /* wichtig: erlaubt unabhängiges Scrollen */
+    overflow: hidden; /* verhindert doppeltes Scrollen */
 }
 
 
 /* ==========================================================================
-   NAVIGATION – dynamische Breitenlogik
+   NAVIGATION – dynamisch 20% bis max 240px
    ========================================================================== */
-
-/*
-   ✔ max 20% des Viewports
-   ✔ aber niemals breiter als 240px
-   ✔ wird automatisch SCHMAL (64px), wenn 20% < 240px
-*/
 
 #nav-container {
     background: var(--color-wood);
     color: var(--color-text-on-wood);
 
     width: clamp(64px, 20vw, 240px);
-    /* 64px = Minimalbreite im Compact Mode */
 
     display: flex;
     flex-direction: column;
+
     box-shadow: var(--shadow-m);
 
     padding: var(--space-m) 0;
-    overflow: hidden; /* wichtig für ausblendende Labels */
+
+    height: 100vh;
+    overflow-y: auto; /* Navigation scrollt unabhängig */
 
     transition: width var(--animation-normal);
 }
 
-/* Normaler Modus: Labels sichtbar */
-.nav-label {
-    white-space: nowrap;
-    opacity: 1;
-    transition: opacity var(--animation-normal);
+/* Titel oben */
+.nav-header {
+    padding: var(--space-m) var(--space-l);
+    margin-bottom: var(--space-m);
+    display: flex;
+    align-items: center;
 }
 
-/* Navigationseintrag */
+/* Standard: linksbündig */
+.nav-title {
+    font-family: var(--font-deco);
+    font-size: var(--font-size-l);
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-align: left;
+    width: 100%;
+}
+
+
+/* ==========================================================================
+   Navigationseinträge
+   ========================================================================== */
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+}
+
 .nav-item {
     padding: var(--space-m) var(--space-l);
     cursor: pointer;
+
     display: flex;
     align-items: center;
     gap: var(--space-s);
 
     border-bottom: var(--border-width-thin) var(--border-style) var(--border-color);
-    font-family: var(--font-deco);
+
     font-size: var(--font-size-m);
+    font-family: var(--font-deco);
 }
 
 .nav-item:hover {
@@ -73,39 +82,51 @@ body {
     opacity: var(--hover-opacity);
 }
 
-/* Icons fixieren */
+/* Icon */
 .nav-icon {
     width: 26px;
     text-align: center;
     font-size: var(--font-size-l);
 }
 
+/* Label sichtbar im Normalmodus */
+.nav-label {
+    white-space: nowrap;
+}
+
 
 /* ==========================================================================
-   AUTOMATISCHER COMPACT MODE
-   ↓ Wenn Navigation schmaler als 140px wird (inkl. Padding)
-   Dann werden Labels versteckt
+   Kompaktmodus (automatisch < ~1200px abhängig von viewport)
    ========================================================================== */
 
-@media (max-width: 700px) {
-    /* Navigation wird garantiert nur 64px breit, da 20vw < 240px */
+@media (max-width: 900px) {
+
+    /* Navigation kompakt */
     #nav-container {
         width: 64px !important;
+        min-width: 64px;
     }
 
-    /* Labels verstecken */
+    /* Titel zentrieren */
+    .nav-title {
+        text-align: center;
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    /* Labels komplett weg */
     .nav-label {
-        opacity: 0;
-        display: none;
+        display: none !important;
     }
 
-    /* Icons zentrieren */
+    /* Icons zentriert */
     .nav-item {
         justify-content: center;
         padding-left: 0;
         padding-right: 0;
     }
 
+    /* Admin Überschrift ausblenden */
     .nav-section-title {
         display: none;
     }
@@ -113,45 +134,48 @@ body {
 
 
 /* ==========================================================================
-   CONTENT-BEREICH
+   CONTENT BEREICH
    ========================================================================== */
 
 .content-area {
     flex-grow: 1;
-    background: var(--color-bg);
-
-    /* Automatische Berechnung abhängig von actual navigation width */
     width: calc(100vw - clamp(64px, 20vw, 240px));
 
     display: flex;
     flex-direction: column;
 
-    overflow: hidden;
+    height: 100vh;
+    overflow: hidden; /* Kopf immer sichtbar */
 }
 
 
 /* ==========================================================================
-   KOPFZEILE
+   STICKY HEADER
    ========================================================================== */
 
 #kopf-container {
-    width: 100%;
-    flex-shrink: 0;
-
     background: var(--color-bg-secondary);
     border-bottom: var(--border-width) var(--border-style) var(--border-color);
     padding: var(--space-s) var(--space-l);
+
     box-shadow: var(--shadow-s);
+
+    flex-shrink: 0;
+
+    position: sticky;
+    top: 0;
+    z-index: 10; /* bleibt über Content */
 }
 
 
 /* ==========================================================================
-   TOOL-INHALT
+   TOOL-INHALT – eigener Scrollbereich
    ========================================================================== */
 
 .tool-content {
     flex-grow: 1;
-    padding: var(--space-xl);
     overflow-y: auto;
     overflow-x: auto;
+
+    padding: var(--space-xl);
 }
