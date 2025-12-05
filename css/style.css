@@ -1,38 +1,61 @@
 /* ==========================================================================
-   GLOBALS – interne Tools (Navigation, Kopf, Content)
+   STYLE.CSS – Maritime Webapp Layout
+   Verwendet ausschließlich Variablen aus root.css
+   Keine harten Farben, keine alten Reste
+   ========================================================================== */
+
+
+/* ==========================================================================
+   GLOBALS
    ========================================================================== */
 
 body {
     margin: 0;
     padding: 0;
     background: var(--color-bg);
-    font-family: var(--font-base);
     color: var(--color-text);
+    font-family: var(--font-base);
     line-height: var(--line-height);
     display: flex;
     min-height: 100vh;
+}
 
+:root {
+    --nav-width: 240px;
 }
 
 
 /* ==========================================================================
-   NAVIGATION LINKS
+   LAYOUT
+   ========================================================================== */
+
+.layout-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+
+/* ==========================================================================
+   NAVIGATION
    ========================================================================== */
 
 #nav-container {
+    width: var(--nav-width);
+    min-width: 240px;
+    max-width: 320px;
+
     background: var(--color-wood);
     color: var(--color-text-on-wood);
+    padding: var(--space-m) 0;
+    box-shadow: var(--shadow-m);
+
     display: flex;
     flex-direction: column;
-    box-shadow: var(--shadow-m);
-    padding: var(--space-m) 0;
-
-    width: 240px;
-
-
     transition: width var(--animation-normal);
 }
 
+/* Header der Navigation */
 .nav-header {
     padding: var(--space-m) var(--space-l);
     margin-bottom: var(--space-m);
@@ -41,29 +64,33 @@ body {
 .nav-title {
     font-family: var(--font-deco);
     font-size: var(--font-size-l);
-    font-weight: bold;
     letter-spacing: 1px;
     display: flex;
     align-items: center;
     gap: var(--space-s);
 }
 
+/* Linkliste */
 .nav-links {
     list-style: none;
-    padding: 0;
     margin: 0;
+    padding: 0;
     flex-grow: 1;
 }
 
+/* Ein Eintrag */
 .nav-item {
-    padding: var(--space-m) var(--space-l);
-    cursor: pointer;
-    border-bottom: var(--border-width-thin) var(--border-style) var(--border-color);
-    font-size: var(--font-size-m);
-    font-family: var(--font-deco);
     display: flex;
     align-items: center;
     gap: var(--space-s);
+
+    padding: var(--space-m) var(--space-l);
+    font-size: var(--font-size-m);
+    font-family: var(--font-deco);
+
+    border-bottom: var(--border-width-thin) var(--border-style) var(--border-color);
+    cursor: pointer;
+    transition: background var(--animation-fast);
 }
 
 .nav-item:hover {
@@ -71,28 +98,33 @@ body {
     opacity: var(--hover-opacity);
 }
 
+/* Icon */
 .nav-icon {
-    font-size: var(--font-size-l);
+    width: 26px;
     text-align: center;
 }
 
+/* Text */
 .nav-label {
     white-space: nowrap;
 }
 
+/* Abschnittstitel */
 .nav-section-title {
-    margin-top: var(--space-l);
     padding: var(--space-s) var(--space-l);
+    margin-top: var(--space-l);
+    text-transform: uppercase;
+
+    font-family: var(--font-smallcaps);
     font-size: var(--font-size-s);
     opacity: 0.8;
-    text-transform: uppercase;
-    font-family: var(--font-smallcaps);
 }
 
+/* Logout als normaler Menüpunkt */
 .nav-item.logout {
     font-weight: bold;
-    color: var(--color-text-on-wood);
 }
+
 
 
 /* ==========================================================================
@@ -100,45 +132,44 @@ body {
    ========================================================================== */
 
 .content-area {
+    flex-grow: 1;
+    width: calc(100vw - var(--nav-width));
+    background: var(--color-bg);
+
     display: flex;
     flex-direction: column;
-
-    flex-grow: 1;
-
-    background: var(--color-bg);
-    overflow: hidden;
+    overflow: hidden; /* Kopf bleibt stabil */
 }
 
 
 /* ==========================================================================
-   KOPFZEILE
+   HEADER
    ========================================================================== */
 
 #kopf-container {
     width: 100%;
-    flex-shrink: 0;
+    flex-shrink: 0; /* verhindert Abschneiden */
 
     background: var(--color-bg-secondary);
     border-bottom: var(--border-width) var(--border-style) var(--border-color);
     padding: var(--space-s) var(--space-l);
     box-shadow: var(--shadow-s);
-
-    overflow-x: hidden;
 }
 
+/* Zeile 1 – User rechts */
 .kopf-zeile.oben {
     display: flex;
     justify-content: flex-end;
-    padding-bottom: var(--space-xs);
     font-size: var(--font-size-s);
     color: var(--color-text-muted);
     font-family: var(--font-serif);
+    margin-bottom: var(--space-xs);
 }
 
+/* Zeile 2 – Tooltitel links */
 .kopf-zeile.unten {
     display: flex;
     justify-content: flex-start;
-    padding-top: var(--space-xs);
 }
 
 .tool-title {
@@ -149,6 +180,7 @@ body {
 }
 
 
+
 /* ==========================================================================
    TOOL-INHALT
    ========================================================================== */
@@ -156,25 +188,33 @@ body {
 .tool-content {
     flex-grow: 1;
     padding: var(--space-xl);
+    font-family: var(--font-base);
+
     overflow-y: auto;
     overflow-x: auto;
-    font-family: var(--font-base);
 }
 
 
+
 /* ==========================================================================
-   BUTTONS & STATUSBOXEN
+   BUTTONS
    ========================================================================== */
 
 .btn {
     padding: var(--space-m) var(--space-l);
     border-radius: var(--radius-m);
     border: none;
-    cursor: pointer;
+
     font-size: var(--font-size-m);
+    font-family: var(--font-smallcaps);
+    cursor: pointer;
+
     box-shadow: var(--shadow-s);
     transition: var(--animation-fast);
-    font-family: var(--font-smallcaps);
+}
+
+.btn:hover {
+    opacity: var(--hover-opacity);
 }
 
 .btn-primary {
@@ -187,9 +227,11 @@ body {
     color: var(--color-text-on-dark);
 }
 
-.btn:hover {
-    opacity: var(--hover-opacity);
-}
+
+
+/* ==========================================================================
+   STATUSBOXEN
+   ========================================================================== */
 
 .info-box,
 .error-box,
@@ -216,3 +258,87 @@ body {
 }
 
 
+
+/* ==========================================================================
+   TABELLEN
+   ========================================================================== */
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-s);
+    box-shadow: var(--shadow-s);
+    overflow: hidden;
+}
+
+th {
+    background: var(--color-ocean-dark);
+    color: var(--color-text-on-dark);
+    padding: var(--space-s);
+    text-align: left;
+    font-family: var(--font-serif);
+
+    border-right: var(--border-width-thin) var(--border-style) var(--color-overlay-light);
+}
+
+th:last-child {
+    border-right: none;
+}
+
+td {
+    padding: var(--space-s);
+    border-bottom: var(--border-width-thin) var(--border-style) var(--color-ink-light);
+    border-right: var(--border-width-thin) var(--border-style) var(--color-ink-light);
+}
+
+td:last-child {
+    border-right: none;
+}
+
+tbody tr:hover {
+    background: var(--color-overlay-light);
+}
+
+
+
+/* ==========================================================================
+   FORMULARE
+   ========================================================================== */
+
+input, select, textarea {
+    width: 100%;
+    padding: var(--space-s);
+    margin-bottom: var(--space-m);
+
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-s);
+    border: var(--border-width-thin) var(--border-style) var(--color-ink-medium);
+
+    font-size: var(--font-size-m);
+    font-family: var(--font-base);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: var(--border-width) var(--border-style) var(--color-ocean-light);
+}
+
+
+
+/* ==========================================================================
+   KARTEN / PANELS
+   ========================================================================== */
+
+.card {
+    padding: var(--space-l);
+    background: var(--color-bg-secondary);
+
+    border-left: var(--border-width-thick) var(--border-style) var(--color-wood);
+    border-radius: var(--radius-m);
+
+    box-shadow: var(--shadow-m);
+}
