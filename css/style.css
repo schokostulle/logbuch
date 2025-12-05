@@ -11,20 +11,7 @@ body {
     line-height: var(--line-height);
     display: flex;
     min-height: 100vh;
-}
 
-:root {
-    --nav-width: 240px; /* Fixe Standardbreite */
-}
-
-
-/* ==========================================================================
-   LAYOUT 20/80
-   ========================================================================== */
-
-.layout-container {
-    display: flex;
-    width: 100%;
 }
 
 
@@ -40,9 +27,8 @@ body {
     box-shadow: var(--shadow-m);
     padding: var(--space-m) 0;
 
-    width: var(--nav-width);
-    min-width: 240px;
-    max-width: 320px;
+    width: 240px;
+
 
     transition: width var(--animation-normal);
 }
@@ -87,7 +73,6 @@ body {
 
 .nav-icon {
     font-size: var(--font-size-l);
-    width: 26px;
     text-align: center;
 }
 
@@ -118,7 +103,6 @@ body {
     display: flex;
     flex-direction: column;
 
-    width: calc(100vw - var(--nav-width));
     flex-grow: 1;
 
     background: var(--color-bg);
@@ -232,6 +216,3 @@ body {
 }
 
 
-/* ==========================================================================
-   → Responsives Verhalten wurde vollständig entfernt
-   ========================================================================== */
