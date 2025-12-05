@@ -13,9 +13,8 @@ body {
     min-height: 100vh;
 }
 
-/* Dynamische Breitensteuerung */
 :root {
-    --nav-width: 240px;   /* Standard */
+    --nav-width: 240px; /* Fixe Standardbreite */
 }
 
 
@@ -76,7 +75,6 @@ body {
     border-bottom: var(--border-width-thin) var(--border-style) var(--border-color);
     font-size: var(--font-size-m);
     font-family: var(--font-deco);
-
     display: flex;
     align-items: center;
     gap: var(--space-s);
@@ -124,7 +122,7 @@ body {
     flex-grow: 1;
 
     background: var(--color-bg);
-    overflow: hidden; /* verhindert Layoutsprung */
+    overflow: hidden;
 }
 
 
@@ -134,7 +132,7 @@ body {
 
 #kopf-container {
     width: 100%;
-    flex-shrink: 0; /* verhindert Abschneiden */
+    flex-shrink: 0;
 
     background: var(--color-bg-secondary);
     border-bottom: var(--border-width) var(--border-style) var(--border-color);
@@ -174,10 +172,8 @@ body {
 .tool-content {
     flex-grow: 1;
     padding: var(--space-xl);
-
     overflow-y: auto;
     overflow-x: auto;
-
     font-family: var(--font-base);
 }
 
@@ -237,53 +233,5 @@ body {
 
 
 /* ==========================================================================
-   RESPONSIVE – Menü kompakt (< 900px)
+   → Responsives Verhalten wurde vollständig entfernt
    ========================================================================== */
-
-@media (max-width: 900px) {
-
-    :root {
-        --nav-width: 64px;
-    }
-
-    #nav-container {
-        width: 64px !important;
-        min-width: 64px !important;
-        padding: var(--space-s) 0;
-    }
-
-    .content-area {
-        width: calc(100vw - 64px);
-    }
-
-    .nav-label {
-        display: none !important;
-    }
-
-    .nav-item {
-        justify-content: center;
-        padding-left: 0;
-        padding-right: 0;
-    }
-
-    .nav-section-title {
-        display: none !important;
-    }
-
-    /* Header skalieren */
-    #kopf-container {
-        padding: var(--space-xs) var(--space-m);
-    }
-
-    .tool-title {
-        font-size: var(--font-size-l);
-        letter-spacing: 0.5px;
-        word-break: break-word;
-    }
-
-    .kopf-zeile.oben {
-        font-size: var(--font-size-xs);
-        flex-wrap: wrap;
-        text-align: right;
-    }
-}
