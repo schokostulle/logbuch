@@ -1,9 +1,21 @@
 // js/navigation.js
 //
-// Navigation links + Seitenwechsel per HTML (kein fetch!)
+// Permanente Navigation links + HTML-Seitenwechsel
+// Keine fetch-Befehle. Jedes Tool hat eine eigene HTML-Seite.
+//
+// Beispielpfade:
+//   /dashboard/dashboard.html
+//   /member/member.html
+//   /map/map.html
+//
 
 import { getCurrentUser, logoutUser } from "./auth.js";
 import { supabase } from "./supabase.js";
+
+
+/* ==========================================================================
+   Icons
+   ========================================================================== */
 
 const icons = {
     dashboard:   "📜",
@@ -22,6 +34,11 @@ const icons = {
     header:      "🧭"
 };
 
+
+/* ==========================================================================
+   Tool-Definitionen
+   ========================================================================== */
+
 const toolsAll = [
     { id: "dashboard",   label: "Dashboard" },
     { id: "flotte",      label: "Flotten" },
@@ -38,6 +55,11 @@ const toolsAdmin = [
     { id: "chrono",      label: "Chrono" }
 ];
 
+
+/* ==========================================================================
+   Navigation erzeugen
+   ========================================================================== */
+
 async function buildNavigation() {
 
     const user = await getCurrentUser();
@@ -48,15 +70,17 @@ async function buildNavigation() {
 
     const { data: profile } = await supabase
         .from("profiles")
-        .select("username, role")
+        .select("role")
         .eq("id", user.id)
         .single();
 
-    const isAdmin = profile.role === "Admin";
+    const isAdmin = profile?.role === "Admin";
 
     const nav = document.getElementById("nav-container");
     if (!nav) return;
 
+
+    /* Header */
     let html = `
         <div class="nav-header">
             <span class="nav-title">
@@ -68,25 +92,34 @@ async function buildNavigation() {
         <ul class="nav-links">
     `;
 
+
+    /* Tools für alle */
     toolsAll.forEach(tool => {
         html += `
             <li class="nav-item" data-tool="${tool.id}">
                 <span class="nav-icon">${icons[tool.id]}</span>
                 <span class="nav-label">${tool.label}</span>
-            </li>`;
+            </li>
+        `;
     });
 
+
+    /* Adminbereich */
     if (isAdmin) {
         html += `<li class="nav-section-title">Administration</li>`;
+
         toolsAdmin.forEach(tool => {
             html += `
-            <li class="nav-item" data-tool="${tool.id}">
-                <span class="nav-icon">${icons[tool.id]}</span>
-                <span class="nav-label">${tool.label}</span>
-            </li>`;
+                <li class="nav-item" data-tool="${tool.id}">
+                    <span class="nav-icon">${icons[tool.id]}</span>
+                    <span class="nav-label">${tool.label}</span>
+                </li>
+            `;
         });
     }
 
+
+    /* Logout */
     html += `
         <li class="nav-item logout" data-logout="true">
             <span class="nav-icon">${icons.logout}</span>
@@ -95,12 +128,21 @@ async function buildNavigation() {
     `;
 
     html += `</ul>`;
+
+
     nav.innerHTML = html;
 
     activateNavigation();
 }
 
+
+
+/* ==========================================================================
+   Klick-Handler: Seitenwechsel
+   ========================================================================== */
+
 function activateNavigation() {
+
     const items = document.querySelectorAll(".nav-item");
 
     items.forEach(item => {
@@ -109,18 +151,3 @@ function activateNavigation() {
         if (item.dataset.logout === "true") {
             item.addEventListener("click", async () => {
                 await logoutUser();
-                window.location.href = "../index.html";
-            });
-            return;
-        }
-
-        // Normale Tool-Links → Seitenwechsel
-        item.addEventListener("click", () => {
-            const tool = item.dataset.tool;
-            window.location.href = `../${tool}/${tool}.html`;
-        });
-    });
-}
-
-buildNavigation();
-export default buildNavigation;
