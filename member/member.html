@@ -1,35 +1,80 @@
-<!-- WICHTIG: Pfad relativ zu dashboard/dashboard.html -->
-<link rel="stylesheet" href="../member/member.css">
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<div class="member-wrapper">
+    <title>Mitgliederverwaltung – Logbuch</title>
 
-    <h2 class="member-title">Mitgliederverwaltung</h2>
+    <!-- Design Tokens + Global Layout -->
+    <link rel="stylesheet" href="../css/root.css">
+    <link rel="stylesheet" href="../css/style.css">
 
-    <!-- Statusausgabe -->
-    <div id="member-status"></div>
+    <!-- Tool-spezifisches CSS -->
+    <link rel="stylesheet" href="member.css">
+</head>
 
-    <!-- Tabelle -->
-    <table class="member-table">
+<body>
 
-        <colgroup>
-            <col style="width: 30%;">
-            <col style="width: 25%;">
-            <col style="width: 25%;">
-            <col style="width: 20%;">
-        </colgroup>
+<div class="layout-container">
 
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>Rolle</th>
-                <th>Status</th>
-                <th>Aktion</th>
-            </tr>
-        </thead>
+    <!-- Navigation -->
+    <nav id="nav-container"></nav>
 
-        <tbody id="member-table-body">
-            <!-- Dynamisch gefüllt durch member.js -->
-        </tbody>
+    <!-- Contentbereich -->
+    <main class="content-area">
 
-    </table>
+        <!-- Kopfbereich -->
+        <header id="kopf-container"></header>
+
+        <!-- Toolinhalt -->
+        <section class="tool-content">
+
+            <div class="member-wrapper">
+
+                <h2 class="member-title">Mitgliederverwaltung</h2>
+
+                <!-- Status -->
+                <div id="member-status"></div>
+
+                <!-- Tabelle -->
+                <table class="member-table">
+
+                    <colgroup>
+                        <col style="width: 30%;">
+                        <col style="width: 25%;">
+                        <col style="width: 25%;">
+                        <col style="width: 20%;">
+                    </colgroup>
+
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Rolle</th>
+                            <th>Status</th>
+                            <th>Aktion</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="member-table-body">
+                        <!-- Wird durch member.js gefüllt -->
+                    </tbody>
+
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+
 </div>
+
+<!-- JS -->
+<script type="module" src="../js/supabase.js"></script>
+<script type="module" src="../js/auth.js"></script>
+<script type="module" src="../js/navigation.js"></script>
+<script type="module" src="../js/kopf.js"></script>
+<script type="module" src="member.js"></script>
+
+</body>
+</html>
