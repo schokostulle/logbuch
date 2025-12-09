@@ -1,17 +1,24 @@
 /* ==========================================================================
    MEMBER TOOL – Maritime Style
-   Stützt sich komplett auf root.css + style.css (Farben, Radius, Schatten)
+   Nutzt ausschließlich root.css + style.css Variablen
    ========================================================================== */
 
 
-/* Wrapper */
+/* ==========================================================================
+   WRAPPER
+   ========================================================================== */
+
 .member-wrapper {
-    padding: var(--space-l);
+    padding: var(--space-xl);
     font-family: var(--font-base);
 }
 
 
-/* Überschrift */
+
+/* ==========================================================================
+   ÜBERSCHRIFT
+   ========================================================================== */
+
 .member-wrapper h2 {
     font-family: var(--font-deco);
     font-size: var(--font-size-xl);
@@ -22,7 +29,7 @@
 
 
 /* ==========================================================================
-   STATUSAUSGABE
+   STATUSAUSGABE (success / error / info kommt aus style.css)
    ========================================================================== */
 
 #member-status {
@@ -39,20 +46,24 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
+
     background: var(--color-bg-secondary);
     border-radius: var(--radius-m);
-    overflow: hidden;
     box-shadow: var(--shadow-s);
+
+    overflow: hidden;
     margin-bottom: var(--space-xl);
 }
 
-/* Kopf */
+/* Tabellenkopf */
 .member-table th {
     background: var(--color-ocean-dark);
     color: var(--color-text-on-dark);
+
     padding: var(--space-s) var(--space-m);
     font-family: var(--font-smallcaps);
     text-align: left;
+
     border-right: var(--border-width-thin) var(--border-style) var(--color-overlay-light);
 }
 
@@ -60,7 +71,7 @@
     border-right: none;
 }
 
-/* Zeilen */
+/* Tabellenzellen */
 .member-table td {
     padding: var(--space-m);
     border-bottom: var(--border-width-thin) var(--border-style) var(--color-ink-light);
@@ -71,7 +82,7 @@
     border-right: none;
 }
 
-/* Hover */
+/* Hover-Effekt für Zeilen */
 .member-table tbody tr:hover {
     background: var(--color-overlay-light);
     transition: background var(--animation-fast);
@@ -88,8 +99,10 @@
     padding: var(--space-s);
     font-size: var(--font-size-m);
     border-radius: var(--radius-s);
+
     background: var(--color-bg);
     border: var(--border-width-thin) var(--border-style) var(--border-color);
+
     cursor: pointer;
 }
 
@@ -102,7 +115,7 @@
 
 
 /* ==========================================================================
-   SPEICHER-BUTTON (pro Zeile)
+   BUTTON „Speichern“
    ========================================================================== */
 
 .save-btn {
@@ -116,13 +129,13 @@
 }
 
 
+
 /* ==========================================================================
-   RESPONSIVE
+   RESPONSIVE (Table Scroll statt Layoutbruch)
    ========================================================================== */
 
 @media (max-width: 700px) {
 
-    /* Tabelle scrollbar statt zerstört */
     .member-table {
         display: block;
         overflow-x: auto;
