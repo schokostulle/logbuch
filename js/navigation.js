@@ -1,7 +1,7 @@
 // js/navigation.js
 //
 // Navigation links + Tool-Ladefunktion
-// mit Symbolen vor jedem Menüpunkt
+// Icons + dynamisches Laden der Tool-JS-Dateien
 
 import { getCurrentUser, logoutUser } from "./auth.js";
 import { supabase } from "./supabase.js";
@@ -73,7 +73,7 @@ async function buildNavigation() {
     if (!nav) return;
 
 
-    /* Header */
+    /* HEADER */
     let html = `
         <div class="nav-header">
             <span class="nav-title">
@@ -85,6 +85,7 @@ async function buildNavigation() {
         <ul class="nav-links">
     `;
 
+
     /* Tools für alle */
     toolsAll.forEach(tool => {
         html += `
@@ -94,18 +95,20 @@ async function buildNavigation() {
             </li>`;
     });
 
-    /* Admin */
+
+    /* Adminbereich */
     if (isAdmin) {
         html += `<li class="nav-section-title">Administration</li>`;
 
         toolsAdmin.forEach(tool => {
             html += `
-            <li data-tool="${tool.id}" class="nav-item">
-                <span class="nav-icon">${icons[tool.id]}</span>
-                <span class="nav-label">${tool.label}</span>
-            </li>`;
+                <li data-tool="${tool.id}" class="nav-item">
+                    <span class="nav-icon">${icons[tool.id]}</span>
+                    <span class="nav-label">${tool.label}</span>
+                </li>`;
         });
     }
+
 
     /* Logout */
     html += `
@@ -116,12 +119,10 @@ async function buildNavigation() {
     `;
 
     html += `</ul>`;
-
     nav.innerHTML = html;
 
     activateNavigation();
 }
-
 
 
 /* ==========================================================================
@@ -134,58 +135,9 @@ function activateNavigation() {
 
     items.forEach(item => {
 
-        /* Logout */
+        /* LOGOUT */
         if (item.dataset.logout === "true") {
             item.addEventListener("click", async () => {
                 await logoutUser();
                 window.location.href = "../index.html";
             });
-            return;
-        }
-
-        /* Normale Tools */
-        item.addEventListener("click", () => {
-            const tool = item.getAttribute("data-tool");
-            loadToolContent(tool);
-
-            if (window.setToolTitle) {
-                window.setToolTitle(tool);
-            }
-        });
-    });
-}
-
-
-
-/* ==========================================================================
-   Tool laden
-   ========================================================================== */
-
-export async function loadToolContent(toolName) {
-
-    const container = document.getElementById("tool-content");
-    if (!container) return;
-
-    try {
-        const response = await fetch(`../${toolName}/${toolName}.html`);
-
-        if (!response.ok) {
-            container.innerHTML = `<p>Fehler: Tool konnte nicht geladen werden.</p>`;
-            return;
-        }
-
-        container.innerHTML = await response.text();
-
-    } catch (e) {
-        container.innerHTML = `<p>Fehler beim Laden des Tools.</p>`;
-    }
-}
-
-
-/* ==========================================================================
-   Start
-   ========================================================================== */
-
-buildNavigation();
-
-export default buildNavigation;
