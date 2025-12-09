@@ -29,7 +29,7 @@
 
 
 /* ==========================================================================
-   STATUSAUSGABE (success / error / info kommt aus style.css)
+   STATUSAUSGABE (info-box / error-box / success-box)
    ========================================================================== */
 
 #member-status {
@@ -56,6 +56,7 @@
 }
 
 /* Tabellenkopf */
+
 .member-table th {
     background: var(--color-ocean-dark);
     color: var(--color-text-on-dark);
@@ -72,8 +73,10 @@
 }
 
 /* Tabellenzellen */
+
 .member-table td {
     padding: var(--space-m);
+
     border-bottom: var(--border-width-thin) var(--border-style) var(--color-ink-light);
     border-right: var(--border-width-thin) var(--border-style) var(--color-ink-light);
 }
@@ -82,7 +85,8 @@
     border-right: none;
 }
 
-/* Hover-Effekt für Zeilen */
+/* Hover */
+
 .member-table tbody tr:hover {
     background: var(--color-overlay-light);
     transition: background var(--animation-fast);
@@ -91,12 +95,13 @@
 
 
 /* ==========================================================================
-   FORM ELEMENTE (Select)
+   FORM ELEMENTE
    ========================================================================== */
 
 .member-table select {
     width: 100%;
     padding: var(--space-s);
+
     font-size: var(--font-size-m);
     border-radius: var(--radius-s);
 
@@ -115,7 +120,7 @@
 
 
 /* ==========================================================================
-   BUTTON „Speichern“
+   SPEICHER-BUTTON
    ========================================================================== */
 
 .save-btn {
@@ -131,7 +136,7 @@
 
 
 /* ==========================================================================
-   RESPONSIVE (Table Scroll statt Layoutbruch)
+   RESPONSIVE (Schmale Bildschirme → Tabelle horizontal scrollbar)
    ========================================================================== */
 
 @media (max-width: 700px) {
