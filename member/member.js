@@ -1,22 +1,19 @@
 // member/member.js
 //
 // Mitgliederverwaltung für Admins
-// Zeigt alle User und erlaubt Rollen-/Statusänderungen.
+// Läuft ausschließlich auf member/member.html
+// Kein dynamisches Nachladen von HTML-Seiten
 
 import { getCurrentUser } from "../js/auth.js";
 import { supabase } from "../js/supabase.js";
 
 
 /* ==========================================================================
-   DOM Elemente (können beim ersten Laden noch fehlen)
+   DOM Referenzen
    ========================================================================== */
 
-function getDomRefs() {
-    return {
-        tableBody: document.getElementById("member-table-body"),
-        statusBox: document.getElementById("member-status")
-    };
-}
+const tableBody = document.getElementById("member-table-body");
+const statusBox = document.getElementById("member-status");
 
 
 /* ==========================================================================
@@ -24,7 +21,6 @@ function getDomRefs() {
    ========================================================================== */
 
 function showStatus(message, type = "info") {
-    const { statusBox } = getDomRefs();
     if (!statusBox) return;
     statusBox.innerHTML = `<div class="${type}-box">${message}</div>`;
 }
@@ -37,11 +33,7 @@ function showStatus(message, type = "info") {
 
 async function loadMembers() {
 
-    const { tableBody } = getDomRefs();
-    if (!tableBody) {
-        // Tool ist noch nicht geladen → nichts tun
-        return;
-    }
+    if (!tableBody) return;
 
     const user = await getCurrentUser();
     if (!user) {
@@ -103,11 +95,11 @@ async function loadMembers() {
 
 
 /* ==========================================================================
-   Speicher-Buttons aktivieren
+   Speicheraktionen
    ========================================================================== */
 
 function activateActions() {
-    const { tableBody } = getDomRefs();
+
     if (!tableBody) return;
 
     const saveButtons = tableBody.querySelectorAll(".save-btn");
@@ -142,9 +134,7 @@ function activateActions() {
 
 
 /* ==========================================================================
-   Init – wird nach Laden des Fragments erneut aufgerufen
+   Init – wird beim Laden von member.html ausgeführt
    ========================================================================== */
 
-export function initMemberTool() {
-    loadMembers();
-}
+document.addEventListener("DOMContentLoaded", loadMembers);
