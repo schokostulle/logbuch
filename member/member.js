@@ -1,12 +1,12 @@
-// member/member.js
+// member.js
 //
 // Mitgliederverwaltung für Admins
-// Voraussetzungen:
-// - Supabase Tabelle "profiles" mit Feldern: id, username, role, status
-// - Nur Admins haben Zugriff (Navigation filtert bereits)
+// Zeigt alle User an und erlaubt Rollen-/Statusänderungen.
+// Struktur: id, username, role, status
+// Hinweis: Navigation verhindert, dass Non-Admins diese Seite sehen.
 
-import { getCurrentUser } from "../js/auth.js";
-import { supabase } from "../js/supabase.js";
+import { getCurrentUser } from "./auth.js";
+import { supabase } from "./supabase.js";
 
 
 /* ==========================================================================
@@ -39,47 +39,47 @@ async function loadMembers() {
         return;
     }
 
-    // Eigene ID, um Selbstbearbeitung zu verhindern
     const currentUserId = user.id;
 
-    const { data, error } = await supabase
+    const { data: profiles, error } = await supabase
         .from("profiles")
         .select("id, username, role, status")
         .order("username", { ascending: true });
 
-    if (error) {
+    if (error || !profiles) {
         showStatus("Fehler beim Laden der Mitglieder.", "error");
         return;
     }
 
     tableBody.innerHTML = "";
 
-    data.forEach(row => {
+    profiles.forEach(member => {
 
-        const isSelf = row.id === currentUserId;
+        const isSelf = member.id === currentUserId;
         const disabledAttr = isSelf ? "disabled" : "";
 
         const tr = document.createElement("tr");
+
         tr.innerHTML = `
-            <td>${row.username}</td>
+            <td>${member.username}</td>
 
             <td>
-                <select data-id="${row.id}" class="role-select" ${disabledAttr}>
-                    <option value="Admin"  ${row.role === "Admin" ? "selected" : ""}>Admin</option>
-                    <option value="Member" ${row.role === "Member" ? "selected" : ""}>Member</option>
+                <select class="role-select" data-id="${member.id}" ${disabledAttr}>
+                    <option value="Admin"  ${member.role === "Admin" ? "selected" : ""}>Admin</option>
+                    <option value="Member" ${member.role === "Member" ? "selected" : ""}>Member</option>
                 </select>
             </td>
 
             <td>
-                <select data-id="${row.id}" class="status-select" ${disabledAttr}>
-                    <option value="aktiv"    ${row.status === "aktiv" ? "selected" : ""}>aktiv</option>
-                    <option value="blockiert" ${row.status === "blockiert" ? "selected" : ""}>blockiert</option>
-                    <option value="gelöscht"  ${row.status === "gelöscht" ? "selected" : ""}>gelöscht</option>
+                <select class="status-select" data-id="${member.id}" ${disabledAttr}>
+                    <option value="aktiv"     ${member.status === "aktiv" ? "selected" : ""}>aktiv</option>
+                    <option value="blockiert" ${member.status === "blockiert" ? "selected" : ""}>blockiert</option>
+                    <option value="gelöscht"  ${member.status === "gelöscht" ? "selected" : ""}>gelöscht</option>
                 </select>
             </td>
 
             <td>
-                <button class="btn btn-secondary save-btn" data-id="${row.id}" ${disabledAttr}>
+                <button class="btn btn-secondary save-btn" data-id="${member.id}" ${disabledAttr}>
                     Speichern
                 </button>
             </td>
@@ -94,18 +94,18 @@ async function loadMembers() {
 
 
 /* ==========================================================================
-   Aktionen aktivieren (Speichern)
+   Speicher-Buttons aktivieren
    ========================================================================== */
 
 function activateActions() {
-
     const saveButtons = document.querySelectorAll(".save-btn");
 
     saveButtons.forEach(btn => {
         btn.addEventListener("click", async () => {
 
-            const id = btn.getAttribute("data-id");
-            const roleSelect = document.querySelector(`.role-select[data-id="${id}"]`);
+            const id = btn.dataset.id;
+
+            const roleSelect   = document.querySelector(`.role-select[data-id="${id}"]`);
             const statusSelect = document.querySelector(`.status-select[data-id="${id}"]`);
 
             const newRole = roleSelect.value;
@@ -113,10 +113,7 @@ function activateActions() {
 
             const { error } = await supabase
                 .from("profiles")
-                .update({
-                    role: newRole,
-                    status: newStatus
-                })
+                .update({ role: newRole, status: newStatus })
                 .eq("id", id);
 
             if (error) {
@@ -125,6 +122,8 @@ function activateActions() {
             }
 
             showStatus("Änderung gespeichert.", "success");
+
+            // Tabelle komplett neu laden → sauberer Refresh
             loadMembers();
         });
     });
