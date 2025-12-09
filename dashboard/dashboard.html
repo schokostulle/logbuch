@@ -7,11 +7,14 @@
 <title>Dashboard – Community Webapp</title>
 
 <!-- Global Theme -->
-<link rel="stylesheet" href="css/root.css">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="../css/root.css">
+<link rel="stylesheet" href="../css/style.css">
 
 <!-- Maritime Schriftarten -->
 <link href="https://fonts.googleapis.com/css2?family=Estonia&family=Almendra+SC&family=Cormorant+Garamond:wght@400;600&family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<!-- Dashboard Styles (falls benötigt) -->
+<link rel="stylesheet" href="dashboard.css">
 
 </head>
 <body>
@@ -24,23 +27,25 @@
     <!-- Hauptbereich -->
     <main class="content-area">
 
-        <!-- Kopfbereich (Userinfo + Tooltitel) -->
+        <!-- Kopfbereich -->
         <header id="kopf-container"></header>
 
         <!-- Dashboard-Inhalt -->
         <section id="tool-content" class="tool-content">
-            <!-- dashboard.js füllt diese Fläche -->
+            <!-- dashboard.js setzt hier den Inhalt -->
         </section>
 
     </main>
 
 </div>
 
-<!-- JavaScript -->
-<script type="module" src="js/supabase.js"></script>
-<script type="module" src="js/auth.js"></script>
-<script type="module" src="js/navigation.js"></script>
-<script type="module" src="js/kopf.js"></script>
+<!-- Globale JS-Module -->
+<script type="module" src="../js/supabase.js"></script>
+<script type="module" src="../js/auth.js"></script>
+<script type="module" src="../js/navigation.js"></script>
+<script type="module" src="../js/kopf.js"></script>
+
+<!-- Dashboard-spezifisches Script -->
 <script type="module" src="dashboard.js"></script>
 
 </body>
