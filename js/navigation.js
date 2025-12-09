@@ -50,7 +50,6 @@ const toolsAdmin = [
 ];
 
 
-
 /* ==========================================================================
    Navigation generieren
    ========================================================================== */
@@ -70,7 +69,6 @@ async function buildNavigation() {
         .single();
 
     const isAdmin = profile.role === "Admin";
-
     const nav = document.getElementById("nav-container");
     if (!nav) return;
 
@@ -90,17 +88,15 @@ async function buildNavigation() {
     /* Tools für alle */
     toolsAll.forEach(tool => {
         html += `
-        <li data-tool="${tool.id}" class="nav-item">
-            <span class="nav-icon">${icons[tool.id]}</span>
-            <span class="nav-label">${tool.label}</span>
-        </li>`;
+            <li data-tool="${tool.id}" class="nav-item">
+                <span class="nav-icon">${icons[tool.id]}</span>
+                <span class="nav-label">${tool.label}</span>
+            </li>`;
     });
 
-    /* Adminbereich */
+    /* Admin */
     if (isAdmin) {
-        html += `
-            <li class="nav-section-title">Administration</li>
-        `;
+        html += `<li class="nav-section-title">Administration</li>`;
 
         toolsAdmin.forEach(tool => {
             html += `
@@ -120,6 +116,7 @@ async function buildNavigation() {
     `;
 
     html += `</ul>`;
+
     nav.innerHTML = html;
 
     activateNavigation();
@@ -137,7 +134,7 @@ function activateNavigation() {
 
     items.forEach(item => {
 
-        // Logout
+        /* Logout */
         if (item.dataset.logout === "true") {
             item.addEventListener("click", async () => {
                 await logoutUser();
@@ -146,7 +143,7 @@ function activateNavigation() {
             return;
         }
 
-        // Normale Tools
+        /* Normale Tools */
         item.addEventListener("click", () => {
             const tool = item.getAttribute("data-tool");
             loadToolContent(tool);
@@ -165,11 +162,13 @@ function activateNavigation() {
    ========================================================================== */
 
 export async function loadToolContent(toolName) {
+
     const container = document.getElementById("tool-content");
     if (!container) return;
 
     try {
         const response = await fetch(`../${toolName}/${toolName}.html`);
+
         if (!response.ok) {
             container.innerHTML = `<p>Fehler: Tool konnte nicht geladen werden.</p>`;
             return;
@@ -177,7 +176,7 @@ export async function loadToolContent(toolName) {
 
         container.innerHTML = await response.text();
 
-    } catch {
+    } catch (e) {
         container.innerHTML = `<p>Fehler beim Laden des Tools.</p>`;
     }
 }
