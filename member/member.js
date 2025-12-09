@@ -1,20 +1,22 @@
-// member.js
+// member/member.js
 //
 // Mitgliederverwaltung für Admins
-// Zeigt alle User an und erlaubt Rollen-/Statusänderungen.
-// Struktur: id, username, role, status
-// Hinweis: Navigation verhindert, dass Non-Admins diese Seite sehen.
+// Zeigt alle User und erlaubt Rollen-/Statusänderungen.
 
-import { getCurrentUser } from "./auth.js";
-import { supabase } from "./supabase.js";
+import { getCurrentUser } from "../js/auth.js";
+import { supabase } from "../js/supabase.js";
 
 
 /* ==========================================================================
-   DOM Elemente
+   DOM Elemente (können beim ersten Laden noch fehlen)
    ========================================================================== */
 
-const tableBody = document.getElementById("member-table-body");
-const statusBox = document.getElementById("member-status");
+function getDomRefs() {
+    return {
+        tableBody: document.getElementById("member-table-body"),
+        statusBox: document.getElementById("member-status")
+    };
+}
 
 
 /* ==========================================================================
@@ -22,6 +24,8 @@ const statusBox = document.getElementById("member-status");
    ========================================================================== */
 
 function showStatus(message, type = "info") {
+    const { statusBox } = getDomRefs();
+    if (!statusBox) return;
     statusBox.innerHTML = `<div class="${type}-box">${message}</div>`;
 }
 
@@ -32,6 +36,12 @@ function showStatus(message, type = "info") {
    ========================================================================== */
 
 async function loadMembers() {
+
+    const { tableBody } = getDomRefs();
+    if (!tableBody) {
+        // Tool ist noch nicht geladen → nichts tun
+        return;
+    }
 
     const user = await getCurrentUser();
     if (!user) {
@@ -59,7 +69,6 @@ async function loadMembers() {
         const disabledAttr = isSelf ? "disabled" : "";
 
         const tr = document.createElement("tr");
-
         tr.innerHTML = `
             <td>${member.username}</td>
 
@@ -98,17 +107,20 @@ async function loadMembers() {
    ========================================================================== */
 
 function activateActions() {
-    const saveButtons = document.querySelectorAll(".save-btn");
+    const { tableBody } = getDomRefs();
+    if (!tableBody) return;
+
+    const saveButtons = tableBody.querySelectorAll(".save-btn");
 
     saveButtons.forEach(btn => {
         btn.addEventListener("click", async () => {
 
             const id = btn.dataset.id;
 
-            const roleSelect   = document.querySelector(`.role-select[data-id="${id}"]`);
-            const statusSelect = document.querySelector(`.status-select[data-id="${id}"]`);
+            const roleSelect   = tableBody.querySelector(`.role-select[data-id="${id}"]`);
+            const statusSelect = tableBody.querySelector(`.status-select[data-id="${id}"]`);
 
-            const newRole = roleSelect.value;
+            const newRole   = roleSelect.value;
             const newStatus = statusSelect.value;
 
             const { error } = await supabase
@@ -122,8 +134,6 @@ function activateActions() {
             }
 
             showStatus("Änderung gespeichert.", "success");
-
-            // Tabelle komplett neu laden → sauberer Refresh
             loadMembers();
         });
     });
@@ -132,7 +142,9 @@ function activateActions() {
 
 
 /* ==========================================================================
-   Init
+   Init – wird nach Laden des Fragments erneut aufgerufen
    ========================================================================== */
 
-loadMembers();
+export function initMemberTool() {
+    loadMembers();
+}
