@@ -2,59 +2,64 @@
    GLOBAL LAYOUT
    ========================================================================== */
 
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* global kein Scrollen */
+}
+
+body {
+    background: var(--color-bg);
+    font-family: var(--font-base);
+    color: var(--color-text);
+    line-height: var(--line-height);
+}
+
 .layout-container {
     display: flex;
+    width: 100vw;
     height: 100vh;
-    width: 100vw;  /* garantiert bündige Position */
     overflow: hidden;
 }
 
 
+
 /* ==========================================================================
-   NAVIGATION – dynamisch 20% bis max 240px
+   NAVIGATION – dynamisch 20% bis max. 240px
    ========================================================================== */
 
 #nav-container {
+    width: clamp(64px, 20vw, 240px);
+    min-width: 64px;
+
     background: var(--color-wood);
     color: var(--color-text-on-wood);
-
-    width: clamp(64px, 20vw, 240px);
 
     display: flex;
     flex-direction: column;
 
+    padding: var(--space-m) 0;
     box-shadow: var(--shadow-m);
 
-    padding: var(--space-m) 0;
-
-    height: 100vh;
-    overflow-y: auto; /* Navigation scrollt unabhängig */
-
-    transition: width var(--animation-normal);
+    height: 100%;
+    overflow-y: auto; /* Navigation scrollt selbst */
 }
 
-/* Titel oben */
 .nav-header {
     padding: var(--space-m) var(--space-l);
-    margin-bottom: var(--space-m);
     display: flex;
     align-items: center;
 }
 
-/* Standard: linksbündig */
 .nav-title {
     font-family: var(--font-deco);
     font-size: var(--font-size-l);
     font-weight: bold;
     letter-spacing: 1px;
-    text-align: left;
     width: 100%;
+    text-align: left;
 }
-
-
-/* ==========================================================================
-   Navigationseinträge
-   ========================================================================== */
 
 .nav-links {
     list-style: none;
@@ -71,10 +76,10 @@
     align-items: center;
     gap: var(--space-s);
 
-    border-bottom: var(--border-width-thin) var(--border-style) var(--border-color);
-
     font-size: var(--font-size-m);
     font-family: var(--font-deco);
+
+    border-bottom: var(--border-width-thin) var(--border-style) var(--border-color);
 }
 
 .nav-item:hover {
@@ -82,94 +87,92 @@
     opacity: var(--hover-opacity);
 }
 
-/* Icon */
 .nav-icon {
     width: 26px;
-    text-align: center;
     font-size: var(--font-size-l);
+    text-align: center;
 }
 
-/* Label sichtbar im Normalmodus */
 .nav-label {
     white-space: nowrap;
 }
 
 
+
 /* ==========================================================================
-   Kompaktmodus (automatisch < ~1200px abhängig von viewport)
+   KOMPAKT-MODUS
+   Wird automatisch aktiv, wenn Bildschirm < 900px
    ========================================================================== */
 
 @media (max-width: 900px) {
 
-    /* Navigation kompakt */
     #nav-container {
         width: 64px !important;
-        min-width: 64px;
+        min-width: 64px !important;
     }
 
-    /* Titel zentrieren */
     .nav-title {
         text-align: center;
-        padding-right: 0;
-        padding-left: 0;
+        padding: 0;
     }
 
-    /* Labels komplett weg */
     .nav-label {
         display: none !important;
     }
 
-    /* Icons zentriert */
     .nav-item {
         justify-content: center;
         padding-left: 0;
         padding-right: 0;
     }
 
-    /* Admin Überschrift ausblenden */
     .nav-section-title {
-        display: none;
+        display: none !important;
     }
 }
 
 
+
 /* ==========================================================================
-   CONTENT BEREICH
+   CONTENT-BEREICH
    ========================================================================== */
 
 .content-area {
     flex-grow: 1;
+
     width: calc(100vw - clamp(64px, 20vw, 240px));
 
     display: flex;
     flex-direction: column;
 
-    height: 100vh;
-    overflow: hidden; /* Kopf immer sichtbar */
+    height: 100%;
+    overflow: hidden; /* Kopf bleibt sticky */
 }
 
 
+
 /* ==========================================================================
-   STICKY HEADER
+   KOPFZEILE – STICKY
    ========================================================================== */
 
 #kopf-container {
     background: var(--color-bg-secondary);
     border-bottom: var(--border-width) var(--border-style) var(--border-color);
-    padding: var(--space-s) var(--space-l);
 
+    padding: var(--space-s) var(--space-l);
     box-shadow: var(--shadow-s);
 
     flex-shrink: 0;
 
     position: sticky;
     top: 0;
-    z-index: 10; /* bleibt über Content */
+    z-index: 10;
 }
 
 
+
 /* ==========================================================================
-   TOOL-INHALT – eigener Scrollbereich
+   TOOL-INHALT – scrollt unabhängig
    ========================================================================== */
 
 .tool-content {
@@ -178,16 +181,4 @@
     overflow-x: auto;
 
     padding: var(--space-xl);
-}
-
-body {
-    margin: 0;
-    padding: 0;
-    background: var(--color-bg);
-    font-family: var(--font-base);
-    color: var(--color-text);
-    line-height: var(--line-height);
-
-    height: 100vh;
-    overflow: hidden; /* wichtig: verhindert, dass body scrollt */
 }
