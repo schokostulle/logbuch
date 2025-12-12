@@ -246,5 +246,5 @@ body {
     flex-grow: 1;
     overflow-y: auto;
     overflow-x: auto;
-    padding: var(--space-l);
+    padding: var(--space-xs);
 }
