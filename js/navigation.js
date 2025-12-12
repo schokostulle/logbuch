@@ -37,103 +37,91 @@ async function buildNavigation() {
     const isAdmin = profile.role === "Admin";
 
     /* --------------------------------------------------------------
+       Aktuelle Seite bestimmen (für .active)
+       -------------------------------------------------------------- */
+    const currentPath = window.location.pathname;
+
+    const isActive = (path) => currentPath.includes(path)
+        ? "active"
+        : "";
+
+    /* --------------------------------------------------------------
        Navigation aufbauen
        -------------------------------------------------------------- */
     nav.innerHTML = `
         <div class="nav-header">
-            <span class="nav-title">
-                <span class="nav-icon">⚓</span>
-                <span class="nav-label">Logbuch</span>
-            </span>
+            <div class="nav-title">
+                ⚓ <span class="nav-label">Logbuch</span>
+            </div>
         </div>
 
-        <ul class="nav-links">
+        <div class="nav-links">
 
-            <li class="nav-item">
-                <a href="../dashboard/dashboard.html">
-                    <span class="nav-icon">📯</span>
-                    <span class="nav-label">Dashboard</span>
-                </a>
-            </li>
+            <a class="nav-item ${isActive("dashboard")}" href="../dashboard/dashboard.html">
+                <span class="nav-icon">📯</span>
+                <span class="nav-label">Dashboard</span>
+            </a>
 
-            <li class="nav-item">
-                <a href="../fleet/fleet.html">
-                    <span class="nav-icon">⛵</span>
-                    <span class="nav-label">Flotte</span>
-                </a>
-            </li>
+            <a class="nav-item ${isActive("fleet")}" href="../fleet/fleet.html">
+                <span class="nav-icon">⛵</span>
+                <span class="nav-label">Flotte</span>
+            </a>
 
-            <li class="nav-item">
-                <a href="../reports/reports.html">
-                    <span class="nav-icon">📜</span>
-                    <span class="nav-label">Berichte</span>
-                </a>
-            </li>
+            <a class="nav-item ${isActive("reports")}" href="../reports/reports.html">
+                <span class="nav-icon">📜</span>
+                <span class="nav-label">Berichte</span>
+            </a>
 
-            <li class="nav-item">
-                <a href="../map/map.html">
-                    <span class="nav-icon">🗺️</span>
-                    <span class="nav-label">Karte</span>
-                </a>
-            </li>
+            <a class="nav-item ${isActive("map")}" href="../map/map.html">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-label">Karte</span>
+            </a>
 
-            <li class="nav-item">
-                <a href="../reservation/reservation.html">
-                    <span class="nav-icon">📍</span>
-                    <span class="nav-label">Reservierungen</span>
-                </a>
-            </li>
+            <a class="nav-item ${isActive("reservation")}" href="../reservation/reservation.html">
+                <span class="nav-icon">📍</span>
+                <span class="nav-label">Reservierungen</span>
+            </a>
 
-            <li class="nav-item">
-                <a href="../calculation/calculation.html">
-                    <span class="nav-icon">📐</span>
-                    <span class="nav-label">Berechnung</span>
-                </a>
-            </li>
+            <a class="nav-item ${isActive("calculation")}" href="../calculation/calculation.html">
+                <span class="nav-icon">📐</span>
+                <span class="nav-label">Berechnung</span>
+            </a>
 
             ${isAdmin ? `
-
-            <li class="nav-item">
-                <a href="../member/member.html">
+                <a class="nav-item ${isActive("member")}" href="../member/member.html">
                     <span class="nav-icon">🪖</span>
                     <span class="nav-label">Mitglieder</span>
                 </a>
-            </li>
 
-            <li class="nav-item">
-                <a href="../csv/csv.html">
+                <a class="nav-item ${isActive("csv")}" href="../csv/csv.html">
                     <span class="nav-icon">📂</span>
                     <span class="nav-label">CSV</span>
                 </a>
-            </li>
 
-            <li class="nav-item">
-                <a href="../diplomacy/diplomacy.html">
+                <a class="nav-item ${isActive("diplomacy")}" href="../diplomacy/diplomacy.html">
                     <span class="nav-icon">🕊️</span>
                     <span class="nav-label">Diplomatie</span>
                 </a>
-            </li>
 
-            <li class="nav-item">
-                <a href="../chrono/chrono.html">
+                <a class="nav-item ${isActive("chrono")}" href="../chrono/chrono.html">
                     <span class="nav-icon">⏳</span>
                     <span class="nav-label">Chrono</span>
                 </a>
-            </li>
             ` : ""}
 
-            <li class="nav-item logout" id="logout">
+            <a class="nav-item" id="logout">
                 <span class="nav-icon">⛩️</span>
                 <span class="nav-label">Logout</span>
-            </li>
+            </a>
 
-        </ul>
+        </div>
     `;
 
     /* --------------------------------------------------------------
        Logout
        -------------------------------------------------------------- */
-    document.getElementById("logout")?.addEventListener("click", async () => {
+    document.getElementById("logout")?.addEventListener("click", async (e) => {
+        e.preventDefault();
         await logoutUser();
         window.location.href = "../index.html";
     });
