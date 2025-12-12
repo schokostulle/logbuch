@@ -1,76 +1,83 @@
 /* ==========================================================================
-   Global Design Tokens – Maritime Theme (Age of Discovery)
-   Variablen für Farben, Transparenzen, Typografie, Abstände, Radius,
-   Schatten, Border, Animationen, Light/Dark Mode
+   Global Design Tokens – Maritime / Military Theme
+   Default: DARK MODE
    ========================================================================== */
 
 :root {
 
     /* ==============================================================
-       FARBPALETTE – Light Mode (Default)
+       BASISFARBEN – Dunkles Ozeanblau (Default)
        ============================================================== */
 
-    /* Grundflächen (Pergament) */
-    --color-bg: #f4efe5;
-    --color-bg-secondary: #e8e1d4;
+    /* Hauptflächen */
+    --color-bg: #0e1620;                /* Tiefes Navy-Blau */
+    --color-bg-secondary: #15212d;      /* Sekundärfläche */
 
-    /* Tinte / Text */
-    --color-text: #2b2b2b;
-    --color-text-muted: #5e5a54;
+    /* Text */
+    --color-text: #d9dee3;              /* kühles Off-White */
+    --color-text-muted: #9aa6b2;
     --color-text-on-dark: #ffffff;
-    --color-text-on-wood: #ffffff;
+    --color-text-on-wood: #f5f2ec;
 
-    /* Ozean */
-    --color-ocean: #3a6478;
-    --color-ocean-light: #6c9fb3;
-    --color-ocean-dark: #244250;
+    /* ==============================================================
+       OZEAN / NAVY
+       ============================================================== */
 
-    /* Holz */
-    --color-wood: #8b5e3c;
-    --color-wood-dark: #5e3e26;
+    --color-ocean: #1f3b53;             /* Stahlblau */
+    --color-ocean-light: #3f6b8a;       /* kaltes See-Blau */
+    --color-ocean-dark: #0a141d;        /* fast schwarz-blau */
 
-    /* Metall / Messing */
-    --color-brass: #bfa66b;
-    --color-brass-dark: #a28846;
+    /* ==============================================================
+       METALL / MILITÄR
+       ============================================================== */
 
-    /* Status */
-    --color-success: #3f7f5f;
-    --color-success-bg: #dfeee7;
+    /* Eisen / Stahl */
+    --color-iron: #6e7b87;
+    --color-iron-dark: #3e4953;
 
-    --color-error: #8f2f2f;
-    --color-error-bg: #f3e0dd;
+    /* Messing / Gold */
+    --color-brass: #b89c5a;
+    --color-brass-dark: #8f773f;
 
-    --color-info: #3e5f8c;
-    --color-info-bg: #dfe5f3;
+    /* Holz (gedämpft, dunkel) */
+    --color-wood: #4a3321;
+    --color-wood-dark: #2e2015;
 
-    /* Transparenzen (global) */
-    --color-ink-very-light: rgba(0,0,0,0.05);
-    --color-ink-light:      rgba(0,0,0,0.12);
-    --color-ink-medium:     rgba(0,0,0,0.25);
-    --color-ink-strong:     rgba(0,0,0,0.40);
+    /* ==============================================================
+       STATUSFARBEN (gedämpft, militärisch)
+       ============================================================== */
 
-    --color-overlay-light:  rgba(255,255,255,0.15);
-    --color-overlay-strong: rgba(255,255,255,0.25);
-    --color-overlay-dark:   rgba(0,0,0,0.15);
+    --color-success: #4f8a6a;
+    --color-success-bg: rgba(79,138,106,0.15);
+
+    --color-error: #a14a4a;
+    --color-error-bg: rgba(161,74,74,0.15);
+
+    --color-info: #4a6f8f;
+    --color-info-bg: rgba(74,111,143,0.15);
+
+    /* ==============================================================
+       TRANSPARENZEN / OVERLAYS
+       ============================================================== */
+
+    --color-ink-very-light: rgba(255,255,255,0.05);
+    --color-ink-light:      rgba(255,255,255,0.12);
+    --color-ink-medium:     rgba(255,255,255,0.25);
+    --color-ink-strong:     rgba(0,0,0,0.45);
+
+    --color-overlay-light:  rgba(255,255,255,0.08);
+    --color-overlay-strong: rgba(255,255,255,0.15);
+    --color-overlay-dark:   rgba(0,0,0,0.35);
 
 
     /* ==============================================================
-       TYPOGRAFIE – Maritime Fontset
+       TYPOGRAFIE – Maritime Command Style
        ============================================================== */
 
-    /* UI-Basis (Forms, Content) */
     --font-base: "Inter", Arial, sans-serif;
-
-    /* Serif (Lesetext, Infoboxen) */
-    --font-serif: "Cormorant Garamond", "Georgia", serif;
-
-    /* Schreibschrift – dekorativ */
+    --font-serif: "Cormorant Garamond", Georgia, serif;
     --font-script: "Estonia", "IM Fell English SC", serif;
-
-    /* Historische Small-Caps (Navigation, Überschriften) */
     --font-smallcaps: "Almendra SC", serif;
-
-    /* Gravur – perfekt für Titel */
     --font-deco: "Cinzel", serif;
 
     --font-size-xs: 0.75rem;
@@ -97,26 +104,26 @@
 
 
     /* ==============================================================
-       RADIUS
+       RADIUS – kantig, militärisch
        ============================================================== */
 
     --radius-xs: 2px;
-    --radius-s:  4px;
-    --radius-m:  8px;
-    --radius-l:  12px;
+    --radius-s:  3px;
+    --radius-m:  6px;
+    --radius-l:  10px;
 
 
     /* ==============================================================
-       SCHATTEN
+       SCHATTEN – tief & schwer
        ============================================================== */
 
-    --shadow-s: 0 1px 2px rgba(0, 0, 0, 0.15);
-    --shadow-m: 0 2px 6px rgba(0, 0, 0, 0.20);
-    --shadow-l: 0 4px 12px rgba(0, 0, 0, 0.25);
+    --shadow-s: 0 1px 2px rgba(0,0,0,0.4);
+    --shadow-m: 0 3px 8px rgba(0,0,0,0.55);
+    --shadow-l: 0 8px 20px rgba(0,0,0,0.7);
 
 
     /* ==============================================================
-       BORDER SYSTEM
+       BORDER SYSTEM – Metallisch
        ============================================================== */
 
     --border-width-thin: 1px;
@@ -125,51 +132,40 @@
 
     --border-style: solid;
 
-    --border-color: var(--color-ink-light);
-    --border-color-strong: var(--color-ink-medium);
+    --border-color: rgba(255,255,255,0.15);
+    --border-color-strong: rgba(184,156,90,0.6); /* Messingakzent */
 
 
     /* ==============================================================
-       ANIMATIONEN / INTERACTION
+       INTERACTION
        ============================================================== */
 
     --animation-fast: 120ms ease-out;
     --animation-normal: 200ms ease-out;
     --animation-slow: 350ms ease;
 
-    --hover-opacity: 0.85;
+    --hover-opacity: 0.9;
 }
 
 
 
 /* ==========================================================================
-   DARK MODE – überschreibt ausschließlich Farben
+   OPTIONAL: LIGHT MODE (explizit)
    ========================================================================== */
 
-body.dark {
+body.light {
 
-    --color-bg: #1e2428;
-    --color-bg-secondary: #2a3136;
+    --color-bg: #f1efe9;
+    --color-bg-secondary: #e4e0d8;
 
-    --color-text: #e8e8e8;
-    --color-text-muted: #c0c0c0;
-    --color-text-on-dark: #ffffff;
-    --color-text-on-wood: #ffffff;
+    --color-text: #2b2b2b;
+    --color-text-muted: #5e5a54;
 
-    --color-ocean: #557f92;
-    --color-ocean-light: #7fb4c8;
-    --color-ocean-dark: #0f1e26;
+    --color-ocean: #3a6478;
+    --color-ocean-dark: #244250;
 
-    --color-wood: #5a3a22;
-    --color-wood-dark: #3c2618;
+    --border-color: rgba(0,0,0,0.15);
+    --border-color-strong: rgba(168,140,70,0.6);
 
-    --color-brass: #a48b55;
-    --color-brass-dark: #8a7448;
-
-    --color-overlay-light: rgba(255,255,255,0.08);
-    --color-overlay-strong: rgba(255,255,255,0.15);
-    --color-overlay-dark: rgba(0,0,0,0.35);
-
-    --border-color: rgba(255,255,255,0.15);
-    --border-color-strong: rgba(255,255,255,0.35);
+    --color-overlay-light: rgba(0,0,0,0.05);
 }
