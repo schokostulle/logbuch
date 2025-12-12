@@ -1,0 +1,196 @@
+/* ==========================================================================
+   CSV TOOL – Maritime / Military
+   Tabellenlayout identisch zu MEMBER
+   Nutzt ausschließlich root.css + style.css
+   ========================================================================== */
+
+
+/* ==========================================================================
+   WRAPPER
+   ========================================================================== */
+
+.csv-wrapper {
+    padding: var(--space-xl);
+    font-family: var(--font-base);
+}
+
+
+
+/* ==========================================================================
+   ÜBERSCHRIFT IM CONTENT (NICHT KOPF)
+   ========================================================================== */
+
+.csv-wrapper h2 {
+    font-family: var(--font-smallcaps);
+    font-size: var(--font-size-xl);
+    letter-spacing: 1px;
+    margin-bottom: var(--space-l);
+    color: var(--color-brass);
+}
+
+
+
+/* ==========================================================================
+   STATUSAUSGABE
+   ========================================================================== */
+
+#csv-status {
+    margin-bottom: var(--space-m);
+}
+
+
+
+/* ==========================================================================
+   TABELLE – RUMPF & RAHMEN
+   ========================================================================== */
+
+.csv-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+
+    background: linear-gradient(
+        to bottom,
+        var(--color-bg-secondary),
+        var(--color-bg)
+    );
+
+    border-radius: var(--radius-m);
+    box-shadow: var(--shadow-m);
+    border: var(--border-width)
+            var(--border-style)
+            var(--border-color-strong);
+
+    overflow: hidden;
+    margin-bottom: var(--space-xl);
+}
+
+
+
+/* ==========================================================================
+   TABELLENKOPF – BRÜCKE
+   ========================================================================== */
+
+.csv-table thead th {
+    background: linear-gradient(
+        to bottom,
+        var(--color-ocean),
+        var(--color-ocean-dark)
+    );
+
+    color: var(--color-text-on-dark);
+    padding: var(--space-s) var(--space-m);
+
+    font-family: var(--font-smallcaps);
+    font-size: var(--font-size-s);
+    letter-spacing: 1px;
+
+    text-align: left;
+
+    border-right: var(--border-width-thin)
+                  var(--border-style)
+                  var(--color-overlay-strong);
+}
+
+.csv-table thead th:last-child {
+    border-right: none;
+}
+
+
+
+/* ==========================================================================
+   TABELLENZELLEN – DECK
+   ========================================================================== */
+
+.csv-table td {
+    padding: var(--space-s) var(--space-m);
+
+    border-bottom: var(--border-width-thin)
+                   var(--border-style)
+                   var(--border-color);
+
+    border-right: var(--border-width-thin)
+                  var(--border-style)
+                  var(--border-color);
+
+    vertical-align: middle;
+    font-size: var(--font-size-s);
+}
+
+.csv-table td:last-child {
+    border-right: none;
+}
+
+
+
+/* ==========================================================================
+   ZEILENINTERAKTION
+   ========================================================================== */
+
+.csv-table tbody tr {
+    transition: background var(--animation-fast);
+}
+
+.csv-table tbody tr:hover {
+    background: var(--color-overlay-light);
+}
+
+
+
+/* ==========================================================================
+   AKTIONSBUTTONS (z. B. Löschen)
+   ========================================================================== */
+
+.csv-btn {
+    padding: var(--space-xs) var(--space-s);
+
+    font-family: var(--font-smallcaps);
+    font-size: var(--font-size-s);
+    letter-spacing: 1px;
+
+    background: linear-gradient(
+        to bottom,
+        var(--color-brass),
+        var(--color-brass-dark)
+    );
+
+    color: #111;
+    border: none;
+    border-radius: var(--radius-s);
+
+    cursor: pointer;
+    box-shadow: var(--shadow-s);
+}
+
+.csv-btn:hover {
+    opacity: var(--hover-opacity);
+}
+
+.csv-btn.danger {
+    background: linear-gradient(
+        to bottom,
+        var(--color-error),
+        #6f2f2f
+    );
+    color: #fff;
+}
+
+
+
+/* ==========================================================================
+   RESPONSIVE – HORIZONTAL SCROLL STATT ZERSTÖRUNG
+   ========================================================================== */
+
+@media (max-width: 700px) {
+
+    .csv-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .csv-table th,
+    .csv-table td {
+        white-space: nowrap;
+    }
+}
