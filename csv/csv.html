@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../css/root.css">
     <link rel="stylesheet" href="../css/style.css">
 
-    <!-- Maritime Schriftarten -->
+    <!-- Schriftarten -->
     <link href="https://fonts.googleapis.com/css2?family=Estonia&family=Almendra+SC&family=Cormorant+Garamond:wght@400;600&family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
     <!-- Tool-spezifisches CSS -->
@@ -30,52 +30,58 @@
         <!-- Kopfzeile -->
         <header id="kopf-container"></header>
 
-        <!-- Tool-Inhalt -->
-        <section class="csv-wrapper">
+        <!-- TOOL-CONTENT (Scrollbereich laut style.css) -->
+        <section class="tool-content">
 
-            <h2>CSV Import</h2>
+            <div class="csv-wrapper">
 
-            <div class="csv-controls">
-                <input type="file" id="csv-file" accept=".csv">
+                <h2>CSV Import</h2>
 
-                <button class="csv-btn" id="upload-btn">
-                    CSV hochladen
-                </button>
+                <!-- Steuerung -->
+                <div class="csv-controls">
+                    <input type="file" id="csv-file" accept=".csv">
 
-                <button class="csv-btn" id="delete-btn">
-                    Alle Daten löschen
-                </button>
-            </div>
+                    <button class="csv-btn" id="upload-btn">
+                        CSV hochladen
+                    </button>
 
-            <div id="csv-status"></div>
-<div id="csv-status"></div>
+                    <button class="csv-btn" id="delete-btn">
+                        Alle Daten löschen
+                    </button>
+                </div>
 
-<div class="csv-rowcount" id="csv-rowcount">
-    Angezeigte Zeilen: 0
-</div>
+                <!-- Status -->
+                <div id="csv-status"></div>
 
-            <!-- Scrollbarer Tabellenbereich -->
-            <div class="csv-table-wrapper">
-                <table class="csv-table">
-                    <thead>
-                        <tr>
-                            <th>Oz</th>
-                            <th>Ig</th>
-                            <th>In</th>
-                            <th>Inselname</th>
-                            <th>Spieler ID</th>
-                            <th>Spielername</th>
-                            <th>Allianz ID</th>
-                            <th>Allianzkürzel</th>
-                            <th>Allianzname</th>
-                            <th>Punkte</th>
-                        </tr>
-                    </thead>
+                <!-- Zeilenanzahl -->
+                <div class="csv-rowcount" id="csv-rowcount">
+                    Angezeigte Zeilen: 0
+                </div>
 
-                    <tbody id="csv-table-body">
-                        <!-- Wird durch csv.js gefüllt -->
-                    </tbody>
-                </table>
+                <!-- Tabelle -->
+                <div class="csv-table-wrapper">
+                    <table class="csv-table">
+                        <thead>
+                            <tr>
+                                <th>Oz</th>
+                                <th>Ig</th>
+                                <th>In</th>
+                                <th>Inselname</th>
+                                <th>Spieler ID</th>
+                                <th>Spielername</th>
+                                <th>Allianz ID</th>
+                                <th>Allianzkürzel</th>
+                                <th>Allianzname</th>
+                                <th>Punkte</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="csv-table-body">
+                            <!-- Wird durch csv.js gefüllt -->
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
 
         </section>
@@ -84,13 +90,11 @@
 
 </div>
 
-<!-- Globale JS-Module -->
+<!-- JS -->
 <script type="module" src="../js/supabase.js"></script>
 <script type="module" src="../js/auth.js"></script>
 <script type="module" src="../js/navigation.js"></script>
 <script type="module" src="../js/kopf.js"></script>
-
-<!-- Tool-spezifisches Script -->
 <script type="module" src="csv.js"></script>
 
 </body>
