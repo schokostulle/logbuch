@@ -1,60 +1,96 @@
 /* ==========================================================================
-   INDEX.CSS — Startseite (Login & Registrierung)
+   INDEX.CSS — Login & Registrierung
+   Dark Maritime / Military Access Screen
    Keine Navigation, kein Dashboard-Layout
    ========================================================================== */
 
-/* Grundlayout */
-body {
-    background: var(--color-bg);
+/* ==========================================================================
+   GRUNDLAYOUT
+   ========================================================================== */
+
+html, body {
     margin: 0;
-    padding: var(--space-xl);
+    padding: 0;
+    height: 100%;
+}
+
+body {
+    min-height: 100vh;
+
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
 
-    /* Pergament-Optik */
-    background: linear-gradient(
-        to bottom,
-        #f7f3e8 0%,
-        #ece3d1 100%
+    background: radial-gradient(
+        circle at top,
+        #162432 0%,
+        #0b1219 70%
     );
-    background-attachment: fixed;
+
     color: var(--color-text);
     font-family: var(--font-base);
 }
 
-/* Wrapper für Login/Registrierung */
+
+
+/* ==========================================================================
+   AUTH-WRAPPER – Zugangskonsole
+   ========================================================================== */
+
 .auth-wrapper {
     width: 100%;
     max-width: 420px;
 
-    background: var(--color-bg-secondary);
+    background: linear-gradient(
+        to bottom,
+        #182736 0%,
+        #0f1924 100%
+    );
+
     padding: var(--space-xl);
     border-radius: var(--radius-l);
-    box-shadow: var(--shadow-l);
 
-    border: 2px solid rgba(139, 94, 60, 0.25); /* Holzfarbener Rahmen */
+    box-shadow:
+        0 0 0 1px rgba(184,156,90,0.25),
+        var(--shadow-l);
+
+    border: var(--border-width) var(--border-style) var(--border-color-strong);
 }
 
-/* Header */
+
+
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
+
 .auth-header {
     text-align: center;
     margin-bottom: var(--space-xl);
 }
 
 .auth-header h1 {
-    font-family: var(--font-serif);
-    color: var(--color-ocean-dark);
-    margin-bottom: var(--space-s);
+    font-family: var(--font-deco);
+    font-size: var(--font-size-xl);
+    letter-spacing: 2px;
+
+    color: var(--color-brass);
+    margin-bottom: var(--space-xs);
 }
 
 .auth-header .subtitle {
-    color: var(--color-text-muted);
+    font-family: var(--font-smallcaps);
     font-size: var(--font-size-s);
+    letter-spacing: 1px;
+
+    color: var(--color-text-muted);
 }
 
-/* Sektionen */
+
+
+/* ==========================================================================
+   SEKTIONEN
+   ========================================================================== */
+
 .auth-section {
     margin-bottom: var(--space-xl);
 }
@@ -64,85 +100,136 @@ body {
 }
 
 .auth-section h2 {
-    font-family: var(--font-serif);
-    color: var(--color-ocean);
-    margin-bottom: var(--space-m);
+    font-family: var(--font-smallcaps);
+    font-size: var(--font-size-m);
+    letter-spacing: 1px;
+
+    color: var(--color-ocean-light);
     text-align: center;
+
+    margin-bottom: var(--space-m);
 }
 
-/* Formularelemente */
+
+
+/* ==========================================================================
+   FORMULARFELDER
+   ========================================================================== */
+
 label {
     display: block;
     margin-bottom: var(--space-xs);
+
     font-size: var(--font-size-s);
     color: var(--color-text-muted);
 }
 
 input {
     width: 100%;
-    padding: var(--space-s);
+    padding: var(--space-s) var(--space-m);
     margin-bottom: var(--space-m);
 
-    background: var(--color-bg);
-    border: 1px solid rgba(0,0,0,0.2);
+    background: #0c151f;
+    color: var(--color-text);
+
     border-radius: var(--radius-s);
+    border: var(--border-width-thin) var(--border-style) var(--border-color);
+
     font-size: var(--font-size-m);
+}
+
+input::placeholder {
+    color: var(--color-text-muted);
 }
 
 input:focus {
-    outline: 2px solid var(--color-ocean-light);
+    outline: none;
+    border-color: var(--color-brass);
+    box-shadow: 0 0 0 1px rgba(184,156,90,0.5);
 }
 
-/* Buttons */
+
+
+/* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+
 button.btn {
     width: 100%;
     padding: var(--space-m);
+
     border-radius: var(--radius-m);
-    font-size: var(--font-size-m);
-    cursor: pointer;
     border: none;
-    transition: var(--animation-fast);
+
+    font-family: var(--font-smallcaps);
+    font-size: var(--font-size-m);
+    letter-spacing: 1px;
+
+    cursor: pointer;
     box-shadow: var(--shadow-s);
+    transition: var(--animation-fast);
 }
 
 .btn-primary {
-    background: var(--color-ocean);
-    color: white;
+    background: linear-gradient(
+        to bottom,
+        var(--color-ocean-light),
+        var(--color-ocean)
+    );
+    color: var(--color-text-on-dark);
 }
 
 .btn-secondary {
-    background: var(--color-brass);
-    color: white;
+    background: linear-gradient(
+        to bottom,
+        var(--color-brass),
+        var(--color-brass-dark)
+    );
+    color: #111;
 }
 
 button:hover {
     opacity: var(--hover-opacity);
 }
 
-/* Link zum Umschalten Login ↔ Registrierung */
+
+
+/* ==========================================================================
+   SWITCH LOGIN / REGISTRIERUNG
+   ========================================================================== */
+
 .switch {
     text-align: center;
     font-size: var(--font-size-s);
+    color: var(--color-text-muted);
 }
 
 .switch a {
-    color: var(--color-ocean-dark);
+    color: var(--color-brass);
+    text-decoration: none;
+    border-bottom: 1px dotted rgba(184,156,90,0.6);
     cursor: pointer;
-    text-decoration: underline;
 }
 
 .switch a:hover {
     opacity: var(--hover-opacity);
 }
 
-/* Statusbox */
+
+
+/* ==========================================================================
+   STATUSBOX
+   ========================================================================== */
+
 .status-box {
     margin-top: var(--space-l);
     padding: var(--space-m);
+
     border-radius: var(--radius-m);
     font-size: var(--font-size-s);
     text-align: center;
-    display: none; /* per JS sichtbar */
+
+    display: none;
 }
 
 .status-box.success {
@@ -160,14 +247,24 @@ button:hover {
     color: var(--color-info);
 }
 
-/* Mobile Optimierung */
+
+
+/* ==========================================================================
+   MOBILE
+   ========================================================================== */
+
 @media (max-width: 480px) {
+
     body {
         padding: var(--space-m);
     }
 
     .auth-wrapper {
         padding: var(--space-l);
-        border-width: 1px;
+        border-radius: var(--radius-m);
+    }
+
+    .auth-header h1 {
+        font-size: var(--font-size-l);
     }
 }
