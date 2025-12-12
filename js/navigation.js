@@ -92,9 +92,7 @@ async function buildNavigation() {
             </li>
 
             ${isAdmin ? `
-           /* <li class="nav-section-title">Administration</li> 
-
-*/
+           // <li class="nav-section-title">Administration</li>
 
             <li class="nav-item">
                 <a href="../member/member.html">
