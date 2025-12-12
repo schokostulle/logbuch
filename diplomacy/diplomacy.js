@@ -1,76 +1,35 @@
 import { supabase } from "../js/supabase.js";
 
-/* ==========================================================================
-   DOM
-   ========================================================================== */
-
 const allianceBody = document.getElementById("alliance-body");
 const playerBody   = document.getElementById("player-body");
 
-/* ==========================================================================
-   STATUS-DEFINITION
-   ========================================================================== */
+const STATUS = ["neutral", "friendly", "hostile"];
 
-const STATUS_OPTIONS = [
-    { value: "neutral",   label: "Neutral" },
-    { value: "friendly",  label: "Freundlich" },
-    { value: "hostile",   label: "Feindlich" }
-];
-
-/* ==========================================================================
-   HELFER
-   ========================================================================== */
-
-function statusSelect(current = "neutral") {
+function statusSelect(value) {
     return `
         <select class="status-select">
-            ${STATUS_OPTIONS.map(s =>
-                `<option value="${s.value}" ${s.value === current ? "selected" : ""}>
-                    ${s.label}
-                 </option>`
+            ${STATUS.map(s =>
+                `<option value="${s}" ${s === value ? "selected" : ""}>${s}</option>`
             ).join("")}
         </select>
     `;
 }
 
-function setRowStatusClass(tr, status) {
-    tr.classList.remove("status-neutral", "status-friendly", "status-hostile");
-    tr.classList.add(`status-${status}`);
-}
-
-/* ==========================================================================
+/* =========================
    ALLIANZEN
-   ========================================================================== */
+   ========================= */
 
 async function loadAlliances() {
-
-    /* eindeutige Allianzen aus CSV */
-    const { data: csvAlliances } = await supabase
-        .from("csv_data")
-        .select("alliance_id, alliance_tag")
-        .neq("alliance_id", null)
-        .group("alliance_id, alliance_tag");
-
-    /* Basis-Datensätze sicherstellen */
-    for (const a of csvAlliances) {
-        await supabase
-            .from("diplomacy_alliances")
-            .upsert({
-                alliance_id: a.alliance_id,
-                alliance_tag: a.alliance_tag,
-                status: "neutral"
-            }, { onConflict: "alliance_id" });
-    }
-
-    const { data: alliances } = await supabase
-        .from("diplomacy_alliances")
+    const { data } = await supabase
+        .from("diplomacy_alliance_view")
         .select("*")
         .order("alliance_tag");
 
     allianceBody.innerHTML = "";
 
-    alliances.forEach(a => {
+    data.forEach(a => {
         const tr = document.createElement("tr");
+        tr.className = `status-${a.status}`;
 
         tr.innerHTML = `
             <td>${a.alliance_id}</td>
@@ -79,65 +38,45 @@ async function loadAlliances() {
             <td><button class="save-btn">Speichern</button></td>
         `;
 
-        setRowStatusClass(tr, a.status);
-
-        tr.querySelector(".save-btn").addEventListener("click", async () => {
+        tr.querySelector(".save-btn").onclick = async () => {
             const status = tr.querySelector("select").value;
 
-            /* Allianzstatus speichern */
             await supabase
                 .from("diplomacy_alliances")
-                .update({ status })
-                .eq("alliance_id", a.alliance_id);
+                .upsert({
+                    alliance_id: a.alliance_id,
+                    status
+                });
 
-            /* VERERBUNG → alle Spieler dieser Allianz */
+            /* Vererbung auf Spieler */
             await supabase
                 .from("diplomacy_players")
                 .update({ status })
-                .eq("alliance_id", a.alliance_id);
+                .eq("player_id", a.alliance_id);
 
-            setRowStatusClass(tr, status);
-            loadPlayers(); // Spieleransicht aktualisieren
-        });
+            loadAlliances();
+            loadPlayers();
+        };
 
         allianceBody.appendChild(tr);
     });
 }
 
-/* ==========================================================================
+/* =========================
    SPIELER
-   ========================================================================== */
+   ========================= */
 
 async function loadPlayers() {
-
-    /* eindeutige Spieler aus CSV */
-    const { data: csvPlayers } = await supabase
-        .from("csv_data")
-        .select("player_id, player_name, alliance_id")
-        .neq("player_id", null)
-        .group("player_id, player_name, alliance_id");
-
-    /* Basis-Datensätze sicherstellen */
-    for (const p of csvPlayers) {
-        await supabase
-            .from("diplomacy_players")
-            .upsert({
-                player_id: p.player_id,
-                player_name: p.player_name,
-                alliance_id: p.alliance_id,
-                status: "neutral"
-            }, { onConflict: "player_id" });
-    }
-
-    const { data: players } = await supabase
-        .from("diplomacy_players")
+    const { data } = await supabase
+        .from("diplomacy_player_view")
         .select("*")
         .order("player_name");
 
     playerBody.innerHTML = "";
 
-    players.forEach(p => {
+    data.forEach(p => {
         const tr = document.createElement("tr");
+        tr.className = `status-${p.status}`;
 
         tr.innerHTML = `
             <td>${p.player_id}</td>
@@ -146,26 +85,23 @@ async function loadPlayers() {
             <td><button class="save-btn">Speichern</button></td>
         `;
 
-        setRowStatusClass(tr, p.status);
-
-        tr.querySelector(".save-btn").addEventListener("click", async () => {
+        tr.querySelector(".save-btn").onclick = async () => {
             const status = tr.querySelector("select").value;
 
             await supabase
                 .from("diplomacy_players")
-                .update({ status })
-                .eq("player_id", p.player_id);
+                .upsert({
+                    player_id: p.player_id,
+                    status
+                });
 
-            setRowStatusClass(tr, status);
-        });
+            loadPlayers();
+        };
 
         playerBody.appendChild(tr);
     });
 }
 
-/* ==========================================================================
-   INIT
-   ========================================================================== */
-
+/* INIT */
 loadAlliances();
 loadPlayers();
