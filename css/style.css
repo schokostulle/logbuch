@@ -244,7 +244,16 @@ body {
 
 .tool-content {
     flex-grow: 1;
+
     overflow-y: auto;
     overflow-x: auto;
+
+    /* Grundabstand */
     padding: var(--space-xs);
+
+    /* WICHTIG: Luft zum unteren Rand */
+    padding-bottom: calc(var(--space-xs) + 32px);
+
+    /* sauberes Scroll-Ende */
+    scroll-padding-bottom: 32px;
 }
