@@ -126,7 +126,37 @@ body {
     white-space: nowrap;
 }
 
+/* ==========================================================================
+   NAVIGATION – Link-Farben korrigieren (kein Browser-Default)
+   ========================================================================== */
 
+/* Basis-Link */
+#nav-container a {
+    color: var(--color-text-on-wood);
+    text-decoration: none;
+}
+
+/* Bereits besuchte Links */
+#nav-container a:visited {
+    color: var(--color-text-on-wood);
+}
+
+/* Hover */
+#nav-container a:hover {
+    color: var(--color-brass);
+    background: var(--color-overlay-light);
+}
+
+/* Aktiver Klick */
+#nav-container a:active {
+    color: var(--color-ocean-light);
+}
+
+/* Fokus (Tastatur) */
+#nav-container a:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--color-brass);
+}
 
 /* ==========================================================================
    KOMPAKT-MODUS (< 900px)
