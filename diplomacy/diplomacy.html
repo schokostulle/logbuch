@@ -1,1 +1,64 @@
-hff
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Diplomatie – Logbuch</title>
+
+    <link rel="stylesheet" href="../css/root.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="diplomacy.css">
+</head>
+
+<body>
+<div class="layout-container">
+
+    <nav id="nav-container"></nav>
+
+    <main class="content-area">
+        <header id="kopf-container"></header>
+
+        <section class="tool-content">
+
+            <div class="diplomacy-wrapper">
+
+                <h2>Allianzen</h2>
+
+                <table class="member-table">
+                    <thead>
+                        <tr>
+                            <th>Allianz ID</th>
+                            <th>Kürzel</th>
+                            <th>Status</th>
+                            <th>Aktion</th>
+                        </tr>
+                    </thead>
+                    <tbody id="alliance-body"></tbody>
+                </table>
+
+                <h2>Spieler</h2>
+
+                <table class="member-table">
+                    <thead>
+                        <tr>
+                            <th>Spieler ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Aktion</th>
+                        </tr>
+                    </thead>
+                    <tbody id="player-body"></tbody>
+                </table>
+
+            </div>
+
+        </section>
+    </main>
+</div>
+
+<script type="module" src="../js/supabase.js"></script>
+<script type="module" src="../js/auth.js"></script>
+<script type="module" src="../js/navigation.js"></script>
+<script type="module" src="../js/kopf.js"></script>
+<script type="module" src="diplomacy.js"></script>
+</body>
+</html>
