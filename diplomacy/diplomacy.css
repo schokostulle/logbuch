@@ -1,6 +1,6 @@
 /* ==========================================================================
    DIPLOMACY TOOL – Maritime / Military
-   Baut auf MEMBER-Tabellenlayout auf
+   NUTZT AUSSCHLIESSLICH root.css + style.css TOKENS
    ========================================================================== */
 
 /* ==========================================================================
@@ -28,29 +28,96 @@
 
 /* ==========================================================================
    TABELLEN
-   (nutzt bewusst .member-table aus member.css / style.css)
+   → Layout stammt vollständig aus member.css / style.css
    ========================================================================== */
 
-/* keine Doppeldefinition – member-table bleibt Quelle */
+/* KEINE zusätzlichen Tabellenstile nötig */
 
 /* ==========================================================================
-   STATUS-FARBEN – ZEILEN
+   STATUS-FARBEN – ZEILEN (TOKEN-BASIERT)
    ========================================================================== */
 
-/* Neutral */
+/* Neutral – keine Hervorhebung */
 .status-neutral {
-    background-color: transparent;
+    background: transparent;
 }
 
-/* Freundlich – grünlich */
+/* Freundlich */
 .status-friendly {
-    background-color: rgba(79, 138, 106, 0.18);
+    background: var(--color-success-bg);
 }
 
-/* Feindlich – rot / alarm */
+/* Feindlich */
 .status-hostile {
-    background-color: rgba(161, 74, 74, 0.18);
+    background: var(--color-error-bg);
 }
 
 /* Hover bleibt dominant */
-.member-table tbody
+.member-table tbody tr:hover {
+    background: var(--color-overlay-light);
+}
+
+/* ==========================================================================
+   STATUS SELECT
+   ========================================================================== */
+
+.status-select {
+    width: 100%;
+    padding: var(--space-xs) var(--space-s);
+
+    font-family: var(--font-base);
+    font-size: var(--font-size-s);
+
+    background: var(--color-bg);
+    color: var(--color-text);
+
+    border-radius: var(--radius-s);
+    border: var(--border-width-thin)
+            var(--border-style)
+            var(--border-color);
+
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   BUTTON – IDENTISCH ZU MEMBER
+   ========================================================================== */
+
+.save-btn {
+    width: 100%;
+    padding: var(--space-xs) var(--space-s);
+
+    font-family: var(--font-smallcaps);
+    font-size: var(--font-size-s);
+    letter-spacing: 1px;
+
+    background: linear-gradient(
+        to bottom,
+        var(--color-brass),
+        var(--color-brass-dark)
+    );
+
+    color: #111;
+    border: none;
+    border-radius: var(--radius-s);
+
+    cursor: pointer;
+    box-shadow: var(--shadow-s);
+}
+
+.save-btn:hover {
+    opacity: var(--hover-opacity);
+}
+
+.save-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ==========================================================================
+   SAUBERES SEITENENDE
+   ========================================================================== */
+
+.diplomacy-wrapper > table:last-of-type {
+    margin-bottom: var(--space-xxl);
+}
