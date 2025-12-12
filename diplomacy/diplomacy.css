@@ -1,7 +1,8 @@
 /* ==========================================================================
    DIPLOMACY TOOL – Maritime / Military
-   Tabellenlayout IDENTISCH zu MEMBER / CSV
-   Nutzt ausschließlich root.css + style.css Tokens
+   NUR Ergänzungen
+   KEIN Layout
+   KEINE Tabellenstruktur
    ========================================================================== */
 
 
@@ -23,7 +24,6 @@
     font-family: var(--font-smallcaps);
     font-size: var(--font-size-xl);
     letter-spacing: 1px;
-
     color: var(--color-brass);
 
     margin: var(--space-xl) 0 var(--space-m);
@@ -31,57 +31,23 @@
 
 
 /* ==========================================================================
-   TABELLEN-WRAPPER
-   → identisch zu CSV (Sticky Header + Scroll)
-   ========================================================================== */
-
-.table-wrapper {
-    max-height: calc(100vh - 300px); /* Kopf + Padding + Luft */
-    overflow-y: auto;
-    overflow-x: auto;
-
-    border-radius: var(--radius-m);
-    box-shadow: var(--shadow-m);
-
-    border: var(--border-width)
-            var(--border-style)
-            var(--border-color-strong);
-
-    margin-bottom: var(--space-xl);
-}
-
-
-/* ==========================================================================
-   TABELLENKOPF – STICKY (wie CSV / MEMBER)
-   ========================================================================== */
-
-.table-wrapper thead th {
-    position: sticky;
-    top: 0;
-    z-index: 5;
-}
-
-
-/* ==========================================================================
    STATUS-FARBEN – ZEILEN
+   (nur Farbe, keine Struktur)
    ========================================================================== */
 
-/* Neutral – bewusst ruhig */
 .status-neutral {
     background: transparent;
 }
 
-/* Freundlich – Grün */
 .status-friendly {
     background: var(--color-success-bg);
 }
 
-/* Feindlich – Rot */
 .status-hostile {
     background: var(--color-error-bg);
 }
 
-/* Hover bleibt dominant */
+/* Hover aus style.css bleibt führend */
 .member-table tbody tr:hover {
     background: var(--color-overlay-light);
 }
@@ -112,12 +78,11 @@
 .status-select:focus {
     outline: none;
     border-color: var(--color-brass);
-    box-shadow: 0 0 0 1px rgba(184,156,90,0.5);
 }
 
 
 /* ==========================================================================
-   BUTTON – IDENTISCH ZU MEMBER / CSV
+   BUTTON – IDENTISCH ZU MEMBER
    ========================================================================== */
 
 .save-btn {
@@ -156,23 +121,6 @@
    SAUBERES SEITENENDE
    ========================================================================== */
 
-.diplomacy-wrapper > .table-wrapper:last-of-type {
+.diplomacy-wrapper > table:last-of-type {
     margin-bottom: var(--space-xxl);
-}
-
-
-/* ==========================================================================
-   MOBILE – HORIZONTAL SCROLL
-   ========================================================================== */
-
-@media (max-width: 700px) {
-
-    .table-wrapper {
-        max-height: calc(100vh - 260px);
-    }
-
-    .member-table th,
-    .member-table td {
-        white-space: nowrap;
-    }
 }
