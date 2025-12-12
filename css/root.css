@@ -170,3 +170,8 @@ body.light {
 
     --color-overlay-light: rgba(0,0,0,0.05);
 }
+
+:root {
+    --nav-width-expanded: 240px;
+    --nav-width-collapsed: 64px;
+}
