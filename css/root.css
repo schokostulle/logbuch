@@ -1,277 +1,172 @@
 /* ==========================================================================
-   INDEX.CSS — Login & Registrierung
-   Dark Maritime / Military Theme
-   KEINE Navigation, KEIN Dashboard
+   Global Design Tokens – Maritime / Military Theme
+   Default: DARK MODE
    ========================================================================== */
+
+:root {
+
+    /* ==============================================================
+       BASISFARBEN – Dunkles Ozeanblau (Default)
+       ============================================================== */
+
+    /* Hauptflächen */
+    --color-bg: #0e1620;                 /* Tiefes Navy-Blau */
+    --color-bg-secondary: #15212d;       /* Sekundärfläche */
+
+    /* Text */
+    --color-text: #d9dee3;               /* kühles Off-White */
+    --color-text-muted: #9aa6b2;
+    --color-text-disabled: #6b7784;
+
+    --color-text-on-dark: #ffffff;
+    --color-text-on-wood: #f5f2ec;
+
+    /* ==============================================================
+       OZEAN / NAVY
+       ============================================================== */
+
+    --color-ocean: #1f3b53;              /* Stahlblau */
+    --color-ocean-light: #3f6b8a;
+    --color-ocean-dark: #0a141d;
+
+    /* ==============================================================
+       METALL / MILITÄR
+       ============================================================== */
+
+    /* Eisen / Stahl */
+    --color-iron: #6e7b87;
+    --color-iron-dark: #3e4953;
+
+    /* Messing / Gold */
+    --color-brass: #b89c5a;
+    --color-brass-dark: #8f773f;
+
+    /* Holz (gedämpft) */
+    --color-wood: #4a3321;
+    --color-wood-dark: #2e2015;
+
+    /* ==============================================================
+       STATUSFARBEN
+       ============================================================== */
+
+    --color-success: #4f8a6a;
+    --color-success-bg: rgba(79,138,106,0.15);
+
+    --color-error: #a14a4a;
+    --color-error-bg: rgba(161,74,74,0.15);
+
+    --color-info: #4a6f8f;
+    --color-info-bg: rgba(74,111,143,0.15);
+
+    /* ==============================================================
+       TRANSPARENZEN / OVERLAYS
+       ============================================================== */
+
+    --color-ink-very-light: rgba(255,255,255,0.05);
+    --color-ink-light:      rgba(255,255,255,0.12);
+    --color-ink-medium:     rgba(255,255,255,0.25);
+    --color-ink-strong:     rgba(0,0,0,0.45);
+
+    --color-overlay-light:  rgba(255,255,255,0.08);
+    --color-overlay-strong: rgba(255,255,255,0.15);
+    --color-overlay-dark:   rgba(0,0,0,0.35);
+
+    /* ==============================================================
+       TYPOGRAFIE – Maritime Command Style
+       ============================================================== */
+
+    --font-base: "Inter", Arial, sans-serif;
+    --font-serif: "Cormorant Garamond", Georgia, serif;
+    --font-script: "Estonia", "IM Fell English SC", serif;
+    --font-smallcaps: "Almendra SC", serif;
+    --font-deco: "Cinzel", serif;
+
+    --font-size-xs: 0.75rem;
+    --font-size-s:  0.875rem;
+    --font-size-m:  1rem;
+    --font-size-l:  1.25rem;
+    --font-size-xl: 1.5rem;
+    --font-size-xxl: 2rem;
+
+    --line-height: 1.5;
+
+    /* ==============================================================
+       ABSTÄNDE
+       ============================================================== */
+
+    --space-xxs: 2px;
+    --space-xs:  4px;
+    --space-s:   8px;
+    --space-m:   12px;
+    --space-l:   16px;
+    --space-xl:  24px;
+    --space-xxl: 32px;
+
+    /* ==============================================================
+       RADIUS – kantig, militärisch
+       ============================================================== */
+
+    --radius-xs: 2px;
+    --radius-s:  3px;
+    --radius-m:  6px;
+    --radius-l:  10px;
+
+    /* ==============================================================
+       SCHATTEN – tief & schwer
+       ============================================================== */
+
+    --shadow-s: 0 1px 2px rgba(0,0,0,0.4);
+    --shadow-m: 0 3px 8px rgba(0,0,0,0.55);
+    --shadow-l: 0 8px 20px rgba(0,0,0,0.7);
+
+    /* ==============================================================
+       BORDER SYSTEM – Metallisch
+       ============================================================== */
+
+    --border-width-thin: 1px;
+    --border-width:      2px;
+    --border-width-thick: 3px;
+
+    --border-style: solid;
+
+    --border-color: rgba(255,255,255,0.15);
+    --border-color-strong: rgba(184,156,90,0.6); /* Messing */
+
+    /* ==============================================================
+       INTERACTION / STATES
+       ============================================================== */
+
+    --color-focus: var(--color-brass);
+    --color-active: var(--color-ocean-light);
+    --color-disabled-bg: rgba(255,255,255,0.04);
+
+    --animation-fast: 120ms ease-out;
+    --animation-normal: 200ms ease-out;
+    --animation-slow: 350ms ease;
+
+    --hover-opacity: 0.9;
+}
+
 
 
 /* ==========================================================================
-   GLOBAL RESET & SICHERHEIT
+   OPTIONAL: LIGHT MODE (explizit)
    ========================================================================== */
 
-*,
-*::before,
-*::after {
-    box-sizing: border-box; /* <<< WICHTIGSTE ZEILE */
-}
+body.light {
 
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-}
+    --color-bg: #f1efe9;
+    --color-bg-secondary: #e4e0d8;
 
+    --color-text: #2b2b2b;
+    --color-text-muted: #5e5a54;
+    --color-text-disabled: #8a857c;
 
-/* ==========================================================================
-   BODY – Zugangskonsole
-   ========================================================================== */
+    --color-ocean: #3a6478;
+    --color-ocean-dark: #244250;
 
-body {
-    min-height: 100vh;
+    --border-color: rgba(0,0,0,0.15);
+    --border-color-strong: rgba(168,140,70,0.6);
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    background: radial-gradient(
-        circle at top,
-        #162432 0%,
-        #0b1219 75%
-    );
-
-    color: var(--color-text);
-    font-family: var(--font-base);
-}
-
-
-/* ==========================================================================
-   AUTH WRAPPER – TERMINALRAHMEN
-   ========================================================================== */
-
-.auth-wrapper {
-    width: 100%;
-    max-width: 420px;
-
-    padding: var(--space-xl);
-
-    background: linear-gradient(
-        to bottom,
-        #182736 0%,
-        #0f1924 100%
-    );
-
-    border-radius: var(--radius-l);
-
-    border: var(--border-width) var(--border-style) var(--border-color-strong);
-
-    box-shadow:
-        0 0 0 1px rgba(184,156,90,0.25),
-        var(--shadow-l);
-}
-
-
-/* ==========================================================================
-   HEADER
-   ========================================================================== */
-
-.auth-header {
-    text-align: center;
-    margin-bottom: var(--space-xl);
-}
-
-.auth-header h1 {
-    font-family: var(--font-deco);
-    font-size: var(--font-size-xl);
-    letter-spacing: 2px;
-
-    color: var(--color-brass);
-    margin-bottom: var(--space-xs);
-}
-
-.auth-header .subtitle {
-    font-family: var(--font-smallcaps);
-    font-size: var(--font-size-s);
-    letter-spacing: 1px;
-
-    color: var(--color-text-muted);
-}
-
-
-/* ==========================================================================
-   SEKTIONEN
-   ========================================================================== */
-
-.auth-section {
-    margin-bottom: var(--space-xl);
-}
-
-.auth-section.hidden {
-    display: none;
-}
-
-.auth-section h2 {
-    font-family: var(--font-smallcaps);
-    font-size: var(--font-size-m);
-    letter-spacing: 1px;
-
-    color: var(--color-ocean-light);
-    text-align: center;
-
-    margin-bottom: var(--space-m);
-}
-
-
-/* ==========================================================================
-   FORMULARE
-   ========================================================================== */
-
-label {
-    display: block;
-    margin-bottom: var(--space-xs);
-
-    font-size: var(--font-size-s);
-    color: var(--color-text-muted);
-}
-
-input {
-    width: 100%;
-    max-width: 100%;
-
-    padding: var(--space-s) var(--space-m);
-    margin-bottom: var(--space-m);
-
-    background: #0c151f;
-    color: var(--color-text);
-
-    border-radius: var(--radius-s);
-    border: var(--border-width-thin) var(--border-style) var(--border-color);
-
-    font-size: var(--font-size-m);
-}
-
-input::placeholder {
-    color: var(--color-text-muted);
-}
-
-input:focus {
-    outline: none;
-    border-color: var(--color-brass);
-    box-shadow: 0 0 0 1px rgba(184,156,90,0.5);
-}
-
-
-/* ==========================================================================
-   BUTTONS
-   ========================================================================== */
-
-button.btn {
-    width: 100%;
-    padding: var(--space-m);
-
-    border-radius: var(--radius-m);
-    border: none;
-
-    font-family: var(--font-smallcaps);
-    font-size: var(--font-size-m);
-    letter-spacing: 1px;
-
-    cursor: pointer;
-    box-shadow: var(--shadow-s);
-    transition: var(--animation-fast);
-}
-
-.btn-primary {
-    background: linear-gradient(
-        to bottom,
-        var(--color-ocean-light),
-        var(--color-ocean)
-    );
-    color: var(--color-text-on-dark);
-}
-
-.btn-secondary {
-    background: linear-gradient(
-        to bottom,
-        var(--color-brass),
-        var(--color-brass-dark)
-    );
-    color: #111;
-}
-
-button:hover {
-    opacity: var(--hover-opacity);
-}
-
-
-/* ==========================================================================
-   LOGIN ↔ REGISTRIERUNG SWITCH
-   ========================================================================== */
-
-.switch {
-    text-align: center;
-    font-size: var(--font-size-s);
-    color: var(--color-text-muted);
-}
-
-.switch a {
-    color: var(--color-brass);
-    text-decoration: none;
-    border-bottom: 1px dotted rgba(184,156,90,0.6);
-    cursor: pointer;
-}
-
-.switch a:hover {
-    opacity: var(--hover-opacity);
-}
-
-
-/* ==========================================================================
-   STATUSBOX
-   ========================================================================== */
-
-.status-box {
-    margin-top: var(--space-l);
-    padding: var(--space-m);
-
-    border-radius: var(--radius-m);
-    font-size: var(--font-size-s);
-    text-align: center;
-
-    display: none;
-}
-
-.status-box.success {
-    background: var(--color-success-bg);
-    color: var(--color-success);
-}
-
-.status-box.error {
-    background: var(--color-error-bg);
-    color: var(--color-error);
-}
-
-.status-box.info {
-    background: var(--color-info-bg);
-    color: var(--color-info);
-}
-
-
-/* ==========================================================================
-   MOBILE
-   ========================================================================== */
-
-@media (max-width: 480px) {
-
-    body {
-        padding: var(--space-m);
-    }
-
-    .auth-wrapper {
-        padding: var(--space-l);
-        border-radius: var(--radius-m);
-    }
-
-    .auth-header h1 {
-        font-size: var(--font-size-l);
-    }
+    --color-overlay-light: rgba(0,0,0,0.05);
 }
