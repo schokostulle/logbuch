@@ -1,7 +1,7 @@
 /* ==========================================================================
    CSV TOOL – Maritime / Military
    Tabellenlayout identisch zu MEMBER
-   Nutzt ausschließlich root.css + style.css
+   Sticky Header + Scrollbarer Body
    ========================================================================== */
 
 
@@ -17,7 +17,7 @@
 
 
 /* ==========================================================================
-   ÜBERSCHRIFT IM CONTENT (NICHT KOPF)
+   ÜBERSCHRIFT IM CONTENT
    ========================================================================== */
 
 .csv-wrapper h2 {
@@ -41,7 +41,25 @@
 
 
 /* ==========================================================================
-   TABELLE – RUMPF & RAHMEN
+   TABELLEN-CONTAINER (SCROLLBEREICH)
+   ========================================================================== */
+
+.csv-table-wrapper {
+    max-height: calc(100vh - 260px); /* Header + Padding */
+    overflow-y: auto;
+    overflow-x: auto;
+
+    border-radius: var(--radius-m);
+    box-shadow: var(--shadow-m);
+    border: var(--border-width)
+            var(--border-style)
+            var(--border-color-strong);
+}
+
+
+
+/* ==========================================================================
+   TABELLE – GRUNDSTRUKTUR
    ========================================================================== */
 
 .csv-table {
@@ -54,24 +72,19 @@
         var(--color-bg-secondary),
         var(--color-bg)
     );
-
-    border-radius: var(--radius-m);
-    box-shadow: var(--shadow-m);
-    border: var(--border-width)
-            var(--border-style)
-            var(--border-color-strong);
-
-    overflow: hidden;
-    margin-bottom: var(--space-xl);
 }
 
 
 
 /* ==========================================================================
-   TABELLENKOPF – BRÜCKE
+   TABELLENKOPF – STICKY / BRÜCKE
    ========================================================================== */
 
 .csv-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+
     background: linear-gradient(
         to bottom,
         var(--color-ocean),
@@ -138,10 +151,11 @@
 
 
 /* ==========================================================================
-   AKTIONSBUTTONS (z. B. Löschen)
+   BUTTONS – IDENTISCH ZU MEMBER (GOLD)
    ========================================================================== */
 
 .csv-btn {
+    width: 100%;
     padding: var(--space-xs) var(--space-s);
 
     font-family: var(--font-smallcaps);
@@ -166,27 +180,21 @@
     opacity: var(--hover-opacity);
 }
 
-.csv-btn.danger {
-    background: linear-gradient(
-        to bottom,
-        var(--color-error),
-        #6f2f2f
-    );
-    color: #fff;
+.csv-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 
 
 /* ==========================================================================
-   RESPONSIVE – HORIZONTAL SCROLL STATT ZERSTÖRUNG
+   MOBILE – HORIZONTAL SCROLL
    ========================================================================== */
 
 @media (max-width: 700px) {
 
-    .csv-table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
+    .csv-table-wrapper {
+        max-height: calc(100vh - 220px);
     }
 
     .csv-table th,
