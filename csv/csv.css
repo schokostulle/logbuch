@@ -202,3 +202,16 @@
         white-space: nowrap;
     }
 }
+
+/* ==========================================================================
+   ZEILENANZAHL-ANZEIGE
+   ========================================================================== */
+
+.csv-rowcount {
+    margin-bottom: var(--space-m);
+    font-family: var(--font-smallcaps);
+    font-size: var(--font-size-s);
+    letter-spacing: 1px;
+
+    color: var(--color-text-muted);
+}
