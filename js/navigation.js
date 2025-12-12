@@ -42,7 +42,7 @@ async function buildNavigation() {
     nav.innerHTML = `
         <div class="nav-header">
             <span class="nav-title">
-                <span class="nav-icon">🧭</span>
+                <span class="nav-icon">⚓</span>
                 <span class="nav-label">Logbuch</span>
             </span>
         </div>
@@ -51,7 +51,7 @@ async function buildNavigation() {
 
             <li class="nav-item">
                 <a href="../dashboard/dashboard.html">
-                    <span class="nav-icon">📜</span>
+                    <span class="nav-icon">📯</span>
                     <span class="nav-label">Dashboard</span>
                 </a>
             </li>
@@ -79,7 +79,7 @@ async function buildNavigation() {
 
             <li class="nav-item">
                 <a href="../reservation/reservation.html">
-                    <span class="nav-icon">🎯</span>
+                    <span class="nav-icon">📍</span>
                     <span class="nav-label">Reservierungen</span>
                 </a>
             </li>
@@ -92,11 +92,11 @@ async function buildNavigation() {
             </li>
 
             ${isAdmin ? `
-            <li class="nav-section-title">Administration</li>
+           /* <li class="nav-section-title">Administration</li> */
 
             <li class="nav-item">
                 <a href="../member/member.html">
-                    <span class="nav-icon">👥</span>
+                    <span class="nav-icon">🪖</span>
                     <span class="nav-label">Mitglieder</span>
                 </a>
             </li>
