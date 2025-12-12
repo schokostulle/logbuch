@@ -257,3 +257,11 @@ body {
     /* sauberes Scroll-Ende */
     scroll-padding-bottom: 32px;
 }
+
+/* ==========================================================================
+   TOOL-WRAPPER – globales sauberes Scroll-Ende
+   ========================================================================== */
+
+.tool-content > *:last-child {
+    margin-bottom: var(--space-xxl);
+}
