@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Dashboard – Community Webapp</title>
+    <title>Diplomatie – Logbuch</title>
 
-<!-- Global Theme -->
-<link rel="stylesheet" href="../css/root.css">
-<link rel="stylesheet" href="../css/style.css">
+    <!-- Design Tokens + Global Layout -->
+    <link rel="stylesheet" href="../css/root.css">
+    <link rel="stylesheet" href="../css/style.css">
 
-<!-- Maritime Schriftarten -->
-<link href="https://fonts.googleapis.com/css2?family=Estonia&family=Almendra+SC&family=Cormorant+Garamond:wght@400;600&family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Maritime Schriftarten -->
+    <link href="https://fonts.googleapis.com/css2?family=Estonia&family=Almendra+SC&family=Cormorant+Garamond:wght@400;600&family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-<!-- Dashboard Styles (falls benötigt) -->
-<link rel="stylesheet" href="dashboard.css">
-
+    <!-- Tool-spezifisches CSS (kommt später, aktuell leer) -->
+    <!-- <link rel="stylesheet" href="diplomacy.css"> -->
 </head>
+
 <body>
 
 <div class="layout-container">
@@ -27,26 +27,26 @@
     <!-- Hauptbereich -->
     <main class="content-area">
 
-        <!-- Kopfbereich -->
+        <!-- Kopfzeile -->
         <header id="kopf-container"></header>
 
-        <!-- Dashboard-Inhalt -->
+        <!-- Tool-Inhalt -->
         <section id="tool-content" class="tool-content">
-            <!-- dashboard.js setzt hier den Inhalt -->
+            <!-- Diplomacy-HTML kommt hier hinein -->
         </section>
 
     </main>
 
 </div>
 
-<!-- Globale JS-Module -->
+<!-- Globale Module -->
 <script type="module" src="../js/supabase.js"></script>
 <script type="module" src="../js/auth.js"></script>
 <script type="module" src="../js/navigation.js"></script>
 <script type="module" src="../js/kopf.js"></script>
 
-<!-- Dashboard-spezifisches Script -->
-<script type="module" src="dashboard.js"></script>
+<!-- Tool-Logik (kommt später, aktuell leer) -->
+<!-- <script type="module" src="diplomacy.js"></script> -->
 
 </body>
 </html>
