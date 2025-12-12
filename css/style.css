@@ -2,6 +2,11 @@
    GLOBAL LAYOUT
    ========================================================================== */
 
+/* WICHTIG: stabiles Boxmodell */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 html,
 body {
     margin: 0;
@@ -35,7 +40,7 @@ body {
     width: clamp(64px, 20vw, 240px);
 
     background: var(--color-iron-dark);
-    color: var(--color-text-on-wood);
+    color: var(--color-text); /* FIX: passend zu Eisen */
 
     display: flex;
     flex-direction: column;
@@ -89,7 +94,9 @@ body {
     font-size: var(--font-size-m);
     font-family: var(--font-deco);
 
-    border-bottom: var(--border-width-thin) var(--border-style) var(--border-color);
+    border-bottom: var(--border-width-thin)
+                  var(--border-style)
+                  var(--border-color);
 }
 
 .nav-item:hover {
@@ -163,7 +170,9 @@ body {
 
 #kopf-container {
     background: var(--color-bg-secondary);
-    border-bottom: var(--border-width) var(--border-style) var(--border-color);
+    border-bottom: var(--border-width)
+                   var(--border-style)
+                   var(--border-color-strong);
 
     padding: var(--space-s) var(--space-l);
     box-shadow: var(--shadow-s);
@@ -187,5 +196,6 @@ body {
     overflow-y: auto;
     overflow-x: auto;
 
-    padding: var(--space-xxs);
+    /* FIX: sinnvolles Standard-Padding */
+    padding: var(--space-l);
 }
