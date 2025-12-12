@@ -1,153 +1,146 @@
 // js/navigation.js
-//
-// Permanente Navigation links + HTML-Seitenwechsel
-// Keine fetch-Befehle. Jedes Tool hat eine eigene HTML-Seite.
-//
-// Beispielpfade:
-//   /dashboard/dashboard.html
-//   /member/member.html
-//   /map/map.html
-//
+// Linkes Navigationsmenü mit Auth- & Rollenprüfung
+// Klassischer Seitenwechsel (kein fetch)
 
 import { getCurrentUser, logoutUser } from "./auth.js";
 import { supabase } from "./supabase.js";
 
-
-/* ==========================================================================
-   Icons
-   ========================================================================== */
-
-const icons = {
-    dashboard:   "📜",
-    flotte:      "⛵",
-    reports:     "⚔️",
-    map:         "🗺️",
-    reservation: "📌",
-    calculation: "⚓",
-
-    member:      "🪖",
-    csv:         "📂",
-    diplomacy:   "🕊️",
-    chrono:      "⏳",
-
-    logout:      "⛩️",
-    header:      "🧭"
-};
-
-
-/* ==========================================================================
-   Tool-Definitionen
-   ========================================================================== */
-
-const toolsAll = [
-    { id: "dashboard",   label: "Dashboard" },
-    { id: "flotte",      label: "Flotten" },
-    { id: "reports",     label: "Berichte" },
-    { id: "map",         label: "Karte" },
-    { id: "reservation", label: "Reservierung" },
-    { id: "calculation", label: "Rechner" }
-];
-
-const toolsAdmin = [
-    { id: "member",      label: "Mitglieder" },
-    { id: "csv",         label: "CSV" },
-    { id: "diplomacy",   label: "Diplomatie" },
-    { id: "chrono",      label: "Chrono" }
-];
-
-
-/* ==========================================================================
-   Navigation erzeugen
-   ========================================================================== */
+const nav = document.getElementById("nav-container");
 
 async function buildNavigation() {
 
+    if (!nav) return;
+
+    /* --------------------------------------------------------------
+       Auth prüfen
+       -------------------------------------------------------------- */
     const user = await getCurrentUser();
     if (!user) {
         window.location.href = "../index.html";
         return;
     }
 
-    const { data: profile } = await supabase
+    /* --------------------------------------------------------------
+       Rolle laden
+       -------------------------------------------------------------- */
+    const { data: profile, error } = await supabase
         .from("profiles")
         .select("role")
         .eq("id", user.id)
         .single();
 
-    const isAdmin = profile?.role === "Admin";
+    if (error || !profile) {
+        window.location.href = "../index.html";
+        return;
+    }
 
-    const nav = document.getElementById("nav-container");
-    if (!nav) return;
+    const isAdmin = profile.role === "Admin";
 
-
-    /* Header */
-    let html = `
+    /* --------------------------------------------------------------
+       Navigation aufbauen
+       -------------------------------------------------------------- */
+    nav.innerHTML = `
         <div class="nav-header">
             <span class="nav-title">
-                <span class="nav-icon">${icons.header}</span>
+                <span class="nav-icon">🧭</span>
                 <span class="nav-label">Logbuch</span>
             </span>
         </div>
 
         <ul class="nav-links">
-    `;
 
-
-    /* Tools für alle */
-    toolsAll.forEach(tool => {
-        html += `
-            <li class="nav-item" data-tool="${tool.id}">
-                <span class="nav-icon">${icons[tool.id]}</span>
-                <span class="nav-label">${tool.label}</span>
+            <li class="nav-item">
+                <a href="../dashboard/dashboard.html">
+                    <span class="nav-icon">📜</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
             </li>
-        `;
-    });
 
+            <li class="nav-item">
+                <a href="../fleet/fleet.html">
+                    <span class="nav-icon">⛵</span>
+                    <span class="nav-label">Flotte</span>
+                </a>
+            </li>
 
-    /* Adminbereich */
-    if (isAdmin) {
-        html += `<li class="nav-section-title">Administration</li>`;
+            <li class="nav-item">
+                <a href="../reports/reports.html">
+                    <span class="nav-icon">📜</span>
+                    <span class="nav-label">Berichte</span>
+                </a>
+            </li>
 
-        toolsAdmin.forEach(tool => {
-            html += `
-                <li class="nav-item" data-tool="${tool.id}">
-                    <span class="nav-icon">${icons[tool.id]}</span>
-                    <span class="nav-label">${tool.label}</span>
-                </li>
-            `;
-        });
-    }
+            <li class="nav-item">
+                <a href="../map/map.html">
+                    <span class="nav-icon">🗺️</span>
+                    <span class="nav-label">Karte</span>
+                </a>
+            </li>
 
+            <li class="nav-item">
+                <a href="../reservation/reservation.html">
+                    <span class="nav-icon">🎯</span>
+                    <span class="nav-label">Reservierungen</span>
+                </a>
+            </li>
 
-    /* Logout */
-    html += `
-        <li class="nav-item logout" data-logout="true">
-            <span class="nav-icon">${icons.logout}</span>
-            <span class="nav-label">Logout</span>
-        </li>
+            <li class="nav-item">
+                <a href="../calculation/calculation.html">
+                    <span class="nav-icon">📐</span>
+                    <span class="nav-label">Berechnung</span>
+                </a>
+            </li>
+
+            ${isAdmin ? `
+            <li class="nav-section-title">Administration</li>
+
+            <li class="nav-item">
+                <a href="../member/member.html">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-label">Mitglieder</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="../csv/csv.html">
+                    <span class="nav-icon">📂</span>
+                    <span class="nav-label">CSV</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="../diplomacy/diplomacy.html">
+                    <span class="nav-icon">🕊️</span>
+                    <span class="nav-label">Diplomatie</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="../chrono/chrono.html">
+                    <span class="nav-icon">⏳</span>
+                    <span class="nav-label">Chrono</span>
+                </a>
+            </li>
+            ` : ""}
+
+            <li class="nav-item logout" id="logout">
+                <span class="nav-icon">⛩️</span>
+                <span class="nav-label">Logout</span>
+            </li>
+
+        </ul>
     `;
 
-    html += `</ul>`;
-
-
-    nav.innerHTML = html;
-
-    activateNavigation();
+    /* --------------------------------------------------------------
+       Logout
+       -------------------------------------------------------------- */
+    document.getElementById("logout")?.addEventListener("click", async () => {
+        await logoutUser();
+        window.location.href = "../index.html";
+    });
 }
 
-
-
-/* ==========================================================================
-   Klick-Handler: Seitenwechsel
-   ========================================================================== */
-
-function activateNavigation() {
-
-    const items = document.querySelectorAll(".nav-item");
-
-    items.forEach(item => {
-
-        // Logout
-        if (item.dataset.logout === "true") {
-            item.addEventListener("click", async () => {
-                await logoutUser();
+/* --------------------------------------------------------------
+   Init
+   -------------------------------------------------------------- */
+buildNavigation();
