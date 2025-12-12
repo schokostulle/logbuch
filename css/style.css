@@ -2,17 +2,15 @@
    GLOBAL LAYOUT
    ========================================================================== */
 
-/* WICHTIG: stabiles Boxmodell */
 *, *::before, *::after {
     box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow: hidden; /* Body scrollt nie */
+    overflow: hidden;
 }
 
 body {
@@ -33,14 +31,12 @@ body {
 
 /* ==========================================================================
    NAVIGATION
-   – 20% der Breite, max. 240px, min. 64px
    ========================================================================== */
 
 #nav-container {
     width: clamp(64px, 20vw, 240px);
-
     background: var(--color-iron-dark);
-    color: var(--color-text); /* FIX: passend zu Eisen */
+    color: var(--color-text-on-wood);
 
     display: flex;
     flex-direction: column;
@@ -49,117 +45,102 @@ body {
     box-shadow: var(--shadow-m);
 
     height: 100%;
-    overflow-y: auto; /* Navigation scrollt separat */
-}
-
-.nav-item {
-    color: var(--color-text-on-wood);
-}
-
-.nav-item:hover {
-    color: var(--color-brass);
-}
-
-.nav-item.active {
-    color: var(--color-ocean-light);
-    background: var(--color-overlay-light);
+    overflow-y: auto;
 }
 
 
-/* Kopfbereich */
+
+/* ==========================================================================
+   NAV HEADER
+   ========================================================================== */
+
 .nav-header {
     padding: var(--space-m) var(--space-l);
-    display: flex;
-    align-items: center;
 }
 
 .nav-title {
     font-family: var(--font-deco);
     font-size: var(--font-size-l);
-    font-weight: bold;
     letter-spacing: 1px;
-    width: 100%;
-    text-align: left;
 }
 
 
 
 /* ==========================================================================
-   NAVIGATIONSEINTRÄGE
+   NAV LINKS – EINHEITLICH
    ========================================================================== */
 
 .nav-links {
     list-style: none;
-    padding: 0;
     margin: 0;
+    padding: 0;
     flex-grow: 1;
 }
 
-.nav-item {
-    padding: var(--space-m) var(--space-l);
-    cursor: pointer;
-
+/* ALLE Einträge: Tools + Logout */
+#nav-container a.nav-item {
     display: flex;
     align-items: center;
     gap: var(--space-s);
 
-    font-size: var(--font-size-m);
+    padding: var(--space-m) var(--space-l);
+
     font-family: var(--font-deco);
+    font-size: var(--font-size-m);
+
+    color: var(--color-text-on-wood);
+    text-decoration: none;
 
     border-bottom: var(--border-width-thin)
                   var(--border-style)
                   var(--border-color);
+
+    transition: background var(--animation-fast),
+                color var(--animation-fast);
 }
 
-.nav-item:hover {
-    background: var(--color-overlay-light);
-    opacity: var(--hover-opacity);
-}
-
+/* Icon */
 .nav-icon {
     width: 26px;
-    font-size: var(--font-size-l);
     text-align: center;
+    font-size: var(--font-size-l);
+    flex-shrink: 0;
 }
 
+/* Label */
 .nav-label {
     white-space: nowrap;
 }
 
+
+
 /* ==========================================================================
-   NAVIGATION – Link-Farben korrigieren (kein Browser-Default)
+   INTERAKTION
    ========================================================================== */
 
-/* Basis-Link */
-#nav-container a {
-    color: var(--color-text-on-wood);
-    text-decoration: none;
-}
-
-/* Bereits besuchte Links */
-#nav-container a:visited {
-    color: var(--color-text-on-wood);
-}
-
-/* Hover */
-#nav-container a:hover {
-    color: var(--color-brass);
+#nav-container a.nav-item:hover {
     background: var(--color-overlay-light);
+    color: var(--color-brass);
 }
 
-/* Aktiver Klick */
-#nav-container a:active {
+#nav-container a.nav-item.active {
+    background: var(--color-overlay-light);
     color: var(--color-ocean-light);
 }
 
-/* Fokus (Tastatur) */
-#nav-container a:focus-visible {
+#nav-container a.nav-item:visited {
+    color: var(--color-text-on-wood);
+}
+
+#nav-container a.nav-item:focus-visible {
     outline: none;
     box-shadow: inset 0 0 0 2px var(--color-brass);
 }
 
+
+
 /* ==========================================================================
-   KOMPAKT-MODUS (< 900px)
+   KOMPAKT-MODUS
    ========================================================================== */
 
 @media (max-width: 900px) {
@@ -170,21 +151,16 @@ body {
 
     .nav-title {
         text-align: center;
-        padding: 0;
     }
 
     .nav-label {
         display: none;
     }
 
-    .nav-item {
+    #nav-container a.nav-item {
         justify-content: center;
         padding-left: 0;
         padding-right: 0;
-    }
-
-    .nav-section-title {
-        display: none;
     }
 }
 
@@ -196,12 +172,10 @@ body {
 
 .content-area {
     flex-grow: 1;
-
     display: flex;
     flex-direction: column;
-
     height: 100%;
-    overflow: hidden; /* verhindert Body-Scroll */
+    overflow: hidden;
 }
 
 
@@ -219,8 +193,6 @@ body {
     padding: var(--space-s) var(--space-l);
     box-shadow: var(--shadow-s);
 
-    flex-shrink: 0;
-
     position: sticky;
     top: 0;
     z-index: 10;
@@ -234,10 +206,7 @@ body {
 
 .tool-content {
     flex-grow: 1;
-
     overflow-y: auto;
     overflow-x: auto;
-
-    /* FIX: sinnvolles Standard-Padding */
     padding: var(--space-l);
 }
