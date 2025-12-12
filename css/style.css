@@ -34,7 +34,7 @@ body {
 #nav-container {
     width: clamp(64px, 20vw, 240px);
 
-    background: var(--color-wood);
+    background: var(--color-wood-dark);
     color: var(--color-text-on-wood);
 
     display: flex;
