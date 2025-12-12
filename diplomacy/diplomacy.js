@@ -5,7 +5,11 @@ const playerBody   = document.getElementById("player-body");
 
 const STATUS = ["neutral", "friendly", "hostile"];
 
-function statusSelect(value) {
+/* =========================================
+   STATUS-DROPDOWN
+   ========================================= */
+
+function statusSelect(value = "neutral") {
     return `
         <select class="status-select">
             ${STATUS.map(s =>
@@ -15,21 +19,29 @@ function statusSelect(value) {
     `;
 }
 
-/* =========================
+/* =========================================
    ALLIANZEN
-   ========================= */
+   Quelle: diplomacy_alliance_view
+   ========================================= */
 
 async function loadAlliances() {
-    const { data } = await supabase
+
+    const { data, error } = await supabase
         .from("diplomacy_alliance_view")
         .select("*")
         .order("alliance_tag");
 
+    if (error) {
+        console.error(error);
+        return;
+    }
+
     allianceBody.innerHTML = "";
 
     data.forEach(a => {
+
         const tr = document.createElement("tr");
-        tr.className = `status-${a.status}`;
+        tr.className = `status-${a.status || "neutral"}`;
 
         tr.innerHTML = `
             <td>${a.alliance_id}</td>
@@ -48,35 +60,39 @@ async function loadAlliances() {
                     status
                 });
 
-            /* Vererbung auf Spieler */
-            await supabase
-                .from("diplomacy_players")
-                .update({ status })
-                .eq("player_id", a.alliance_id);
-
-            loadAlliances();
-            loadPlayers();
+            /* KEINE JS-Vererbung!
+               DB-Trigger erledigt das korrekt */
+            await loadAlliances();
+            await loadPlayers();
         };
 
         allianceBody.appendChild(tr);
     });
 }
 
-/* =========================
+/* =========================================
    SPIELER
-   ========================= */
+   Quelle: diplomacy_player_view
+   ========================================= */
 
 async function loadPlayers() {
-    const { data } = await supabase
+
+    const { data, error } = await supabase
         .from("diplomacy_player_view")
         .select("*")
         .order("player_name");
 
+    if (error) {
+        console.error(error);
+        return;
+    }
+
     playerBody.innerHTML = "";
 
     data.forEach(p => {
+
         const tr = document.createElement("tr");
-        tr.className = `status-${p.status}`;
+        tr.className = `status-${p.status || "neutral"}`;
 
         tr.innerHTML = `
             <td>${p.player_id}</td>
@@ -95,13 +111,16 @@ async function loadPlayers() {
                     status
                 });
 
-            loadPlayers();
+            await loadPlayers();
         };
 
         playerBody.appendChild(tr);
     });
 }
 
-/* INIT */
+/* =========================================
+   INIT
+   ========================================= */
+
 loadAlliances();
 loadPlayers();
