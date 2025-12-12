@@ -33,7 +33,6 @@ body {
    NAVIGATION – STABILE ZUSTÄNDE
    ========================================================================== */
 
-/* feste Zustände statt clamp/vw */
 :root {
     --nav-width-expanded: 240px;
     --nav-width-collapsed: 64px;
@@ -147,7 +146,7 @@ body {
 
 
 /* ==========================================================================
-   KOMPAKT-MODUS – EINDEUTIG
+   KOMPAKT-MODUS
    ========================================================================== */
 
 @media (max-width: 900px) {
@@ -239,29 +238,21 @@ body {
 
 
 /* ==========================================================================
-   TOOL-INHALT
+   TOOL-INHALT – SAUBERES SCROLL-ENDE
    ========================================================================== */
 
 .tool-content {
     flex-grow: 1;
-
     overflow-y: auto;
     overflow-x: auto;
 
-    /* Grundabstand */
-    padding: var(--space-xs);
-
-    /* WICHTIG: Luft zum unteren Rand */
-    padding-bottom: calc(var(--space-xs) + 32px);
-
-    /* sauberes Scroll-Ende */
-    scroll-padding-bottom: 32px;
+    padding: var(--space-l);
+    padding-bottom: 0; /* bewusst */
 }
 
-/* ==========================================================================
-   TOOL-WRAPPER – globales sauberes Scroll-Ende
-   ========================================================================== */
-
-.tool-content > *:last-child {
-    margin-bottom: var(--space-xxl);
+/* echter Abstand zum Viewport-Ende */
+.tool-content::after {
+    content: "";
+    display: block;
+    height: var(--space-xxl);
 }
