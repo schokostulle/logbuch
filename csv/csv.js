@@ -1,27 +1,49 @@
 import { supabase } from "../js/supabase.js";
 
-/* DOM */
+/* ==========================================================================
+   DOM
+   ========================================================================== */
+
 const fileInput = document.getElementById("csv-file");
 const uploadBtn = document.getElementById("upload-btn");
 const deleteBtn = document.getElementById("delete-btn");
 const tableBody = document.getElementById("csv-table-body");
 const statusBox = document.getElementById("csv-status");
+const rowCountBox = document.getElementById("csv-rowcount");
 
-/* Statusanzeige */
+/* ==========================================================================
+   STATUSANZEIGE
+   ========================================================================== */
+
 function showStatus(msg, type = "info") {
     statusBox.innerHTML = `<div class="${type}-box">${msg}</div>`;
 }
 
-/* CSV PARSEN */
+/* ==========================================================================
+   ZEILENANZAHL
+   ========================================================================== */
+
+function updateRowCount(count) {
+    if (rowCountBox) {
+        rowCountBox.textContent = `Angezeigte Zeilen: ${count}`;
+    }
+}
+
+/* ==========================================================================
+   CSV PARSEN
+   (keine Kopfzeile, ; getrennt, keine Quotes)
+   ========================================================================== */
+
 function parseCSV(text) {
     return text
         .trim()
         .split("\n")
         .map(line =>
             line
-                .replace(/"/g, "")      // Quotes entfernen
-                .split(";")             // Semikolon
+                .replace(/"/g, "")
+                .split(";")
         )
+        .filter(row => row.length >= 10)
         .map(row => ({
             oz: Number(row[0]),
             ig: Number(row[1]),
@@ -36,7 +58,10 @@ function parseCSV(text) {
         }));
 }
 
-/* DATEN LADEN */
+/* ==========================================================================
+   DATEN LADEN
+   ========================================================================== */
+
 async function loadData() {
     const { data, error } = await supabase
         .from("csv_data")
@@ -66,11 +91,17 @@ async function loadData() {
         `;
         tableBody.appendChild(tr);
     });
+
+    updateRowCount(data.length);
 }
 
-/* UPLOAD */
+/* ==========================================================================
+   UPLOAD (überschreibt komplett)
+   ========================================================================== */
+
 uploadBtn.addEventListener("click", async () => {
     const file = fileInput.files[0];
+
     if (!file) {
         showStatus("Keine CSV-Datei ausgewählt", "error");
         return;
@@ -79,7 +110,12 @@ uploadBtn.addEventListener("click", async () => {
     const text = await file.text();
     const rows = parseCSV(text);
 
-    showStatus("Alte Daten werden gelöscht…", "info");
+    if (!rows.length) {
+        showStatus("CSV enthält keine gültigen Daten", "error");
+        return;
+    }
+
+    showStatus("Alte Daten werden gelöscht …", "info");
 
     await supabase.from("csv_data").delete().neq("oz", -1);
 
@@ -92,18 +128,27 @@ uploadBtn.addEventListener("click", async () => {
         return;
     }
 
-    showStatus("CSV erfolgreich importiert", "success");
+    showStatus(`CSV erfolgreich importiert (${rows.length} Zeilen)`, "success");
     loadData();
 });
 
-/* LÖSCHEN */
+/* ==========================================================================
+   LÖSCHEN
+   ========================================================================== */
+
 deleteBtn.addEventListener("click", async () => {
     if (!confirm("Alle CSV-Daten löschen?")) return;
 
     await supabase.from("csv_data").delete().neq("oz", -1);
-    showStatus("Alle Daten gelöscht", "success");
+
     tableBody.innerHTML = "";
+    updateRowCount(0);
+
+    showStatus("Alle Daten gelöscht", "success");
 });
 
-/* INIT */
+/* ==========================================================================
+   INIT
+   ========================================================================== */
+
 loadData();
