@@ -1,8 +1,8 @@
 // js/kopf.js
 //
 // Kopfzeile (Sticky Header)
-// Zeile 1 rechts: Username + Rolle
-// Zeile 2 links: Aktueller Tool-Name (aus URL abgeleitet)
+// Zeile 1 rechts: User + Rollen-Icon
+// Zeile 2 links: Aktueller Tool-Name (aus URL)
 
 import { getCurrentUser } from "./auth.js";
 import { supabase } from "./supabase.js";
@@ -35,6 +35,15 @@ function getToolTitleFromPath() {
 }
 
 /* ==========================================================================
+   Rollen-Icon
+   ========================================================================== */
+
+function getRoleIcon(role) {
+    if (role === "Admin") return "🎖️";
+    return "🪖"; // Member (Default)
+}
+
+/* ==========================================================================
    Header erzeugen
    ========================================================================== */
 
@@ -60,11 +69,14 @@ async function buildHeader() {
     }
 
     const toolTitle = getToolTitleFromPath();
+    const roleIcon = getRoleIcon(profile.role);
 
     kopfContainer.innerHTML = `
         <div class="kopf-zeile oben">
             <div class="user-info">
-                ${profile.username} <span class="user-role">(${profile.role})</span>
+                ${roleIcon}
+                <span class="username">${profile.username}</span>
+                <span class="user-role">(${profile.role})</span>
             </div>
         </div>
 
