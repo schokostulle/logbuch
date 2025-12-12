@@ -1,96 +1,43 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<section class="tool-content">
 
-    <title>Diplomatie – Logbuch</title>
+    <div class="diplomacy-wrapper">
 
-    <!-- Design Tokens + Global Layout -->
-    <link rel="stylesheet" href="../css/root.css">
-    <link rel="stylesheet" href="../css/style.css">
+        <!-- ================= ALLIANZEN ================= -->
 
-    <!-- Maritime Schriftarten -->
-    <link href="https://fonts.googleapis.com/css2?family=Estonia&family=Almendra+SC&family=Cormorant+Garamond:wght@400;600&family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+        <h2 class="diplomacy-title">Allianzen</h2>
 
-    <!-- Tool-spezifisches CSS -->
-    <link rel="stylesheet" href="diplomacy.css">
-</head>
+        <table class="member-table">
+            <thead>
+                <tr>
+                    <th>Allianz&nbsp;ID</th>
+                    <th>Kürzel</th>
+                    <th>Status</th>
+                    <th>Aktion</th>
+                </tr>
+            </thead>
+            <tbody id="diplomacy-alliance-body">
+                <!-- wird später per JS gefüllt -->
+            </tbody>
+        </table>
 
-<body>
+        <!-- ================= SPIELER ================= -->
 
-<div class="layout-container">
+        <h2 class="diplomacy-title">Spieler</h2>
 
-    <!-- Navigation -->
-    <nav id="nav-container"></nav>
+        <table class="member-table">
+            <thead>
+                <tr>
+                    <th>Spieler&nbsp;ID</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Aktion</th>
+                </tr>
+            </thead>
+            <tbody id="diplomacy-player-body">
+                <!-- wird später per JS gefüllt -->
+            </tbody>
+        </table>
 
-    <!-- Hauptbereich -->
-    <main class="content-area">
+    </div>
 
-        <!-- Kopfzeile -->
-        <header id="kopf-container"></header>
-
-        <!-- Tool-Inhalt -->
-        <section class="tool-content">
-
-            <div class="diplomacy-wrapper">
-
-                <!-- ================= ALLIANZEN ================= -->
-
-                <h2 class="diplomacy-title">Allianzen</h2>
-
-                <div class="table-wrapper">
-                    <table class="member-table">
-                        <thead>
-                            <tr>
-                                <th>Allianz&nbsp;ID</th>
-                                <th>Kürzel</th>
-                                <th>Status</th>
-                                <th>Aktion</th>
-                            </tr>
-                        </thead>
-                        <tbody id="alliance-body">
-                            <!-- diplomacy.js -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- ================= SPIELER ================= -->
-
-                <h2 class="diplomacy-title">Spieler</h2>
-
-                <div class="table-wrapper">
-                    <table class="member-table">
-                        <thead>
-                            <tr>
-                                <th>Spieler&nbsp;ID</th>
-                                <th>Name</th>
-                                <th>Status</th>
-                                <th>Aktion</th>
-                            </tr>
-                        </thead>
-                        <tbody id="player-body">
-                            <!-- diplomacy.js -->
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
-
-</div>
-
-<!-- Globale Module -->
-<script type="module" src="../js/supabase.js"></script>
-<script type="module" src="../js/auth.js"></script>
-<script type="module" src="../js/navigation.js"></script>
-<script type="module" src="../js/kopf.js"></script>
-
-<!-- Tool -->
-<script type="module" src="diplomacy.js"></script>
-
-</body>
-</html>
+</section>
