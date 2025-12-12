@@ -2,11 +2,12 @@
    GLOBAL LAYOUT
    ========================================================================== */
 
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow: hidden; /* global kein Scrollen */
+    overflow: hidden; /* Body scrollt nie */
 }
 
 body {
@@ -26,12 +27,12 @@ body {
 
 
 /* ==========================================================================
-   NAVIGATION – dynamisch 20% bis max. 240px
+   NAVIGATION
+   – 20% der Breite, max. 240px, min. 64px
    ========================================================================== */
 
 #nav-container {
     width: clamp(64px, 20vw, 240px);
-    min-width: 64px;
 
     background: var(--color-wood);
     color: var(--color-text-on-wood);
@@ -43,9 +44,12 @@ body {
     box-shadow: var(--shadow-m);
 
     height: 100%;
-    overflow-y: auto; /* Navigation scrollt selbst */
+    overflow-y: auto; /* Navigation scrollt separat */
 }
 
+
+
+/* Kopfbereich */
 .nav-header {
     padding: var(--space-m) var(--space-l);
     display: flex;
@@ -60,6 +64,12 @@ body {
     width: 100%;
     text-align: left;
 }
+
+
+
+/* ==========================================================================
+   NAVIGATIONSEINTRÄGE
+   ========================================================================== */
 
 .nav-links {
     list-style: none;
@@ -100,15 +110,13 @@ body {
 
 
 /* ==========================================================================
-   KOMPAKT-MODUS
-   Wird automatisch aktiv, wenn Bildschirm < 900px
+   KOMPAKT-MODUS (< 900px)
    ========================================================================== */
 
 @media (max-width: 900px) {
 
     #nav-container {
-        width: 64px !important;
-        min-width: 64px !important;
+        width: 64px;
     }
 
     .nav-title {
@@ -117,7 +125,7 @@ body {
     }
 
     .nav-label {
-        display: none !important;
+        display: none;
     }
 
     .nav-item {
@@ -127,7 +135,7 @@ body {
     }
 
     .nav-section-title {
-        display: none !important;
+        display: none;
     }
 }
 
@@ -140,19 +148,17 @@ body {
 .content-area {
     flex-grow: 1;
 
-    width: calc(100vw - clamp(64px, 20vw, 240px));
-
     display: flex;
     flex-direction: column;
 
     height: 100%;
-    overflow: hidden; /* Kopf bleibt sticky */
+    overflow: hidden; /* verhindert Body-Scroll */
 }
 
 
 
 /* ==========================================================================
-   KOPFZEILE – STICKY
+   STICKY HEADER
    ========================================================================== */
 
 #kopf-container {
@@ -172,11 +178,12 @@ body {
 
 
 /* ==========================================================================
-   TOOL-INHALT – scrollt unabhängig
+   TOOL-INHALT
    ========================================================================== */
 
 .tool-content {
     flex-grow: 1;
+
     overflow-y: auto;
     overflow-x: auto;
 
