@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CSV – Logbuch</title>
+
+    <!-- Design Tokens + Global Layout -->
+    <link rel="stylesheet" href="../css/root.css">
+    <link rel="stylesheet" href="../css/style.css">
+
+    <!-- Maritime Schriftarten -->
+    <link href="https://fonts.googleapis.com/css2?family=Estonia&family=Almendra+SC&family=Cormorant+Garamond:wght@400;600&family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Tool-spezifisches CSS -->
+    <link rel="stylesheet" href="csv.css">
+</head>
+
+<body>
+
+<div class="layout-container">
+
+    <!-- Navigation -->
+    <nav id="nav-container"></nav>
+
+    <!-- Hauptbereich -->
+    <main class="content-area">
+
+        <!-- Kopfzeile -->
+        <header id="kopf-container"></header>
+
+        <!-- Tool-Inhalt -->
+        <section id="tool-content" class="tool-content">
+            <!-- Wird durch csv.js befüllt -->
+        </section>
+
+    </main>
+
+</div>
+
+<!-- Globale JS-Module -->
+<script type="module" src="../js/supabase.js"></script>
+<script type="module" src="../js/auth.js"></script>
+<script type="module" src="../js/navigation.js"></script>
+<script type="module" src="../js/kopf.js"></script>
+
+<!-- Tool-spezifisches Script -->
+<script type="module" src="csv.js"></script>
+
+</body>
+</html>
