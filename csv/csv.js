@@ -4,11 +4,11 @@ import { supabase } from "../js/supabase.js";
    DOM
    ========================================================================== */
 
-const fileInput = document.getElementById("csv-file");
-const uploadBtn = document.getElementById("upload-btn");
-const deleteBtn = document.getElementById("delete-btn");
-const tableBody = document.getElementById("csv-table-body");
-const statusBox = document.getElementById("csv-status");
+const fileInput  = document.getElementById("csv-file");
+const uploadBtn  = document.getElementById("upload-btn");
+const deleteBtn  = document.getElementById("delete-btn");
+const tableBody  = document.getElementById("csv-table-body");
+const statusBox  = document.getElementById("csv-status");
 const rowCountBox = document.getElementById("csv-rowcount");
 
 /* ==========================================================================
@@ -31,18 +31,14 @@ function updateRowCount(count) {
 
 /* ==========================================================================
    CSV PARSEN
-   (keine Kopfzeile, ; getrennt, keine Quotes)
+   (; getrennt, keine Quotes, keine Kopfzeile)
    ========================================================================== */
 
 function parseCSV(text) {
     return text
         .trim()
         .split("\n")
-        .map(line =>
-            line
-                .replace(/"/g, "")
-                .split(";")
-        )
+        .map(line => line.replace(/"/g, "").split(";"))
         .filter(row => row.length >= 10)
         .map(row => ({
             oz: Number(row[0]),
@@ -59,23 +55,47 @@ function parseCSV(text) {
 }
 
 /* ==========================================================================
-   DATEN LADEN
+   DATEN LADEN (SUPABASE PAGINATION!)
    ========================================================================== */
 
 async function loadData() {
-    const { data, error } = await supabase
-        .from("csv_data")
-        .select("*")
-        .order("points", { ascending: false });
-
-    if (error) {
-        showStatus("Fehler beim Laden der Daten", "error");
-        return;
-    }
 
     tableBody.innerHTML = "";
+    updateRowCount(0);
 
-    data.forEach(row => {
+    let allRows = [];
+    let from = 0;
+    const pageSize = 1000;
+    let finished = false;
+
+    while (!finished) {
+
+        const { data, error } = await supabase
+            .from("csv_data")
+            .select("*")
+            .order("points", { ascending: false })
+            .range(from, from + pageSize - 1);
+
+        if (error) {
+            showStatus("Fehler beim Laden der Daten", "error");
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            finished = true;
+            break;
+        }
+
+        allRows = allRows.concat(data);
+        from += pageSize;
+
+        if (data.length < pageSize) {
+            finished = true;
+        }
+    }
+
+    /* Rendern */
+    allRows.forEach(row => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>${row.oz}</td>
@@ -92,16 +112,16 @@ async function loadData() {
         tableBody.appendChild(tr);
     });
 
-    updateRowCount(data.length);
+    updateRowCount(allRows.length);
 }
 
 /* ==========================================================================
-   UPLOAD (überschreibt komplett)
+   UPLOAD (überschreibt komplette Tabelle)
    ========================================================================== */
 
 uploadBtn.addEventListener("click", async () => {
-    const file = fileInput.files[0];
 
+    const file = fileInput.files[0];
     if (!file) {
         showStatus("Keine CSV-Datei ausgewählt", "error");
         return;
@@ -117,7 +137,10 @@ uploadBtn.addEventListener("click", async () => {
 
     showStatus("Alte Daten werden gelöscht …", "info");
 
-    await supabase.from("csv_data").delete().neq("oz", -1);
+    await supabase
+        .from("csv_data")
+        .delete()
+        .neq("oz", -1);
 
     const { error } = await supabase
         .from("csv_data")
@@ -137,9 +160,13 @@ uploadBtn.addEventListener("click", async () => {
    ========================================================================== */
 
 deleteBtn.addEventListener("click", async () => {
+
     if (!confirm("Alle CSV-Daten löschen?")) return;
 
-    await supabase.from("csv_data").delete().neq("oz", -1);
+    await supabase
+        .from("csv_data")
+        .delete()
+        .neq("oz", -1);
 
     tableBody.innerHTML = "";
     updateRowCount(0);
