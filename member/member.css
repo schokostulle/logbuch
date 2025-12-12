@@ -1,6 +1,6 @@
 /* ==========================================================================
-   MEMBER TOOL – Maritime Style
-   Nutzt ausschließlich root.css + style.css Variablen
+   MEMBER TOOL – Maritime / Military
+   Nutzt ausschließlich root.css + style.css
    ========================================================================== */
 
 
@@ -16,20 +16,21 @@
 
 
 /* ==========================================================================
-   ÜBERSCHRIFT
+   ÜBERSCHRIFT IM CONTENT (NICHT KOPF)
    ========================================================================== */
 
 .member-wrapper h2 {
-    font-family: var(--font-deco);
+    font-family: var(--font-smallcaps);
     font-size: var(--font-size-xl);
+    letter-spacing: 1px;
     margin-bottom: var(--space-l);
-    color: var(--color-ocean-dark);
+    color: var(--color-brass);
 }
 
 
 
 /* ==========================================================================
-   STATUSAUSGABE (info-box / error-box / success-box)
+   STATUSAUSGABE
    ========================================================================== */
 
 #member-status {
@@ -39,7 +40,7 @@
 
 
 /* ==========================================================================
-   TABELLE
+   TABELLE – RUMPF & RAHMEN
    ========================================================================== */
 
 .member-table {
@@ -47,96 +48,160 @@
     border-collapse: separate;
     border-spacing: 0;
 
-    background: var(--color-bg-secondary);
+    background: linear-gradient(
+        to bottom,
+        var(--color-bg-secondary),
+        var(--color-bg)
+    );
+
     border-radius: var(--radius-m);
-    box-shadow: var(--shadow-s);
+    box-shadow: var(--shadow-m);
+    border: var(--border-width) var(--border-style) var(--border-color-strong);
 
     overflow: hidden;
     margin-bottom: var(--space-xl);
 }
 
-/* Tabellenkopf */
 
-.member-table th {
-    background: var(--color-ocean-dark);
+
+/* ==========================================================================
+   TABELLENKOPF – BRÜCKE
+   ========================================================================== */
+
+.member-table thead th {
+    background: linear-gradient(
+        to bottom,
+        var(--color-ocean),
+        var(--color-ocean-dark)
+    );
+
     color: var(--color-text-on-dark);
-
     padding: var(--space-s) var(--space-m);
+
     font-family: var(--font-smallcaps);
+    font-size: var(--font-size-s);
+    letter-spacing: 1px;
+
     text-align: left;
 
-    border-right: var(--border-width-thin) var(--border-style) var(--color-overlay-light);
+    border-right: var(--border-width-thin)
+                  var(--border-style)
+                  var(--color-overlay-strong);
 }
 
-.member-table th:last-child {
+.member-table thead th:last-child {
     border-right: none;
 }
 
-/* Tabellenzellen */
+
+
+/* ==========================================================================
+   TABELLENZELLEN – DECK
+   ========================================================================== */
 
 .member-table td {
     padding: var(--space-m);
 
-    border-bottom: var(--border-width-thin) var(--border-style) var(--color-ink-light);
-    border-right: var(--border-width-thin) var(--border-style) var(--color-ink-light);
+    border-bottom: var(--border-width-thin)
+                   var(--border-style)
+                   var(--border-color);
+
+    border-right: var(--border-width-thin)
+                  var(--border-style)
+                  var(--border-color);
+
+    vertical-align: middle;
 }
 
 .member-table td:last-child {
     border-right: none;
 }
 
-/* Hover */
+
+
+/* ==========================================================================
+   ZEILENINTERAKTION
+   ========================================================================== */
+
+.member-table tbody tr {
+    transition: background var(--animation-fast);
+}
 
 .member-table tbody tr:hover {
     background: var(--color-overlay-light);
-    transition: background var(--animation-fast);
 }
 
 
 
 /* ==========================================================================
-   FORM ELEMENTE
+   FORM ELEMENTE – MILITÄRISCH EINGEBETTET
    ========================================================================== */
 
 .member-table select {
     width: 100%;
-    padding: var(--space-s);
+    padding: var(--space-xs) var(--space-s);
 
-    font-size: var(--font-size-m);
-    border-radius: var(--radius-s);
+    font-size: var(--font-size-s);
+    font-family: var(--font-base);
 
     background: var(--color-bg);
-    border: var(--border-width-thin) var(--border-style) var(--border-color);
+    color: var(--color-text);
+
+    border-radius: var(--radius-s);
+    border: var(--border-width-thin)
+            var(--border-style)
+            var(--border-color);
 
     cursor: pointer;
 }
 
 .member-table select:disabled {
-    background: var(--color-ink-very-light);
+    background: var(--color-overlay-dark);
+    color: var(--color-text-muted);
     cursor: not-allowed;
-    opacity: 0.7;
 }
 
 
 
 /* ==========================================================================
-   SPEICHER-BUTTON
+   SPEICHERN-BUTTON – BEFEHLSKNOPF
    ========================================================================== */
 
 .save-btn {
     width: 100%;
-    text-align: center;
+    padding: var(--space-xs) var(--space-s);
+
+    font-family: var(--font-smallcaps);
+    font-size: var(--font-size-s);
+    letter-spacing: 1px;
+
+    background: linear-gradient(
+        to bottom,
+        var(--color-brass),
+        var(--color-brass-dark)
+    );
+
+    color: #111;
+    border: none;
+    border-radius: var(--radius-s);
+
+    cursor: pointer;
+    box-shadow: var(--shadow-s);
+}
+
+.save-btn:hover {
+    opacity: var(--hover-opacity);
 }
 
 .save-btn:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
 }
 
 
 
 /* ==========================================================================
-   RESPONSIVE (Schmale Bildschirme → Tabelle horizontal scrollbar)
+   RESPONSIVE – HORIZONTAL SCROLL STATT ZERSTÖRUNG
    ========================================================================== */
 
 @media (max-width: 700px) {
