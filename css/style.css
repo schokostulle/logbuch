@@ -187,5 +187,5 @@ body {
     overflow-y: auto;
     overflow-x: auto;
 
-    padding: var(--space-xl);
+    padding: var(--space-s);
 }
