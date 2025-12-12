@@ -1,21 +1,13 @@
 // js/kopf.js
 //
-// Kopfzeile (Sticky Header)
-// Zeile 1: rechts – User + Rolle (Cormorant)
-// Zeile 2: links – aktueller Seitentitel (Almendra, Gold)
+// Kopfzeile
+// Zeile 1: rechts – User + Rolle
+// Zeile 2: links – aktueller Seitentitel
 
 import { getCurrentUser } from "./auth.js";
 import { supabase } from "./supabase.js";
 
-/* ==========================================================================
-   DOM Ziel
-   ========================================================================== */
-
 const kopfContainer = document.getElementById("kopf-container");
-
-/* ==========================================================================
-   Seitentitel aus URL ableiten
-   ========================================================================== */
 
 function getPageTitle() {
     const path = window.location.pathname.toLowerCase();
@@ -34,17 +26,9 @@ function getPageTitle() {
     return "Logbuch";
 }
 
-/* ==========================================================================
-   Rollen-Icon
-   ========================================================================== */
-
 function getRoleIcon(role) {
     return role === "Admin" ? "🎖️" : "🪖";
 }
-
-/* ==========================================================================
-   Header bauen
-   ========================================================================== */
 
 async function buildHeader() {
 
@@ -68,31 +52,19 @@ async function buildHeader() {
     }
 
     kopfContainer.innerHTML = `
-        <div class="kopf-zeile oben" style="
-            justify-content: flex-end;
-            font-family: var(--font-serif);
-        ">
+        <div class="kopf-zeile oben">
             <div class="user-info">
                 ${getRoleIcon(profile.role)}
                 ${profile.username} (${profile.role})
             </div>
         </div>
 
-        <div class="kopf-zeile unten" style="
-            justify-content: flex-start;
-        ">
-            <div class="tool-title" style="
-                font-family: var(--font-smallcaps);
-                color: var(--color-brass);
-            ">
+        <div class="kopf-zeile unten">
+            <div class="tool-title">
                 ${getPageTitle()}
             </div>
         </div>
     `;
 }
-
-/* ==========================================================================
-   Init
-   ========================================================================== */
 
 buildHeader();
