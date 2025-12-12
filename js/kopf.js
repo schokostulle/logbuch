@@ -1,8 +1,8 @@
 // js/kopf.js
 //
 // Kopfzeile (Sticky Header)
-// Zeile 1 rechts: User + Rollen-Icon
-// Zeile 2 links: Aktueller Tool-Name (aus URL)
+// Zeile 1: rechts – User + Rolle (Cormorant)
+// Zeile 2: links – aktueller Seitentitel (Almendra, Gold)
 
 import { getCurrentUser } from "./auth.js";
 import { supabase } from "./supabase.js";
@@ -14,11 +14,11 @@ import { supabase } from "./supabase.js";
 const kopfContainer = document.getElementById("kopf-container");
 
 /* ==========================================================================
-   Tooltitel aus URL ableiten
+   Seitentitel aus URL ableiten
    ========================================================================== */
 
-function getToolTitleFromPath() {
-    const path = window.location.pathname;
+function getPageTitle() {
+    const path = window.location.pathname.toLowerCase();
 
     if (path.includes("dashboard"))   return "Dashboard";
     if (path.includes("fleet"))       return "Flotte";
@@ -39,12 +39,11 @@ function getToolTitleFromPath() {
    ========================================================================== */
 
 function getRoleIcon(role) {
-    if (role === "Admin") return "🎖️";
-    return "🪖"; // Member (Default)
+    return role === "Admin" ? "🎖️" : "🪖";
 }
 
 /* ==========================================================================
-   Header erzeugen
+   Header bauen
    ========================================================================== */
 
 async function buildHeader() {
@@ -68,20 +67,26 @@ async function buildHeader() {
         return;
     }
 
-    const toolTitle = getToolTitleFromPath();
-    const roleIcon = getRoleIcon(profile.role);
-
     kopfContainer.innerHTML = `
-        <div class="kopf-zeile oben">
+        <div class="kopf-zeile oben" style="
+            justify-content: flex-end;
+            font-family: var(--font-serif);
+        ">
             <div class="user-info">
-                ${roleIcon}
-                <span class="username">${profile.username}</span>
-                <span class="user-role">(${profile.role})</span>
+                ${getRoleIcon(profile.role)}
+                ${profile.username} (${profile.role})
             </div>
         </div>
 
-        <div class="kopf-zeile unten">
-            <div class="tool-title">${toolTitle}</div>
+        <div class="kopf-zeile unten" style="
+            justify-content: flex-start;
+        ">
+            <div class="tool-title" style="
+                font-family: var(--font-smallcaps);
+                color: var(--color-brass);
+            ">
+                ${getPageTitle()}
+            </div>
         </div>
     `;
 }
