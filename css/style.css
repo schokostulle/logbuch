@@ -198,7 +198,31 @@ body {
     z-index: 10;
 }
 
+/* ==========================================================================
+   KOPFZEILE – TYPO & AUSRICHTUNG
+   ========================================================================== */
 
+/* Zeile 1 – rechts, Cormorant */
+.kopf-zeile.oben {
+    display: flex;
+    justify-content: flex-end;
+    font-family: var(--font-serif);
+    font-size: var(--font-size-s);
+    color: var(--color-text-muted);
+}
+
+/* Zeile 2 – links, Almendra, Gold */
+.kopf-zeile.unten {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.tool-title {
+    font-family: var(--font-smallcaps);
+    font-size: var(--font-size-xl);
+    letter-spacing: 1px;
+    color: var(--color-brass);
+}
 
 /* ==========================================================================
    TOOL-INHALT
