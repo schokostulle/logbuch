@@ -1,10 +1,56 @@
+/* ==========================================================================
+   DIPLOMACY TOOL – Maritime / Military
+   Baut auf MEMBER-Tabellenlayout auf
+   ========================================================================== */
+
+/* ==========================================================================
+   WRAPPER
+   ========================================================================== */
+
 .diplomacy-wrapper {
     padding: var(--space-xl);
+    font-family: var(--font-base);
 }
+
+/* ==========================================================================
+   ÜBERSCHRIFTEN
+   ========================================================================== */
 
 .diplomacy-wrapper h2 {
     font-family: var(--font-smallcaps);
     font-size: var(--font-size-xl);
+    letter-spacing: 1px;
+
     color: var(--color-brass);
+
     margin: var(--space-xl) 0 var(--space-m);
 }
+
+/* ==========================================================================
+   TABELLEN
+   (nutzt bewusst .member-table aus member.css / style.css)
+   ========================================================================== */
+
+/* keine Doppeldefinition – member-table bleibt Quelle */
+
+/* ==========================================================================
+   STATUS-FARBEN – ZEILEN
+   ========================================================================== */
+
+/* Neutral */
+.status-neutral {
+    background-color: transparent;
+}
+
+/* Freundlich – grünlich */
+.status-friendly {
+    background-color: rgba(79, 138, 106, 0.18);
+}
+
+/* Feindlich – rot / alarm */
+.status-hostile {
+    background-color: rgba(161, 74, 74, 0.18);
+}
+
+/* Hover bleibt dominant */
+.member-table tbody
