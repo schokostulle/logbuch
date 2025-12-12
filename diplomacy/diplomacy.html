@@ -1,43 +1,52 @@
-<section class="tool-content">
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <div class="diplomacy-wrapper">
+<title>Dashboard – Community Webapp</title>
 
-        <!-- ================= ALLIANZEN ================= -->
+<!-- Global Theme -->
+<link rel="stylesheet" href="../css/root.css">
+<link rel="stylesheet" href="../css/style.css">
 
-        <h2 class="diplomacy-title">Allianzen</h2>
+<!-- Maritime Schriftarten -->
+<link href="https://fonts.googleapis.com/css2?family=Estonia&family=Almendra+SC&family=Cormorant+Garamond:wght@400;600&family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-        <table class="member-table">
-            <thead>
-                <tr>
-                    <th>Allianz&nbsp;ID</th>
-                    <th>Kürzel</th>
-                    <th>Status</th>
-                    <th>Aktion</th>
-                </tr>
-            </thead>
-            <tbody id="diplomacy-alliance-body">
-                <!-- wird später per JS gefüllt -->
-            </tbody>
-        </table>
+<!-- Dashboard Styles (falls benötigt) -->
+<link rel="stylesheet" href="dashboard.css">
 
-        <!-- ================= SPIELER ================= -->
+</head>
+<body>
 
-        <h2 class="diplomacy-title">Spieler</h2>
+<div class="layout-container">
 
-        <table class="member-table">
-            <thead>
-                <tr>
-                    <th>Spieler&nbsp;ID</th>
-                    <th>Name</th>
-                    <th>Status</th>
-                    <th>Aktion</th>
-                </tr>
-            </thead>
-            <tbody id="diplomacy-player-body">
-                <!-- wird später per JS gefüllt -->
-            </tbody>
-        </table>
+    <!-- Navigation -->
+    <nav id="nav-container"></nav>
 
-    </div>
+    <!-- Hauptbereich -->
+    <main class="content-area">
 
-</section>
+        <!-- Kopfbereich -->
+        <header id="kopf-container"></header>
+
+        <!-- Dashboard-Inhalt -->
+        <section id="tool-content" class="tool-content">
+            <!-- dashboard.js setzt hier den Inhalt -->
+        </section>
+
+    </main>
+
+</div>
+
+<!-- Globale JS-Module -->
+<script type="module" src="../js/supabase.js"></script>
+<script type="module" src="../js/auth.js"></script>
+<script type="module" src="../js/navigation.js"></script>
+<script type="module" src="../js/kopf.js"></script>
+
+<!-- Dashboard-spezifisches Script -->
+<script type="module" src="dashboard.js"></script>
+
+</body>
+</html>
