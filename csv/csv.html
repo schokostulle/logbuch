@@ -33,39 +33,47 @@
         <!-- Tool-Inhalt -->
         <section class="csv-wrapper">
 
-    <h2 class="csv-title">CSV Import</h2>
+            <h2>CSV Import</h2>
 
-    <div class="csv-controls">
-        <input type="file" id="csv-file" accept=".csv">
-        <button class="btn btn-primary" id="upload-btn">CSV hochladen</button>
-        <button class="btn btn-secondary" id="delete-btn">Alle Daten löschen</button>
-    </div>
+            <div class="csv-controls">
+                <input type="file" id="csv-file" accept=".csv">
 
-    <div id="csv-status"></div>
+                <button class="csv-btn" id="upload-btn">
+                    CSV hochladen
+                </button>
 
-    <div class="csv-table-wrapper">
-        <table class="csv-table">
-            <thead>
-                <tr>
-                    <th>Oz</th>
-                    <th>Ig</th>
-                    <th>In</th>
-                    <th>Inselname</th>
-                    <th>Spieler ID</th>
-                    <th>Spielername</th>
-                    <th>Allianz ID</th>
-                    <th>Allianzkürzel</th>
-                    <th>Allianzname</th>
-                    <th>Punkte</th>
-                </tr>
-            </thead>
-            <tbody id="csv-table-body">
-                <!-- Daten -->
-            </tbody>
-        </table>
-    </div>
+                <button class="csv-btn" id="delete-btn">
+                    Alle Daten löschen
+                </button>
+            </div>
 
-</section>
+            <div id="csv-status"></div>
+
+            <!-- Scrollbarer Tabellenbereich -->
+            <div class="csv-table-wrapper">
+                <table class="csv-table">
+                    <thead>
+                        <tr>
+                            <th>Oz</th>
+                            <th>Ig</th>
+                            <th>In</th>
+                            <th>Inselname</th>
+                            <th>Spieler ID</th>
+                            <th>Spielername</th>
+                            <th>Allianz ID</th>
+                            <th>Allianzkürzel</th>
+                            <th>Allianzname</th>
+                            <th>Punkte</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="csv-table-body">
+                        <!-- Wird durch csv.js gefüllt -->
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
 
     </main>
 
