@@ -32,7 +32,58 @@
 
         <!-- Tool-Inhalt -->
         <section id="tool-content" class="tool-content">
-            <!-- Diplomacy-HTML kommt hier hinein -->
+           <div class="diplomacy-wrapper">
+
+    <!-- =========================
+         ALLIANZEN
+         ========================= -->
+
+    <h2 class="diplomacy-title">Allianzen</h2>
+
+    <table class="member-table">
+        <thead>
+            <tr>
+                <th>Allianz&nbsp;ID</th>
+                <th>Kürzel</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="diplomacy-alliance-body">
+            <!-- Beispiel-Zeile (wird per JS erzeugt)
+            <tr>
+                <td>123</td>
+                <td>ABC</td>
+                <td class="status-icons">
+                    <button data-status="friendly" aria-label="freundlich">🟢</button>
+                    <button data-status="neutral" aria-label="neutral" class="active">🟡</button>
+                    <button data-status="hostile" aria-label="feindlich">🔴</button>
+                </td>
+            </tr>
+            -->
+        </tbody>
+    </table>
+
+
+    <!-- =========================
+         SPIELER
+         ========================= -->
+
+    <h2 class="diplomacy-title">Spieler</h2>
+
+    <table class="member-table">
+        <thead>
+            <tr>
+                <th>Spieler&nbsp;ID</th>
+                <th>Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="diplomacy-player-body">
+            <!-- Analog zu Allianzen -->
+        </tbody>
+    </table>
+
+</div>
         </section>
 
     </main>
