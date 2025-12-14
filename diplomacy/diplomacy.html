@@ -11,10 +11,9 @@
     <link rel="stylesheet" href="../css/style.css">
 
     <!-- Maritime Schriftarten -->
-    <link href="https://fonts.googleapis.com/css2?family=Estonia&family=Almendra+SC&family=Cormorant+Garamond:wght@400;600&family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
-    <!-- Tool-spezifisches CSS (kommt später, aktuell leer) -->
-    <!-- <link rel="stylesheet" href="diplomacy.css"> -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Estonia&family=Almendra+SC&family=Cormorant+Garamond:wght@400;600&family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
@@ -32,58 +31,45 @@
 
         <!-- Tool-Inhalt -->
         <section id="tool-content" class="tool-content">
-           <div class="diplomacy-wrapper">
 
-    <!-- =========================
-         ALLIANZEN
-         ========================= -->
+            <div class="diplomacy-wrapper">
 
-    <h2 class="diplomacy-title">Allianzen</h2>
+                <!-- ================= ALLIANZEN ================= -->
 
-    <table class="member-table">
-        <thead>
-            <tr>
-                <th>Allianz&nbsp;ID</th>
-                <th>Kürzel</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody id="diplomacy-alliance-body">
-            <!-- Beispiel-Zeile (wird per JS erzeugt)
-            <tr>
-                <td>123</td>
-                <td>ABC</td>
-                <td class="status-icons">
-                    <button data-status="friendly" aria-label="freundlich">🟢</button>
-                    <button data-status="neutral" aria-label="neutral" class="active">🟡</button>
-                    <button data-status="hostile" aria-label="feindlich">🔴</button>
-                </td>
-            </tr>
-            -->
-        </tbody>
-    </table>
+                <h2 class="diplomacy-title">Allianzen</h2>
 
+                <table class="member-table">
+                    <thead>
+                        <tr>
+                            <th>Allianz&nbsp;ID</th>
+                            <th>Kürzel</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="alliance-body">
+                        <!-- Wird vollständig durch diplomacy.js erzeugt -->
+                    </tbody>
+                </table>
 
-    <!-- =========================
-         SPIELER
-         ========================= -->
+                <!-- ================= SPIELER ================= -->
 
-    <h2 class="diplomacy-title">Spieler</h2>
+                <h2 class="diplomacy-title">Spieler</h2>
 
-    <table class="member-table">
-        <thead>
-            <tr>
-                <th>Spieler&nbsp;ID</th>
-                <th>Name</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody id="diplomacy-player-body">
-            <!-- Analog zu Allianzen -->
-        </tbody>
-    </table>
+                <table class="member-table">
+                    <thead>
+                        <tr>
+                            <th>Spieler&nbsp;ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="player-body">
+                        <!-- Wird vollständig durch diplomacy.js erzeugt -->
+                    </tbody>
+                </table>
 
-</div>
+            </div>
+
         </section>
 
     </main>
@@ -96,8 +82,8 @@
 <script type="module" src="../js/navigation.js"></script>
 <script type="module" src="../js/kopf.js"></script>
 
-<!-- Tool-Logik (kommt später, aktuell leer) -->
-<!-- <script type="module" src="diplomacy.js"></script> -->
+<!-- Tool-Logik -->
+<script type="module" src="diplomacy.js"></script>
 
 </body>
 </html>
