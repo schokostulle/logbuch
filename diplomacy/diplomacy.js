@@ -1,11 +1,8 @@
-// diplomacy.js
-// Phase C: Reine Anzeige
-// - Datengrundlage: csv_data
-// - Jede Allianz-ID / Spieler-ID genau 1×
-// - Status nur visuell (🟡 neutral)
-// - KEINE Speicherung
-// - KEINE Vererbung
-// - KEIN CSS
+// diplomacy.js — Phase D
+// Frontend-Status + Vererbung
+// KEINE Speicherung
+// KEIN CSS
+// KEIN csv_data Update
 
 import { supabase } from "../js/supabase.js";
 
@@ -13,37 +10,60 @@ import { supabase } from "../js/supabase.js";
 const allianceBody = document.getElementById("diplomacy-alliance-body");
 const playerBody   = document.getElementById("diplomacy-player-body");
 
-/* Status-Icons (neutral voreingestellt) */
-function statusIcons() {
-    return `
-        <button data-status="friendly" aria-label="freundlich">🟢</button>
-        <button data-status="neutral" aria-label="neutral" class="active">🟡</button>
-        <button data-status="hostile" aria-label="feindlich">🔴</button>
-    `;
+/* Status */
+const STATUS = ["friendly", "neutral", "hostile"];
+const ICON = {
+    friendly: "🟢",
+    neutral: "🟡",
+    hostile: "🔴"
+};
+
+/* Frontend-State */
+const allianceStatusMap = new Map(); // alliance_id -> status
+const playerStatusMap   = new Map(); // player_id   -> status (manuell)
+
+/* =========================================================
+   STATUS ICONS
+   ========================================================= */
+
+function statusIcons(current, onChange) {
+    const wrapper = document.createElement("div");
+
+    STATUS.forEach(status => {
+        const btn = document.createElement("button");
+        btn.textContent = ICON[status];
+        btn.dataset.status = status;
+
+        if (status === current) {
+            btn.disabled = true;
+        }
+
+        btn.onclick = () => onChange(status);
+        wrapper.appendChild(btn);
+    });
+
+    return wrapper;
 }
 
 /* =========================================================
-   ALLIANZEN – eindeutig aus csv_data
+   ALLIANZEN
    ========================================================= */
 
 async function loadAlliances() {
-
     const { data, error } = await supabase
         .from("csv_data")
         .select("alliance_id, alliance_tag")
         .not("alliance_id", "is", null);
 
-    if (error) {
-        console.error("Fehler beim Laden der Allianzen", error);
-        return;
-    }
+    if (error) return console.error(error);
 
-    /* Eindeutige Allianzen */
     const map = new Map();
-
-    data.forEach(row => {
-        if (!map.has(row.alliance_id)) {
-            map.set(row.alliance_id, row.alliance_tag);
+    data.forEach(r => {
+        if (!map.has(r.alliance_id)) {
+            map.set(r.alliance_id, r.alliance_tag);
+            if (!allianceStatusMap.has(r.alliance_id)) {
+                allianceStatusMap.set(r.alliance_id, "neutral");
+            }
         }
     });
 
@@ -51,53 +71,85 @@ async function loadAlliances() {
 
     for (const [id, tag] of map.entries()) {
         const tr = document.createElement("tr");
+
+        const status = allianceStatusMap.get(id);
+
+        const statusCell = document.createElement("td");
+        statusCell.appendChild(
+            statusIcons(status, newStatus => {
+                allianceStatusMap.set(id, newStatus);
+                renderPlayers(); // Vererbung
+                loadAlliances(); // Re-render
+            })
+        );
+
         tr.innerHTML = `
             <td>${id}</td>
             <td>${tag ?? ""}</td>
-            <td class="status-icons">
-                ${statusIcons()}
-            </td>
         `;
+        tr.appendChild(statusCell);
         allianceBody.appendChild(tr);
     }
 }
 
 /* =========================================================
-   SPIELER – eindeutig aus csv_data
+   SPIELER
    ========================================================= */
 
-async function loadPlayers() {
+let playerSource = [];
 
+async function loadPlayers() {
     const { data, error } = await supabase
         .from("csv_data")
-        .select("player_id, player_name")
+        .select("player_id, player_name, alliance_id")
         .not("player_id", "is", null);
 
-    if (error) {
-        console.error("Fehler beim Laden der Spieler", error);
-        return;
-    }
+    if (error) return console.error(error);
 
-    /* Eindeutige Spieler */
     const map = new Map();
-
-    data.forEach(row => {
-        if (!map.has(row.player_id)) {
-            map.set(row.player_id, row.player_name);
+    data.forEach(r => {
+        if (!map.has(r.player_id)) {
+            map.set(r.player_id, {
+                name: r.player_name,
+                alliance_id: r.alliance_id
+            });
         }
     });
 
+    playerSource = [...map.entries()];
+    renderPlayers();
+}
+
+function renderPlayers() {
     playerBody.innerHTML = "";
 
-    for (const [id, name] of map.entries()) {
+    for (const [id, info] of playerSource) {
+
+        // Statusauflösung:
+        // 1. Manuell gesetzter Spielerstatus
+        // 2. Allianzstatus
+        // 3. neutral
+        const status =
+            playerStatusMap.get(id) ??
+            allianceStatusMap.get(info.alliance_id) ??
+            "neutral";
+
         const tr = document.createElement("tr");
+
+        const statusCell = document.createElement("td");
+        statusCell.appendChild(
+            statusIcons(status, newStatus => {
+                playerStatusMap.set(id, newStatus); // überschreibt Allianz
+                renderPlayers();
+            })
+        );
+
         tr.innerHTML = `
             <td>${id}</td>
-            <td>${name ?? ""}</td>
-            <td class="status-icons">
-                ${statusIcons()}
-            </td>
+            <td>${info.name ?? ""}</td>
         `;
+        tr.appendChild(statusCell);
+
         playerBody.appendChild(tr);
     }
 }
