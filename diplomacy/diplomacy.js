@@ -24,6 +24,7 @@ function statusIcons(current, onChange, onReset = null) {
 
     STATUS.forEach(status => {
         const btn = document.createElement("button");
+        btn.type = "button";
         btn.textContent = ICON[status];
         btn.disabled = status === current;
         btn.onclick = () => onChange(status);
@@ -32,6 +33,7 @@ function statusIcons(current, onChange, onReset = null) {
 
     if (onReset) {
         const reset = document.createElement("button");
+        reset.type = "button";
         reset.textContent = "🔄";
         reset.onclick = onReset;
         wrap.appendChild(reset);
@@ -52,14 +54,14 @@ async function loadAlliances() {
         .select("alliance_id, alliance_tag")
         .neq("alliance_id", null);
 
-    const map = new Map();
+    const allianceMap = new Map();
     csvAlliances.forEach(a => {
-        if (!map.has(a.alliance_id)) {
-            map.set(a.alliance_id, a.alliance_tag);
+        if (!allianceMap.has(a.alliance_id)) {
+            allianceMap.set(a.alliance_id, a.alliance_tag);
         }
     });
 
-    /* bestehende Diplomatie-Status */
+    /* gespeicherte Allianz-Status */
     const { data: stored } = await supabase
         .from("diplomacy_alliances")
         .select("*");
@@ -69,35 +71,42 @@ async function loadAlliances() {
 
     allianceBody.innerHTML = "";
 
-    for (const [id, tag] of map.entries()) {
-        const status = statusMap.get(id) || "neutral";
+    for (const [allianceId, tag] of allianceMap.entries()) {
+
+        const status = statusMap.get(allianceId) || "neutral";
 
         const tr = document.createElement("tr");
         tr.className = `status-${status}`;
 
         const statusCell = document.createElement("td");
+
         statusCell.appendChild(
             statusIcons(status, async newStatus => {
 
+                /* Allianzstatus speichern */
                 await supabase
                     .from("diplomacy_alliances")
                     .upsert({
-                        alliance_id: id,
+                        alliance_id: allianceId,
                         alliance_tag: tag,
                         status: newStatus
                     });
 
-                /* Vererbung: Spieler-Overrides löschen */
-                await supabase
-                    .from("diplomacy_players")
-                    .delete()
-                    .in(
-                        "player_id",
-                        supabase
-                            .from("csv_data")
-                            .select("player_id")
-                            .eq("alliance_id", id)
-                    );
+                /* 👇 KORREKTE VERERBUNG: Spieler-Overrides löschen */
+                const { data: players } = await supabase
+                    .from("csv_data")
+                    .select("player_id")
+                    .eq("alliance_id", allianceId)
+                    .neq("player_id", null);
+
+                const ids = players.map(p => p.player_id);
+
+                if (ids.length) {
+                    await supabase
+                        .from("diplomacy_players")
+                        .delete()
+                        .in("player_id", ids);
+                }
 
                 loadAlliances();
                 loadPlayers();
@@ -105,7 +114,7 @@ async function loadAlliances() {
         );
 
         tr.innerHTML = `
-            <td>${id}</td>
+            <td>${allianceId}</td>
             <td>${tag}</td>
         `;
         tr.appendChild(statusCell);
@@ -126,10 +135,10 @@ async function loadPlayers() {
         .select("player_id, player_name, alliance_id")
         .neq("player_id", null);
 
-    const map = new Map();
+    const playerMap = new Map();
     csvPlayers.forEach(p => {
-        if (!map.has(p.player_id)) {
-            map.set(p.player_id, {
+        if (!playerMap.has(p.player_id)) {
+            playerMap.set(p.player_id, {
                 name: p.player_name,
                 alliance_id: p.alliance_id
             });
@@ -154,16 +163,17 @@ async function loadPlayers() {
 
     playerBody.innerHTML = "";
 
-    for (const [id, p] of map.entries()) {
+    for (const [playerId, p] of playerMap.entries()) {
 
         const inherited = allianceStatus.get(p.alliance_id) || "neutral";
-        const override  = playerStatus.get(id);
+        const override  = playerStatus.get(playerId);
         const status    = override || inherited;
 
         const tr = document.createElement("tr");
         tr.className = `status-${status}`;
 
         const statusCell = document.createElement("td");
+
         statusCell.appendChild(
             statusIcons(
                 status,
@@ -173,7 +183,7 @@ async function loadPlayers() {
                     await supabase
                         .from("diplomacy_players")
                         .upsert({
-                            player_id: id,
+                            player_id: playerId,
                             player_name: p.name,
                             status: newStatus
                         });
@@ -181,12 +191,12 @@ async function loadPlayers() {
                     loadPlayers();
                 },
 
-                /* Reset → Override löschen */
+                /* Override entfernen → zurück zur Allianz */
                 async () => {
                     await supabase
                         .from("diplomacy_players")
                         .delete()
-                        .eq("player_id", id);
+                        .eq("player_id", playerId);
 
                     loadPlayers();
                 }
@@ -194,7 +204,7 @@ async function loadPlayers() {
         );
 
         tr.innerHTML = `
-            <td>${id}</td>
+            <td>${playerId}</td>
             <td>${p.name}</td>
         `;
         tr.appendChild(statusCell);
