@@ -10,10 +10,8 @@
     <link rel="stylesheet" href="../css/root.css">
     <link rel="stylesheet" href="../css/style.css">
 
-    <!-- Maritime Schriftarten -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Estonia&family=Almendra+SC&family=Cormorant+Garamond:wght@400;600&family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap"
-        rel="stylesheet">
+    <!-- Schriftarten (Projektstandard) -->
+    <link href="https://fonts.googleapis.com/css2?family=Estonia&family=Almendra+SC&family=Cormorant+Garamond:wght@400;600&family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -26,50 +24,16 @@
     <!-- Hauptbereich -->
     <main class="content-area">
 
-        <!-- Kopfzeile -->
+        <!-- Kopf -->
         <header id="kopf-container"></header>
 
-        <!-- Tool-Inhalt -->
-        <section id="tool-content" class="tool-content">
-
-            <div class="diplomacy-wrapper">
-
-                <!-- ================= ALLIANZEN ================= -->
-
-                <h2 class="diplomacy-title">Allianzen</h2>
-
-                <table class="member-table">
-                    <thead>
-                        <tr>
-                            <th>Allianz&nbsp;ID</th>
-                            <th>Kürzel</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="alliance-body">
-                        <!-- Wird vollständig durch diplomacy.js erzeugt -->
-                    </tbody>
-                </table>
-
-                <!-- ================= SPIELER ================= -->
-
-                <h2 class="diplomacy-title">Spieler</h2>
-
-                <table class="member-table">
-                    <thead>
-                        <tr>
-                            <th>Spieler&nbsp;ID</th>
-                            <th>Name</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="player-body">
-                        <!-- Wird vollständig durch diplomacy.js erzeugt -->
-                    </tbody>
-                </table>
-
-            </div>
-
+        <!-- TOOL: DIPLOMACY -->
+        <section class="tool-content">
+            <!--
+                Diplomacy Tool
+                - Tabellen werden später hier eingesetzt
+                - Keine Inhalte ohne explizite Freigabe
+            -->
         </section>
 
     </main>
@@ -81,9 +45,6 @@
 <script type="module" src="../js/auth.js"></script>
 <script type="module" src="../js/navigation.js"></script>
 <script type="module" src="../js/kopf.js"></script>
-
-<!-- Tool-Logik -->
-<script type="module" src="diplomacy.js"></script>
 
 </body>
 </html>
