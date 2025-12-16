@@ -1,221 +1,130 @@
 import { supabase } from "../js/supabase.js";
 
-/* ==========================================================================
-   KONSTANTEN
-   ========================================================================== */
+/* ==========================================================
+   DOM
+   ========================================================== */
 
-const allianceBody = document.getElementById("alliance-body");
-const playerBody   = document.getElementById("player-body");
+const toolContent = document.querySelector(".tool-content");
 
-const STATUS = ["friendly", "neutral", "hostile"];
+/* ==========================================================
+   STATUS ICONS (nur Anzeige)
+   ========================================================== */
 
-const ICON = {
-    friendly: "🟢",
-    neutral:  "🟡",
-    hostile:  "🔴"
-};
-
-/* ==========================================================================
-   STATUS-ICON-GRUPPE
-   ========================================================================== */
-
-function statusIcons(current, onChange, onReset = null) {
-    const wrap = document.createElement("div");
-
-    STATUS.forEach(status => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.textContent = ICON[status];
-        btn.disabled = status === current;
-        btn.onclick = () => onChange(status);
-        wrap.appendChild(btn);
-    });
-
-    if (onReset) {
-        const reset = document.createElement("button");
-        reset.type = "button";
-        reset.textContent = "🔄";
-        reset.onclick = onReset;
-        wrap.appendChild(reset);
-    }
-
-    return wrap;
+function statusIcons(status = "neutral") {
+    return `
+        <span title="freundlich">🟢</span>
+        <span title="neutral">🟡</span>
+        <span title="feindlich">🔴</span>
+    `;
 }
 
-/* ==========================================================================
-   ALLIANZEN
-   ========================================================================== */
+/* ==========================================================
+   ALLIANZEN – EINDEUTIG
+   ========================================================== */
 
-async function loadAlliances() {
-
-    /* eindeutige Allianzen aus CSV */
-    const { data: csvAlliances } = await supabase
+async function renderAlliances() {
+    const { data, error } = await supabase
         .from("csv_data")
         .select("alliance_id, alliance_tag")
-        .neq("alliance_id", null);
+        .not("alliance_id", "is", null);
 
-    const allianceMap = new Map();
-    csvAlliances.forEach(a => {
-        if (!allianceMap.has(a.alliance_id)) {
-            allianceMap.set(a.alliance_id, a.alliance_tag);
+    if (error) {
+        toolContent.innerHTML = "Fehler beim Laden der Allianzen";
+        return;
+    }
+
+    const map = new Map();
+
+    data.forEach(row => {
+        if (!map.has(row.alliance_id)) {
+            map.set(row.alliance_id, row.alliance_tag);
         }
     });
 
-    /* gespeicherte Allianz-Status */
-    const { data: stored } = await supabase
-        .from("diplomacy_alliances")
-        .select("*");
+    const rows = [...map.entries()]
+        .sort((a, b) => a[1].localeCompare(b[1]))
+        .map(([id, tag]) => `
+            <tr>
+                <td>${tag}</td>
+                <td>${statusIcons()}</td>
+            </tr>
+        `)
+        .join("");
 
-    const statusMap = new Map();
-    stored.forEach(a => statusMap.set(a.alliance_id, a.status));
-
-    allianceBody.innerHTML = "";
-
-    for (const [allianceId, tag] of allianceMap.entries()) {
-
-        const status = statusMap.get(allianceId) || "neutral";
-
-        const tr = document.createElement("tr");
-        tr.className = `status-${status}`;
-
-        const statusCell = document.createElement("td");
-
-        statusCell.appendChild(
-            statusIcons(status, async newStatus => {
-
-                /* Allianzstatus speichern */
-                await supabase
-                    .from("diplomacy_alliances")
-                    .upsert({
-                        alliance_id: allianceId,
-                        alliance_tag: tag,
-                        status: newStatus
-                    });
-
-                /* 👇 KORREKTE VERERBUNG: Spieler-Overrides löschen */
-                const { data: players } = await supabase
-                    .from("csv_data")
-                    .select("player_id")
-                    .eq("alliance_id", allianceId)
-                    .neq("player_id", null);
-
-                const ids = players.map(p => p.player_id);
-
-                if (ids.length) {
-                    await supabase
-                        .from("diplomacy_players")
-                        .delete()
-                        .in("player_id", ids);
-                }
-
-                loadAlliances();
-                loadPlayers();
-            })
-        );
-
-        tr.innerHTML = `
-            <td>${allianceId}</td>
-            <td>${tag}</td>
-        `;
-        tr.appendChild(statusCell);
-
-        allianceBody.appendChild(tr);
-    }
+    return `
+        <h2>Allianzen</h2>
+        <table class="member-table">
+            <thead>
+                <tr>
+                    <th>Kürzel</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rows}
+            </tbody>
+        </table>
+    `;
 }
 
-/* ==========================================================================
-   SPIELER
-   ========================================================================== */
+/* ==========================================================
+   SPIELER – EINDEUTIG
+   ========================================================== */
 
-async function loadPlayers() {
-
-    /* eindeutige Spieler aus CSV */
-    const { data: csvPlayers } = await supabase
+async function renderPlayers() {
+    const { data, error } = await supabase
         .from("csv_data")
-        .select("player_id, player_name, alliance_id")
-        .neq("player_id", null);
+        .select("player_id, player_name")
+        .not("player_id", "is", null);
 
-    const playerMap = new Map();
-    csvPlayers.forEach(p => {
-        if (!playerMap.has(p.player_id)) {
-            playerMap.set(p.player_id, {
-                name: p.player_name,
-                alliance_id: p.alliance_id
-            });
+    if (error) {
+        toolContent.innerHTML = "Fehler beim Laden der Spieler";
+        return;
+    }
+
+    const map = new Map();
+
+    data.forEach(row => {
+        if (!map.has(row.player_id)) {
+            map.set(row.player_id, row.player_name);
         }
     });
 
-    /* Allianz-Status */
-    const { data: alliances } = await supabase
-        .from("diplomacy_alliances")
-        .select("*");
+    const rows = [...map.entries()]
+        .sort((a, b) => a[1].localeCompare(b[1]))
+        .map(([id, name]) => `
+            <tr>
+                <td>${name}</td>
+                <td>${statusIcons()}</td>
+            </tr>
+        `)
+        .join("");
 
-    const allianceStatus = new Map();
-    alliances.forEach(a => allianceStatus.set(a.alliance_id, a.status));
-
-    /* Spieler-Overrides */
-    const { data: players } = await supabase
-        .from("diplomacy_players")
-        .select("*");
-
-    const playerStatus = new Map();
-    players.forEach(p => playerStatus.set(p.player_id, p.status));
-
-    playerBody.innerHTML = "";
-
-    for (const [playerId, p] of playerMap.entries()) {
-
-        const inherited = allianceStatus.get(p.alliance_id) || "neutral";
-        const override  = playerStatus.get(playerId);
-        const status    = override || inherited;
-
-        const tr = document.createElement("tr");
-        tr.className = `status-${status}`;
-
-        const statusCell = document.createElement("td");
-
-        statusCell.appendChild(
-            statusIcons(
-                status,
-
-                /* Override setzen */
-                async newStatus => {
-                    await supabase
-                        .from("diplomacy_players")
-                        .upsert({
-                            player_id: playerId,
-                            player_name: p.name,
-                            status: newStatus
-                        });
-
-                    loadPlayers();
-                },
-
-                /* Override entfernen → zurück zur Allianz */
-                async () => {
-                    await supabase
-                        .from("diplomacy_players")
-                        .delete()
-                        .eq("player_id", playerId);
-
-                    loadPlayers();
-                }
-            )
-        );
-
-        tr.innerHTML = `
-            <td>${playerId}</td>
-            <td>${p.name}</td>
-        `;
-        tr.appendChild(statusCell);
-
-        playerBody.appendChild(tr);
-    }
+    return `
+        <h2>Spieler</h2>
+        <table class="member-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rows}
+            </tbody>
+        </table>
+    `;
 }
 
-/* ==========================================================================
-   INIT
-   ========================================================================== */
+/* ==========================================================
+   INIT – NUR RENDER
+   ========================================================== */
 
-loadAlliances();
-loadPlayers();
+async function initDiplomacy() {
+    const alliancesHTML = await renderAlliances();
+    const playersHTML   = await renderPlayers();
+
+    toolContent.innerHTML = alliancesHTML + playersHTML;
+}
+
+initDiplomacy();
