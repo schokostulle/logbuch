@@ -12,6 +12,9 @@
 
     <!-- Schriftarten (Projektstandard) -->
     <link href="https://fonts.googleapis.com/css2?family=Estonia&family=Almendra+SC&family=Cormorant+Garamond:wght@400;600&family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Tool-spezifisches CSS -->
+    <link rel="stylesheet" href="diplomacy.css">
 </head>
 
 <body>
@@ -29,11 +32,74 @@
 
         <!-- TOOL: DIPLOMACY -->
         <section class="tool-content">
-            <!--
-                Diplomacy Tool
-                - Tabellen werden später hier eingesetzt
-                - Keine Inhalte ohne explizite Freigabe
-            -->
+
+            <div class="diplomacy-wrapper">
+
+                <!-- ALLIANZ-DIPLOMATIE -->
+                <section class="diplomacy-section">
+
+                    <h2 class="diplomacy-title">
+                        Allianz-Diplomatie
+                    </h2>
+
+                    <!-- Statusausgabe -->
+                    <div id="diplomacy-alliance-status"></div>
+
+                    <!-- Tabelle: Allianzen -->
+                    <div class="diplomacy-table-wrapper">
+                        <table class="diplomacy-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Allianzkürzel</th>
+                                    <th>Status</th>
+                                    <th>Aktion</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="alliance-table-body">
+                                <!-- Wird durch diplomacy.js gefüllt -->
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                </section>
+
+
+                <!-- SPIELER-DIPLOMATIE -->
+                <section class="diplomacy-section">
+
+                    <h2 class="diplomacy-title">
+                        Spieler-Diplomatie
+                    </h2>
+
+                    <!-- Statusausgabe -->
+                    <div id="diplomacy-player-status"></div>
+
+                    <!-- Tabelle: Spieler -->
+                    <div class="diplomacy-table-wrapper">
+                        <table class="diplomacy-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Spielername</th>
+                                    <th>Status</th>
+                                    <th>Aktion</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="player-table-body">
+                                <!-- Wird durch diplomacy.js gefüllt -->
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                </section>
+
+            </div>
+
         </section>
 
     </main>
@@ -45,6 +111,9 @@
 <script type="module" src="../js/auth.js"></script>
 <script type="module" src="../js/navigation.js"></script>
 <script type="module" src="../js/kopf.js"></script>
+
+<!-- Tool-spezifische Logik -->
+<script type="module" src="diplomacy.js"></script>
 
 </body>
 </html>
