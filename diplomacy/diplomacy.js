@@ -4,10 +4,11 @@ import { supabase } from "../js/supabase.js";
    DOM
    ========================================================== */
 
-const toolContent = document.querySelector(".tool-content");
+const allianceBody = document.getElementById("alliance-table-body");
+const playerBody   = document.getElementById("player-table-body");
 
 /* ==========================================================
-   STATUS ICONS (nur Anzeige)
+   STATUS ICONS (nur Anzeige, keine Logik)
    ========================================================== */
 
 function statusIcons(status = "neutral") {
@@ -19,17 +20,20 @@ function statusIcons(status = "neutral") {
 }
 
 /* ==========================================================
-   ALLIANZEN – EINDEUTIG
+   ALLIANZEN – EINDEUTIG (per alliance_id)
    ========================================================== */
 
 async function renderAlliances() {
+
     const { data, error } = await supabase
         .from("csv_data")
         .select("alliance_id, alliance_tag")
         .not("alliance_id", "is", null);
 
     if (error) {
-        toolContent.innerHTML = "Fehler beim Laden der Allianzen";
+        allianceBody.innerHTML = `
+            <tr><td colspan="3">Fehler beim Laden der Allianzen</td></tr>
+        `;
         return;
     }
 
@@ -41,44 +45,35 @@ async function renderAlliances() {
         }
     });
 
-    const rows = [...map.entries()]
+    allianceBody.innerHTML = [...map.entries()]
         .sort((a, b) => a[1].localeCompare(b[1]))
         .map(([id, tag]) => `
-            <tr>
+            <tr data-alliance-id="${id}">
                 <td>${tag}</td>
-                <td>${statusIcons()}</td>
+                <td>${statusIcons("neutral")}</td>
+                <td>
+                    <button class="save-btn">Speichern</button>
+                </td>
             </tr>
         `)
         .join("");
-
-    return `
-        <h2>Allianzen</h2>
-        <table class="member-table">
-            <thead>
-                <tr>
-                    <th>Kürzel</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${rows}
-            </tbody>
-        </table>
-    `;
 }
 
 /* ==========================================================
-   SPIELER – EINDEUTIG
+   SPIELER – EINDEUTIG (per player_id)
    ========================================================== */
 
 async function renderPlayers() {
+
     const { data, error } = await supabase
         .from("csv_data")
         .select("player_id, player_name")
         .not("player_id", "is", null);
 
     if (error) {
-        toolContent.innerHTML = "Fehler beim Laden der Spieler";
+        playerBody.innerHTML = `
+            <tr><td colspan="3">Fehler beim Laden der Spieler</td></tr>
+        `;
         return;
     }
 
@@ -90,30 +85,18 @@ async function renderPlayers() {
         }
     });
 
-    const rows = [...map.entries()]
+    playerBody.innerHTML = [...map.entries()]
         .sort((a, b) => a[1].localeCompare(b[1]))
         .map(([id, name]) => `
-            <tr>
+            <tr data-player-id="${id}">
                 <td>${name}</td>
-                <td>${statusIcons()}</td>
+                <td>${statusIcons("neutral")}</td>
+                <td>
+                    <button class="save-btn">Speichern</button>
+                </td>
             </tr>
         `)
         .join("");
-
-    return `
-        <h2>Spieler</h2>
-        <table class="member-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${rows}
-            </tbody>
-        </table>
-    `;
 }
 
 /* ==========================================================
@@ -121,10 +104,8 @@ async function renderPlayers() {
    ========================================================== */
 
 async function initDiplomacy() {
-    const alliancesHTML = await renderAlliances();
-    const playersHTML   = await renderPlayers();
-
-    toolContent.innerHTML = alliancesHTML + playersHTML;
+    await renderAlliances();
+    await renderPlayers();
 }
 
 initDiplomacy();
