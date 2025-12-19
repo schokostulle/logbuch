@@ -8,19 +8,27 @@ const allianceBody = document.getElementById("alliance-table-body");
 const playerBody   = document.getElementById("player-table-body");
 
 /* ==========================================================
-   STATUS ICONS (nur Anzeige, keine Logik)
+   STATUS SELECT (Anzeige + Wert)
    ========================================================== */
 
-function statusIcons(status = "neutral") {
+function statusSelect(defaultStatus = "neutral") {
     return `
-        <span title="freundlich">🟢</span>
-        <span title="neutral">🟡</span>
-        <span title="feindlich">🔴</span>
+        <select class="status-select" data-status="${defaultStatus}">
+            <option value="neutral" ${defaultStatus === "neutral" ? "selected" : ""}>
+                Neutral
+            </option>
+            <option value="friendly" ${defaultStatus === "friendly" ? "selected" : ""}>
+                Freundlich
+            </option>
+            <option value="hostile" ${defaultStatus === "hostile" ? "selected" : ""}>
+                Feindlich
+            </option>
+        </select>
     `;
 }
 
 /* ==========================================================
-   ALLIANZEN – EINDEUTIG (per alliance_id)
+   ALLIANZEN – EINDEUTIG (alliance_id)
    ========================================================== */
 
 async function renderAlliances() {
@@ -31,9 +39,8 @@ async function renderAlliances() {
         .not("alliance_id", "is", null);
 
     if (error) {
-        allianceBody.innerHTML = `
-            <tr><td colspan="3">Fehler beim Laden der Allianzen</td></tr>
-        `;
+        allianceBody.innerHTML =
+            `<tr><td colspan="3">Fehler beim Laden der Allianzen</td></tr>`;
         return;
     }
 
@@ -48,9 +55,9 @@ async function renderAlliances() {
     allianceBody.innerHTML = [...map.entries()]
         .sort((a, b) => a[1].localeCompare(b[1]))
         .map(([id, tag]) => `
-            <tr data-alliance-id="${id}">
+            <tr data-alliance-id="${id}" class="status-neutral">
                 <td>${tag}</td>
-                <td>${statusIcons("neutral")}</td>
+                <td>${statusSelect("neutral")}</td>
                 <td>
                     <button class="save-btn">Speichern</button>
                 </td>
@@ -60,7 +67,7 @@ async function renderAlliances() {
 }
 
 /* ==========================================================
-   SPIELER – EINDEUTIG (per player_id)
+   SPIELER – EINDEUTIG (player_id)
    ========================================================== */
 
 async function renderPlayers() {
@@ -71,9 +78,8 @@ async function renderPlayers() {
         .not("player_id", "is", null);
 
     if (error) {
-        playerBody.innerHTML = `
-            <tr><td colspan="3">Fehler beim Laden der Spieler</td></tr>
-        `;
+        playerBody.innerHTML =
+            `<tr><td colspan="3">Fehler beim Laden der Spieler</td></tr>`;
         return;
     }
 
@@ -88,9 +94,9 @@ async function renderPlayers() {
     playerBody.innerHTML = [...map.entries()]
         .sort((a, b) => a[1].localeCompare(b[1]))
         .map(([id, name]) => `
-            <tr data-player-id="${id}">
+            <tr data-player-id="${id}" class="status-neutral">
                 <td>${name}</td>
-                <td>${statusIcons("neutral")}</td>
+                <td>${statusSelect("neutral")}</td>
                 <td>
                     <button class="save-btn">Speichern</button>
                 </td>
