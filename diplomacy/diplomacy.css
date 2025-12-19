@@ -1,75 +1,111 @@
 /* ==========================================================================
-   DIPLOMACY TOOL – Maritime / Military
-   NUR Ergänzungen
-   KEIN Layout
-   KEINE Tabellenstruktur
+   DIPLOMACY TOOL – Tabellenstil
+   1:1 an MEMBER orientiert
    ========================================================================== */
 
 
 /* ==========================================================================
-   WRAPPER
+   TABELLE – RUMPF & RAHMEN
    ========================================================================== */
 
-.diplomacy-wrapper {
-    padding: var(--space-xl);
-    font-family: var(--font-base);
+.diplomacy-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+
+    background: linear-gradient(
+        to bottom,
+        var(--color-bg-secondary),
+        var(--color-bg)
+    );
+
+    border-radius: var(--radius-m);
+    box-shadow: var(--shadow-m);
+    border: var(--border-width)
+            var(--border-style)
+            var(--border-color-strong);
+
+    overflow: hidden;
+    margin-bottom: var(--space-xl);
 }
 
 
 /* ==========================================================================
-   ÜBERSCHRIFTEN IM CONTENT
+   TABELLENKOPF – BRÜCKE
    ========================================================================== */
 
-.diplomacy-wrapper h2 {
+.diplomacy-table thead th {
+    background: linear-gradient(
+        to bottom,
+        var(--color-ocean),
+        var(--color-ocean-dark)
+    );
+
+    color: var(--color-text-on-dark);
+    padding: var(--space-s) var(--space-m);
+
     font-family: var(--font-smallcaps);
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-s);
     letter-spacing: 1px;
-    color: var(--color-brass);
 
-    margin: var(--space-xl) 0 var(--space-m);
+    text-align: left;
+
+    border-right: var(--border-width-thin)
+                  var(--border-style)
+                  var(--color-overlay-strong);
+}
+
+.diplomacy-table thead th:last-child {
+    border-right: none;
 }
 
 
 /* ==========================================================================
-   STATUS-FARBEN – ZEILEN
-   (nur Farbe, keine Struktur)
+   TABELLENZELLEN – DECK
    ========================================================================== */
 
-/* neutral */
-.status-neutral {
-    background: transparent;
+.diplomacy-table td {
+    padding: var(--space-m);
+
+    border-bottom: var(--border-width-thin)
+                   var(--border-style)
+                   var(--border-color);
+
+    border-right: var(--border-width-thin)
+                  var(--border-style)
+                  var(--border-color);
+
+    vertical-align: middle;
 }
 
-/* friendly */
-.status-friendly {
-    background: var(--color-success-bg);
-}
-
-/* hostile */
-.status-hostile {
-    background: var(--color-error-bg);
+.diplomacy-table td:last-child {
+    border-right: none;
 }
 
 
 /* ==========================================================================
-   HOVER – NUR DIPLOMACY
+   ZEILENINTERAKTION
    ========================================================================== */
 
-.diplomacy-wrapper .diplomacy-table tbody tr:hover {
+.diplomacy-table tbody tr {
+    transition: background var(--animation-fast);
+}
+
+.diplomacy-table tbody tr:hover {
     background: var(--color-overlay-light);
 }
 
 
 /* ==========================================================================
-   STATUS SELECT
+   STATUS-SELECT – IDENTISCH ZU MEMBER
    ========================================================================== */
 
-.status-select {
+.diplomacy-table select.status-select {
     width: 100%;
     padding: var(--space-xs) var(--space-s);
 
-    font-family: var(--font-base);
     font-size: var(--font-size-s);
+    font-family: var(--font-base);
 
     background: var(--color-bg);
     color: var(--color-text);
@@ -82,70 +118,27 @@
     cursor: pointer;
 }
 
-.status-select:focus {
-    outline: none;
-    border-color: var(--color-brass);
-}
-
-
-/* ==========================================================================
-   STATUS SELECT – VISUELLE RÜCKMELDUNG
-   (nur Farbe, keine Logik)
-   ========================================================================== */
-
-.status-select.status-friendly {
-    background: var(--color-success-bg);
-}
-
-.status-select.status-hostile {
-    background: var(--color-error-bg);
-}
-
-.status-select.status-neutral {
-    background: var(--color-bg);
-}
-
-
-/* ==========================================================================
-   BUTTON – IDENTISCH ZU MEMBER
-   ========================================================================== */
-
-.save-btn {
-    width: 100%;
-    padding: var(--space-xs) var(--space-s);
-
-    font-family: var(--font-smallcaps);
-    font-size: var(--font-size-s);
-    letter-spacing: 1px;
-
-    background: linear-gradient(
-        to bottom,
-        var(--color-brass),
-        var(--color-brass-dark)
-    );
-
-    color: #111;
-    border: none;
-    border-radius: var(--radius-s);
-
-    cursor: pointer;
-    box-shadow: var(--shadow-s);
-}
-
-.save-btn:hover {
-    opacity: var(--hover-opacity);
-}
-
-.save-btn:disabled {
-    opacity: 0.4;
+.diplomacy-table select:disabled {
+    background: var(--color-overlay-dark);
+    color: var(--color-text-muted);
     cursor: not-allowed;
 }
 
 
 /* ==========================================================================
-   SAUBERES SEITENENDE
+   RESPONSIVE – HORIZONTAL SCROLL
    ========================================================================== */
 
-.diplomacy-wrapper > *:last-child {
-    margin-bottom: var(--space-xxl);
+@media (max-width: 700px) {
+
+    .diplomacy-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .diplomacy-table th,
+    .diplomacy-table td {
+        white-space: nowrap;
+    }
 }
