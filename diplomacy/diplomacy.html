@@ -35,19 +35,22 @@
 
             <div class="diplomacy-wrapper">
 
-                <!-- ALLIANZ-DIPLOMATIE -->
+                <!-- RESET -->
+                <div class="diplomacy-reset">
+                    <button class="save-btn" id="reset-diplomacy">
+                        Alle Status zurücksetzen
+                    </button>
+                </div>
+
+                <!-- ================= ALLIANZEN ================= -->
                 <section class="diplomacy-section">
 
-                    <h2 class="diplomacy-title">
-                        Allianz-Diplomatie
-                    </h2>
+                    <h2 class="diplomacy-title">Allianz-Diplomatie</h2>
 
-                    <!-- Statusausgabe -->
                     <div id="diplomacy-alliance-status"></div>
 
-                    <!-- Tabelle: Allianzen -->
                     <div class="diplomacy-table-wrapper">
-                        <table class="diplomacy-table">
+                        <table class="member-table diplomacy-table">
 
                             <thead>
                                 <tr>
@@ -58,7 +61,7 @@
                             </thead>
 
                             <tbody id="alliance-table-body">
-                                <!-- Wird durch diplomacy.js gefüllt -->
+                                <!-- diplomacy.js -->
                             </tbody>
 
                         </table>
@@ -66,20 +69,15 @@
 
                 </section>
 
-
-                <!-- SPIELER-DIPLOMATIE -->
+                <!-- ================= SPIELER ================= -->
                 <section class="diplomacy-section">
 
-                    <h2 class="diplomacy-title">
-                        Spieler-Diplomatie
-                    </h2>
+                    <h2 class="diplomacy-title">Spieler-Diplomatie</h2>
 
-                    <!-- Statusausgabe -->
                     <div id="diplomacy-player-status"></div>
 
-                    <!-- Tabelle: Spieler -->
                     <div class="diplomacy-table-wrapper">
-                        <table class="diplomacy-table">
+                        <table class="member-table diplomacy-table">
 
                             <thead>
                                 <tr>
@@ -90,7 +88,7 @@
                             </thead>
 
                             <tbody id="player-table-body">
-                                <!-- Wird durch diplomacy.js gefüllt -->
+                                <!-- diplomacy.js -->
                             </tbody>
 
                         </table>
@@ -112,7 +110,7 @@
 <script type="module" src="../js/navigation.js"></script>
 <script type="module" src="../js/kopf.js"></script>
 
-<!-- Tool-spezifische Logik -->
+<!-- Tool-Logik -->
 <script type="module" src="diplomacy.js"></script>
 
 </body>
