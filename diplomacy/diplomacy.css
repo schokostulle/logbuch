@@ -35,20 +35,27 @@
    (nur Farbe, keine Struktur)
    ========================================================================== */
 
+/* neutral */
 .status-neutral {
     background: transparent;
 }
 
-.status-friendly {
+/* freundlich */
+.status-freundlich {
     background: var(--color-success-bg);
 }
 
-.status-hostile {
+/* feindlich */
+.status-feindlich {
     background: var(--color-error-bg);
 }
 
-/* Hover aus style.css bleibt führend */
-.member-table tbody tr:hover {
+
+/* ==========================================================================
+   HOVER – NUR DIPLOMACY
+   ========================================================================== */
+
+.diplomacy-wrapper .member-table tbody tr:hover {
     background: var(--color-overlay-light);
 }
 
@@ -78,6 +85,24 @@
 .status-select:focus {
     outline: none;
     border-color: var(--color-brass);
+}
+
+
+/* ==========================================================================
+   STATUS SELECT – VISUELLE RÜCKMELDUNG
+   (nur Farbe, keine Logik)
+   ========================================================================== */
+
+.status-select.status-freundlich {
+    background: var(--color-success-bg);
+}
+
+.status-select.status-feindlich {
+    background: var(--color-error-bg);
+}
+
+.status-select.status-neutral {
+    background: var(--color-bg);
 }
 
 
@@ -121,6 +146,6 @@
    SAUBERES SEITENENDE
    ========================================================================== */
 
-.diplomacy-wrapper > table:last-of-type {
+.diplomacy-wrapper > *:last-child {
     margin-bottom: var(--space-xxl);
 }
