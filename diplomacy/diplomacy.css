@@ -40,13 +40,13 @@
     background: transparent;
 }
 
-/* freundlich */
-.status-freundlich {
+/* friendly */
+.status-friendly {
     background: var(--color-success-bg);
 }
 
-/* feindlich */
-.status-feindlich {
+/* hostile */
+.status-hostile {
     background: var(--color-error-bg);
 }
 
@@ -55,7 +55,7 @@
    HOVER – NUR DIPLOMACY
    ========================================================================== */
 
-.diplomacy-wrapper .member-table tbody tr:hover {
+.diplomacy-wrapper .diplomacy-table tbody tr:hover {
     background: var(--color-overlay-light);
 }
 
@@ -93,11 +93,11 @@
    (nur Farbe, keine Logik)
    ========================================================================== */
 
-.status-select.status-freundlich {
+.status-select.status-friendly {
     background: var(--color-success-bg);
 }
 
-.status-select.status-feindlich {
+.status-select.status-hostile {
     background: var(--color-error-bg);
 }
 
