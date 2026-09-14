@@ -94,3 +94,54 @@ tr.bearbeitet td:first-child { border-left: 3px solid #999; }
 #app {
   display: none;
 }
+
+.navbar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #ddd;
+  flex-wrap: wrap;
+}
+
+.navlink {
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #2c7be5;
+  font-size: 0.9rem;
+  background: #eef3fb;
+}
+
+.navlink.active {
+  background: #2c7be5;
+  color: #fff;
+}
+
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.tile {
+  display: block;
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  text-decoration: none;
+  color: #222;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tile h2 {
+  font-size: 1rem;
+  margin: 0 0 4px 0;
+}
+
+.tile p {
+  font-size: 0.8rem;
+  color: #666;
+  margin: 0;
+}
