@@ -10,7 +10,7 @@ const Auth = (function () {
   function showApp() {
     document.getElementById('loginBox').style.display = 'none';
     document.getElementById('app').style.display = 'block';
-    if (window.Nav) Nav.render();
+    if (typeof Nav !== 'undefined' && Nav.render) Nav.render();
     if (readyCallback) readyCallback(client);
   }
 
