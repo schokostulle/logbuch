@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Logbuch – Farmstatistik</title>
+<title>Logbuch – Dashboard</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -17,41 +17,38 @@
 </div>
 
 <div id="app">
-  <h1>Farmstatistik</h1>
-  <div id="meta">Lade Daten…</div>
-  <button id="refresh">Aktualisieren</button>
-  <button id="logout">Abmelden</button>
+  <div id="navbar" class="navbar"></div>
+  <h1>Dashboard</h1>
+  <p class="small">Wähle ein Modul aus.</p>
 
-  <div class="tablewrap">
-  <table id="dataTable">
-    <thead>
-      <tr>
-        <th data-key="oz">Oz</th>
-        <th data-key="ig">IG</th>
-        <th data-key="i">I</th>
-        <th data-key="s">S</th>
-        <th data-key="distance">Entfernung</th>
-        <th data-key="fahrzeit_minuten">Fahrzeit</th>
-        <th>Rückkehr</th>
-        <th data-key="name">Ziel</th>
-        <th data-key="est_gold">Gold</th>
-        <th data-key="est_steine">Stein</th>
-        <th data-key="est_holz">Holz</th>
-        <th data-key="farmable_sum">Plünderbar</th>
-        <th data-key="kogg_empfehlung">Kogg</th>
-        <th data-key="status">Status</th>
-      </tr>
-    </thead>
-    <tbody id="tbody"></tbody>
-  </table>
+  <div class="tile-grid" id="tileGrid"></div>
+
+  <div style="margin-top:20px;">
+    <button id="logout">Abmelden</button>
   </div>
 </div>
 
-<!-- Reihenfolge wichtig: config vor auth vor Modul, Auth.init() zuletzt -->
+<!-- Reihenfolge wichtig: config vor auth vor nav, Auth.init() zuletzt -->
 <script src="config.js"></script>
 <script src="auth.js"></script>
-<script src="farmstatistik.js"></script>
-<script>Auth.init();</script>
+<script src="nav.js"></script>
+<script>
+  // Kacheln aus derselben Modul-Liste wie die Navigation aufbauen,
+  // damit ein neues Modul nur an einer Stelle (nav.js) ergänzt werden muss.
+  function renderTiles() {
+    const grid = document.getElementById('tileGrid');
+    grid.innerHTML = Nav.MODULES
+      .filter((m) => m.href !== 'index.html')
+      .map((m) => `
+        <a class="tile" href="${m.href}">
+          <h2>${m.label}</h2>
+          <p>Öffnen →</p>
+        </a>
+      `).join('');
+  }
+  Auth.onReady(renderTiles);
+  Auth.init();
+</script>
 
 </body>
 </html>
