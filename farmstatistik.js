@@ -61,11 +61,10 @@ const Farmstatistik = (function () {
         <td>${row.oz ?? ''}</td>
         <td>${row.ig ?? ''}</td>
         <td>${row.i ?? ''}</td>
-        <td>${row.s ? 'x' : ''}</td>
         <td>${row.distance !== null ? row.distance : '–'}</td>
         <td>${formatFahrzeit(row.fahrzeit_minuten)}</td>
         <td>${formatRueckkehr(row.fahrzeit_minuten)}</td>
-        <td>${row.name || ''}<br><span class="small">von ${row.nearest_village || '–'}</span></td>
+        <td>${row.nearest_village || '–'}</td>
         <td>${row.est_gold ?? '–'}</td>
         <td>${row.est_steine ?? '–'}</td>
         <td>${row.est_holz ?? '–'}</td>
