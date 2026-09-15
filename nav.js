@@ -6,7 +6,8 @@ const Nav = (function () {
   const MODULES = [
     { label: 'Dashboard', href: 'index.html' },
     { label: 'Farmstatistik', href: 'farmstatistik.html' },
-    { label: 'Freund: Farmstatistik', href: 'freund-dashboard.html' }
+    { label: 'Freund: Farmstatistik', href: 'freund-dashboard.html' },
+    { label: 'Rechner', href: 'rechner.html' }
     // Weiteres Modul: { label: 'Neuer Name', href: 'neue-datei.html' }
   ];
 
