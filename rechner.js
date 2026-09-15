@@ -70,61 +70,6 @@ function interpolateUnitTime(unitKey, level){
   return table[table.length-1][1];
 }
 
-// Forschung: baseCost/baseTime = Stufe 1
-const RESEARCH = {
-  schild: { name:'Schild', gold:250, stein:0, holz:120, time:timeToSeconds('1:22:48'), req:'Universität Stufe 1' },
-  speer:  { name:'Speer', gold:400, stein:40, holz:100, time:timeToSeconds('1:39:22'), req:'Universität Stufe 1' },
-  bogen:  { name:'Bogen', gold:350, stein:40, holz:50, time:timeToSeconds('1:46:40'), req:'Universität Stufe 5' },
-  kanone: { name:'Kanone', gold:4000, stein:3900, holz:2500, time:timeToSeconds('3:58:21'), req:'Universität Stufe 10' },
-};
-
-// Weltstruktur (für spätere Tools: Entfernungs-/Reisezeitrechner, Kartenansicht, Farmziel-Finder)
-// Koordinatenformat: x:y:z
-//   x = Ozean, angeordnet als quadratisches Raster (z.B. 3x3 = 9 Ozeane)
-//   y = Inselgruppe innerhalb eines Ozeans, angeordnet als quadratisches Raster (z.B. 10x10 = 100 Gruppen)
-//   z = Insel innerhalb einer Inselgruppe, angeordnet als quadratisches Raster (z.B. 4x4 = 16 Inseln)
-// Nicht jede Koordinate ist belegt; nicht jede belegte Insel hat einen Spieler (herrenlose Inseln möglich).
-const WORLD = {
-  oceanGridSize: 3,      // 3x3 -> 9 Ozeane
-  groupGridSize: 10,     // 10x10 -> 100 Inselgruppen je Ozean
-  islandGridSize: 4,     // 4x4 -> 16 Inseln je Gruppe
-  get oceanCount(){ return this.oceanGridSize * this.oceanGridSize; },
-  get groupsPerOcean(){ return this.groupGridSize * this.groupGridSize; },
-  get islandsPerGroup(){ return this.islandGridSize * this.islandGridSize; },
-  get maxIslandsTotal(){ return this.oceanCount * this.groupsPerOcean * this.islandsPerGroup; }
-};
-
-// Wandelt einen 1-basierten Index innerhalb eines quadratischen Rasters in Zeile/Spalte um.
-// Nummerierung: zeilenweise links->rechts, oben->unten (Index 1 = Zeile 0, Spalte 0).
-function coordToGrid(index, gridSize){
-  const i = index - 1;
-  return { row: Math.floor(i / gridSize), col: i % gridSize };
-}
-
-// Berechnet die globale 2D-Position (in "Feldern") einer Insel aus x:y:z.
-function globalPosition(x, y, z, world = WORLD){
-  const o = coordToGrid(x, world.oceanGridSize);   // Ozean im Ozean-Raster
-  const g = coordToGrid(y, world.groupGridSize);   // Gruppe im Gruppen-Raster (innerhalb des Ozeans)
-  const i = coordToGrid(z, world.islandGridSize);  // Insel im Insel-Raster (innerhalb der Gruppe)
-
-  const unitsPerOcean = world.groupGridSize * world.islandGridSize; // Felder je Ozean-Kante
-
-  return {
-    X: o.col * unitsPerOcean + g.col * world.islandGridSize + i.col,
-    Y: o.row * unitsPerOcean + g.row * world.islandGridSize + i.row
-  };
-}
-
-// Entfernung zweier Inseln in Seemeilen (euklidisch, mindestens 1 sm).
-function distanceSM(a, b, world = WORLD){
-  const posA = globalPosition(a.x, a.y, a.z, world);
-  const posB = globalPosition(b.x, b.y, b.z, world);
-  const dx = posA.X - posB.X;
-  const dy = posA.Y - posB.Y;
-  const raw = Math.sqrt(dx*dx + dy*dy);
-  return Math.max(1, Math.round(raw * 10) / 10);
-}
-
 // ---------- Berechnungen ----------
 function scaledCost(base, level){
   // Stufe 1 = base, jede weitere Stufe * 1.25
@@ -244,81 +189,6 @@ milSelect.addEventListener('change', renderMil);
 milQty.addEventListener('input', renderMil);
 milLevel.addEventListener('input', renderMil);
 
-// ---------- Forschung UI ----------
-const forSelect = document.getElementById('for-select');
-Object.entries(RESEARCH).forEach(([key,r])=>{
-  const opt = document.createElement('option');
-  opt.value = key; opt.textContent = r.name;
-  forSelect.appendChild(opt);
-});
-function renderFor(){
-  const r = RESEARCH[forSelect.value];
-  document.getElementById('for-req').textContent = 'Voraussetzung: ' + r.req;
-  buildLevelTable(document.getElementById('for-table'), r, 1, 10, false);
-}
-forSelect.addEventListener('change', renderFor);
-
-// ---------- Init ----------
-renderGeb();
-renderMil();
-renderFor();
-
-// ---------- Reisezeit UI ----------
-const reiseSchiff = document.getElementById('reise-schiff');
-Object.entries(MILITARY).forEach(([key,u])=>{
-  if(u.speedKn){
-    const opt = document.createElement('option');
-    opt.value = key; opt.textContent = `${u.name} (${u.speedKn} kn)`;
-    reiseSchiff.appendChild(opt);
-  }
-});
-
-const coordIds = ['start-x','start-y','start-z','ziel-x','ziel-y','ziel-z'];
-
-function renderReise(){
-  const rawStartX = document.getElementById('start-x').value;
-  const rawStartY = document.getElementById('start-y').value;
-  const rawStartZ = document.getElementById('start-z').value;
-  const rawZielX  = document.getElementById('ziel-x').value;
-  const rawZielY  = document.getElementById('ziel-y').value;
-  const rawZielZ  = document.getElementById('ziel-z').value;
-
-  const allFilled = [rawStartX,rawStartY,rawStartZ,rawZielX,rawZielY,rawZielZ].every(v => v !== '');
-
-  if(!allFilled){
-    document.getElementById('reise-distanz').textContent = '–';
-    document.getElementById('reise-speed').textContent = '–';
-    document.getElementById('reise-zeit-einfach').textContent = '–';
-    document.getElementById('reise-zeit-hinundzurueck').textContent = '–';
-    return;
-  }
-
-  const startX = parseInt(rawStartX,10);
-  const startY = parseInt(rawStartY,10);
-  const startZ = parseInt(rawStartZ,10);
-  const zielX  = parseInt(rawZielX,10);
-  const zielY  = parseInt(rawZielY,10);
-  const zielZ  = parseInt(rawZielZ,10);
-
-  const ship = MILITARY[reiseSchiff.value];
-  const dist = distanceSM(
-    { x:startX, y:startY, z:startZ },
-    { x:zielX, y:zielY, z:zielZ }
-  );
-
-  const hoursOneWay = dist / ship.speedKn;
-  const secOneWay = hoursOneWay * 3600;
-
-  document.getElementById('reise-distanz').textContent = dist.toFixed(1) + ' sm';
-  document.getElementById('reise-speed').textContent = ship.speedKn + ' kn';
-  document.getElementById('reise-zeit-einfach').textContent = secondsToTime(secOneWay);
-  document.getElementById('reise-zeit-hinundzurueck').textContent = secondsToTime(secOneWay * 2);
-}
-
-coordIds.forEach(id => document.getElementById(id).addEventListener('input', renderReise));
-reiseSchiff.addEventListener('change', renderReise);
-renderReise();
-
 // ==================== MEILENSTEIN 1 ====================
 // Portierung der Python-Simulation: einzige sequenzielle Bau-Warteschlange (Minen, Hauptgebäude,
 // Baracke-Struktur, Werft-Struktur) + zwei parallele, unabhängige Ausbildungsqueues (Baracke->Truppen,
@@ -416,4 +286,154 @@ function m1Simulate(mainOrder, werftOrder, cfg, collectLog){
         candidates.push([ts, 'main', {kind, newLevel, cost, time, idx: mainIdx}]);
       }
     } else {
-      candidates.push([mainBusyUntil, 'main_complete', null
+      candidates.push([mainBusyUntil, 'main_complete', null]);
+    }
+
+    if(barackeUnlocked){
+      if(barackeBusyUntil===null){
+        if(pendingSteinewerfer.length>0){
+          const item = pendingSteinewerfer[0];
+          const cost = [item.gold, item.stein, item.holz];
+          const dynTime = interpolateUnitTime('steinewerfer', levels.baracke) ?? item.time;
+          const ts = t + m1TimeToAfford(cost, res, r, cap);
+          candidates.push([ts, 'baracke', {cost, time:dynTime, name:item.name}]);
+        }
+      } else {
+        candidates.push([barackeBusyUntil, 'baracke_complete', null]);
+      }
+    }
+
+    if(werftUnlocked){
+      if(werftBusyUntil===null){
+        if(pendingShips.length>0){
+          const item = pendingShips[0];
+          const cost = [item.gold, item.stein, item.holz];
+          const unitKey = item.name==='Handelsschiff' ? 'handelsschiff' : 'fregatte';
+          const dynTime = interpolateUnitTime(unitKey, levels.werft) ?? item.time;
+          const ts = t + m1TimeToAfford(cost, res, r, cap);
+          candidates.push([ts, 'werft', {cost, time:dynTime, name:item.name}]);
+        }
+      } else {
+        candidates.push([werftBusyUntil, 'werft_complete', null]);
+      }
+    }
+
+    if(candidates.length===0){
+      if(allDone()) return {time:t, log};
+      return {time: Infinity, log};
+    }
+
+    candidates.sort((a,b)=>a[0]-b[0]);
+    const [ts, ctype, payload] = candidates[0];
+    if(!isFinite(ts)) return {time: Infinity, log};
+
+    const dt = ts - t;
+    if(dt > 0){ for(let i=0;i<3;i++) res[i] = Math.min(res[i] + r[i]*dt, cap[i]); }
+    t = ts;
+
+    if(ctype==='main'){
+      const {kind, newLevel, cost, time, idx} = payload;
+      res[0]-=cost[0]; res[1]-=cost[1]; res[2]-=cost[2];
+      mainBusyUntil = t + time; mainPendingKind = kind; mainPendingLevel = newLevel;
+      mainIdx = idx + 1;
+      if(log) log.push({group:'main', name: MAIN_NAMES[kind] + ' → Stufe ' + newLevel, start:t, end:t+time});
+    } else if(ctype==='main_complete'){
+      levels[mainPendingKind] = mainPendingLevel;
+      if(mainPendingKind==='baracke') barackeUnlocked = true;
+      if(mainPendingKind==='werft') werftUnlocked = true;
+      mainBusyUntil = null;
+    } else if(ctype==='baracke'){
+      const {cost, time, name} = payload;
+      res[0]-=cost[0]; res[1]-=cost[1]; res[2]-=cost[2];
+      barackeBusyUntil = t + time;
+      if(log) log.push({group:'baracke', name, start:t, end:t+time});
+    } else if(ctype==='baracke_complete'){
+      pendingSteinewerfer.shift();
+      barackeBusyUntil = null;
+    } else if(ctype==='werft'){
+      const {cost, time, name} = payload;
+      res[0]-=cost[0]; res[1]-=cost[1]; res[2]-=cost[2];
+      werftBusyUntil = t + time;
+      if(log) log.push({group:'werft', name, start:t, end:t+time});
+    } else if(ctype==='werft_complete'){
+      pendingShips.shift();
+      werftBusyUntil = null;
+    }
+
+    if(allDone()) return {time:t, log};
+  }
+}
+
+const M1_TAIL = ['hg','hg','hg','hg','werft','baracke'];
+
+function m1ScoreOrder(mineOrder, cfg){
+  const order = mineOrder.concat(M1_TAIL);
+  const t1 = m1Simulate(order, ['handelsschiff','fregatte'], cfg, false).time;
+  const t2 = m1Simulate(order, ['fregatte','handelsschiff'], cfg, false).time;
+  return Math.min(t1, t2);
+}
+function m1RandomMines(maxEach){
+  const g = Math.floor(Math.random()*(maxEach+1));
+  const s = Math.floor(Math.random()*(maxEach+1));
+  const h = Math.floor(Math.random()*(maxEach+1));
+  let pool = [];
+  for(let i=0;i<g;i++) pool.push('gold');
+  for(let i=0;i<s;i++) pool.push('stein');
+  for(let i=0;i<h;i++) pool.push('holz');
+  for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+  return pool;
+}
+function m1Mutate(mines){
+  mines = mines.slice();
+  const ops = ['swap','insert','remove','add','add'];
+  const op = ops[Math.floor(Math.random()*ops.length)];
+  if(op==='swap' && mines.length>=2){
+    const i=Math.floor(Math.random()*mines.length);
+    const j=Math.floor(Math.random()*mines.length);
+    [mines[i],mines[j]]=[mines[j],mines[i]];
+  } else if(op==='insert' && mines.length>=1){
+    const i=Math.floor(Math.random()*mines.length);
+    const item = mines.splice(i,1)[0];
+    const j=Math.floor(Math.random()*(mines.length+1));
+    mines.splice(j,0,item);
+  } else if(op==='remove' && mines.length>0){
+    mines.splice(Math.floor(Math.random()*mines.length),1);
+  } else if(op==='add'){
+    const kinds=['gold','stein','holz'];
+    const kind = kinds[Math.floor(Math.random()*3)];
+    const j=Math.floor(Math.random()*(mines.length+1));
+    mines.splice(j,0,kind);
+  }
+  return mines;
+}
+function m1Search(cfg, budgetMs){
+  const t0 = performance.now();
+  let current = m1RandomMines(8);
+  let currentScore = m1ScoreOrder(current, cfg);
+  let best = current, bestScore = currentScore;
+  let stale = 0;
+  while(performance.now()-t0 < budgetMs){
+    const cand = m1Mutate(current);
+    const s = m1ScoreOrder(cand, cfg);
+    if(s <= currentScore){
+      current = cand; currentScore = s;
+      if(s < bestScore){ best = cand; bestScore = s; stale = 0; } else { stale++; }
+    } else {
+      stale++;
+      if(Math.random() < 0.03){ current = cand; currentScore = s; }
+    }
+    if(stale > 3000){
+      current = m1RandomMines(8);
+      currentScore = m1ScoreOrder(current, cfg);
+      stale = 0;
+    }
+  }
+  return {order: best.concat(M1_TAIL), score: bestScore};
+}
+
+document.getElementById('m1-calc-btn').addEventListener('click', ()=>{
+  const cfg = {
+    startRes: parseFloat(document.getElementById('m1-startres').value) || 500,
+    prodGold: parseFloat(document.getElementById('m1-prod-gold').value) || 4,
+    prodStein: parseFloat(document.getElementById('m1-prod-stein').value) || 2,
+    prodHolz: par
