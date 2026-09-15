@@ -38,11 +38,7 @@
   <nav class="tabs">
     <button class="active" data-tab="gebaeude">Gebäude</button>
     <button data-tab="militaer">Militär</button>
-    <button data-tab="forschung">Forschung</button>
-    <button data-tab="reisezeit">Reisezeit</button>
     <button data-tab="meilenstein1">Meilenstein 1</button>
-    <button data-tab="meilenstein2">Meilenstein 2</button>
-    <button data-tab="farmstatistik">Farm-Statistik</button>
   </nav>
 
   <!-- GEBÄUDE -->
@@ -96,61 +92,6 @@
     </div>
   </section>
 
-  <!-- FORSCHUNG -->
-  <section class="panel" id="panel-forschung">
-    <div class="field" style="max-width:360px;">
-      <label for="for-select">Forschung</label>
-      <select id="for-select"></select>
-    </div>
-    <div class="req-note" id="for-req"></div>
-    <div class="table-scroll">
-      <table class="level-table" id="for-table">
-        <thead></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
-
-  <footer class="note">
-    Annahme zur Stufen-Skalierung: Die Basiswerte der Tabelle entsprechen Stufe 1 (Kosten/Zeit) bzw. Stufe 0 (Produktions-/Kapazitätswerte). Jede weitere Stufe multipliziert Kosten, Bauzeit und die jeweilige Eigenschaft mit Faktor 1,25. Militäreinheiten und Schiffe besitzen keine Stufen; die Ausbildungszeit „gesamt“ nimmt eine sequenzielle Ausbildungsschlange an.
-  </footer>
-
-  <!-- REISEZEIT -->
-  <section class="panel" id="panel-reisezeit">
-    <div class="row">
-      <div>
-        <div class="field">
-          <label>Start-Koordinate (x:y:z)</label>
-          <div style="display:flex; gap:8px;">
-            <input type="number" id="start-x" min="1" max="9" placeholder="x">
-            <input type="number" id="start-y" min="1" max="100" placeholder="y">
-            <input type="number" id="start-z" min="1" max="16" placeholder="z">
-          </div>
-        </div>
-        <div class="field">
-          <label>Ziel-Koordinate (x:y:z)</label>
-          <div style="display:flex; gap:8px;">
-            <input type="number" id="ziel-x" min="1" max="9" placeholder="x">
-            <input type="number" id="ziel-y" min="1" max="100" placeholder="y">
-            <input type="number" id="ziel-z" min="1" max="16" placeholder="z">
-          </div>
-        </div>
-        <div class="field">
-          <label for="reise-schiff">Schiffstyp</label>
-          <select id="reise-schiff"></select>
-        </div>
-      </div>
-      <div class="result">
-        <h3>Reisezeit</h3>
-        <div class="meta-line"><span class="k">Entfernung</span><span class="v" id="reise-distanz">–</span></div>
-        <div class="meta-line"><span class="k">Geschwindigkeit</span><span class="v" id="reise-speed">–</span></div>
-        <div class="meta-line"><span class="k">Reisezeit (einfach)</span><span class="v" id="reise-zeit-einfach">–</span></div>
-        <div class="meta-line qty-total"><span class="k">Reisezeit (Hin- und Rückweg)</span><span class="v" id="reise-zeit-hinundzurueck">–</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- MEILENSTEIN 1 -->
   <section class="panel" id="panel-meilenstein1">
     <p style="font-size:0.88rem; color:var(--ink-soft); margin-top:0;">
       Berechnet den schnellsten Weg zur ersten Farmflotte (1× Fregatte, 1× Handelsschiff, 5× Steinewerfer) ab Serverstart.
@@ -220,123 +161,6 @@
       </div>
     </div>
   </section>
-
-  <!-- MEILENSTEIN 2 -->
-  <section class="panel" id="panel-meilenstein2">
-    <p style="font-size:0.88rem; color:var(--ink-soft); margin-top:0;">
-      Berechnet die geschätzte Dauer bis zum Kolonialschiff (nach Meilenstein 1), kalibriert an echten
-      Erfahrungswerten (Ramp-up über 9 Tage, Beute/Fahrt ≈ 0,9× Handelsschiff-Kapazität im eingespielten
-      Zustand, ~30 gleichzeitig aktive Flotten als Referenz, plus physikalische Bauzeit-Untergrenze für
-      Werft/Lager/Kolonialschiff).
-    </p>
-    <div class="row">
-      <div>
-        <div class="field">
-          <label for="m2-gold-lv">Goldbergwerk-Stufe (für Minen-Produktion)</label>
-          <input type="number" id="m2-gold-lv" value="4" min="0" max="20">
-        </div>
-        <div class="field">
-          <label for="m2-stein-lv">Steinbruch-Stufe</label>
-          <input type="number" id="m2-stein-lv" value="4" min="0" max="20">
-        </div>
-        <div class="field">
-          <label for="m2-holz-lv">Holzfällerhütte-Stufe</label>
-          <input type="number" id="m2-holz-lv" value="4" min="0" max="20">
-        </div>
-        <div class="field">
-          <label for="m2-lagercap">Basis-Lagerkapazität (Stufe 0)</label>
-          <input type="number" id="m2-lagercap" value="1000">
-        </div>
-        <div class="field">
-          <label for="m2-hscap">Handelsschiff-Kapazität</label>
-          <input type="number" id="m2-hscap" value="500">
-        </div>
-        <div class="field">
-          <label for="m2-zielflotten">Ziel-Flottenanzahl (Basis-Flotten am Ende)</label>
-          <input type="number" id="m2-zielflotten" value="30" min="1">
-        </div>
-        <div class="field">
-          <label for="m2-farmtage">Farmdauer (Tage)</label>
-          <input type="number" id="m2-farmtage" value="14" min="1">
-        </div>
-        <button id="m2-calc-btn" style="width:100%; padding:11px; background:var(--navy); color:#F3EAD3; border:none; border-radius:var(--radius); font-family:'Spectral',serif; font-weight:600; font-size:1rem; cursor:pointer;">Berechnen</button>
-      </div>
-      <div class="result" id="m2-result" style="display:none;">
-        <h3>Ergebnis</h3>
-        <div class="meta-line"><span class="k">Gesamtbedarf (Werft20, Lager*, HG10, Baracke10, Uni8, Forschung, Kolonialschiff, Flotten)</span><span class="v" id="m2-need">–</span></div>
-        <div class="meta-line"><span class="k">Geschätzter Gesamtertrag/Tag (Plateau)</span><span class="v" id="m2-plateau">–</span></div>
-        <div class="meta-line qty-total"><span class="k">Geschätzte Dauer</span><span class="v" id="m2-duration">–</span></div>
-      </div>
-    </div>
-    <div id="m2-chart-wrap" style="display:none; margin-top:20px;">
-      <h3 style="font-size:1.05rem;">Kumulierter Ertrag vs. Bedarf</h3>
-      <div class="table-scroll">
-        <table class="level-table" id="m2-table">
-          <thead><tr><th>Tag</th><th>Fahrten/Tag (geschätzt)</th><th>Ertrag/Tag</th><th>Kumuliert</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <!-- FARM-STATISTIK -->
-  <section class="panel" id="panel-farmstatistik">
-    <p style="font-size:0.88rem; color:var(--ink-soft); margin-top:0;">
-      Kampfberichte (die komplette Liste, am Stück kopiert) hier einfügen. Der Rechner erkennt automatisch
-      alle enthaltenen Berichte, summiert die Beute und schätzt den aktuellen Bestand jeder Insel
-      (Zeit seit letztem Besuch × Basis-Regeneration, gedeckelt bei 90% der Lagerkapazität) –
-      unter der Annahme, dass niemand außer dir diese Inseln anfährt. Ergebnisse werden lokal in
-      diesem Browser gespeichert und bei jedem weiteren Einfügen ergänzt.
-    </p>
-
-    <div class="result" style="margin-bottom:18px;">
-      <h3>Supabase-Verbindung</h3>
-      <p style="font-size:0.78rem; color:var(--ink-soft); margin-top:-6px;">
-        Einmal pro Browser eingeben – wird nur lokal gespeichert, nicht im Dateicode.
-      </p>
-      <div class="field">
-        <label for="fs-sb-url">Projekt-URL</label>
-        <input type="text" id="fs-sb-url" placeholder="https://xxxxx.supabase.co">
-      </div>
-      <div class="field">
-        <label for="fs-sb-key">Anon/Public API-Key</label>
-        <input type="text" id="fs-sb-key" placeholder="eyJhbGciOi...">
-      </div>
-      <button id="fs-sb-connect-btn" style="width:100%; padding:10px; background:var(--navy); color:#F3EAD3; border:none; border-radius:var(--radius); font-family:'Spectral',serif; font-weight:600; cursor:pointer;">Verbinden &amp; speichern</button>
-      <div class="req-note" id="fs-sb-status" style="margin-top:8px;"></div>
-    </div>
-
-    <div class="field">
-      <label for="fs-input">Kampfberichte einfügen</label>
-      <textarea id="fs-input" rows="8" style="width:100%; padding:10px; font-family:'Source Sans 3',sans-serif; font-size:0.85rem; border:1px solid var(--stone); border-radius:var(--radius); background:#FBF7EC; color:var(--ink);" placeholder="Kompletten Text der Kampfbericht-Liste hier einfügen ..."></textarea>
-    </div>
-    <div style="display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;">
-      <button id="fs-parse-btn" style="flex:1; min-width:180px; padding:11px; background:var(--navy); color:#F3EAD3; border:none; border-radius:var(--radius); font-family:'Spectral',serif; font-weight:600; font-size:1rem; cursor:pointer;">Berichte auswerten &amp; hinzufügen</button>
-      <button id="fs-reset-btn" style="padding:11px 18px; background:var(--parchment-dark); color:var(--ink); border:1px solid var(--stone); border-radius:var(--radius); font-family:'Source Sans 3',sans-serif; cursor:pointer;">Statistik zurücksetzen</button>
-    </div>
-    <div class="req-note" id="fs-parse-status"></div>
-
-    <div class="result" style="margin-bottom:22px;">
-      <h3>Gesamtübersicht</h3>
-      <div class="meta-line"><span class="k">Erfasste Fahrten</span><span class="v" id="fs-out-fahrten">0</span></div>
-      <div class="meta-line"><span class="k">Gold gesamt</span><span class="v" id="fs-out-gold">0</span></div>
-      <div class="meta-line"><span class="k">Stein gesamt</span><span class="v" id="fs-out-stein">0</span></div>
-      <div class="meta-line"><span class="k">Holz gesamt</span><span class="v" id="fs-out-holz">0</span></div>
-      <div class="meta-line qty-total"><span class="k">Kombiniert gesamt</span><span class="v" id="fs-out-kombiniert">0</span></div>
-    </div>
-
-    <h3 style="font-size:1.05rem;">Je Zielinsel</h3>
-    <p style="font-size:0.8rem; color:var(--ink-soft); margin-top:-6px;">
-      "Geschätzter Bestand jetzt" nimmt an, dass seit dem letzten erfassten Besuch niemand sonst dort geplündert hat.
-    </p>
-    <div class="table-scroll">
-      <table class="level-table" id="fs-table">
-        <thead><tr><th>Insel</th><th>Fahrten</th><th>Letzter Besuch</th><th>Ø Beute/Fahrt</th><th>Geschätzter Bestand jetzt</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
-
 </div>
 
 
