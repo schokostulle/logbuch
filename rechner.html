@@ -16,6 +16,15 @@
   <div id="loginError"></div>
 </div>
 
+<div id="jsErrorBanner" style="display:none;position:fixed;top:0;left:0;right:0;background:#c0392b;color:#fff;padding:10px 14px;font-family:monospace;font-size:0.8rem;z-index:99999;white-space:pre-wrap;"></div>
+<script>
+  window.addEventListener('error', function (e) {
+    const banner = document.getElementById('jsErrorBanner');
+    banner.style.display = 'block';
+    banner.textContent = 'JS-Fehler: ' + e.message + '\n(Datei: ' + (e.filename || '?').split('/').pop() + ', Zeile: ' + e.lineno + ')';
+  });
+</script>
+
 <div id="app">
   <div id="navbar" class="navbar"></div>
 <div class="wrap rechner-theme">
