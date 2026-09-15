@@ -436,4 +436,75 @@ document.getElementById('m1-calc-btn').addEventListener('click', ()=>{
     startRes: parseFloat(document.getElementById('m1-startres').value) || 500,
     prodGold: parseFloat(document.getElementById('m1-prod-gold').value) || 4,
     prodStein: parseFloat(document.getElementById('m1-prod-stein').value) || 2,
-    prodHolz: par
+      prodHolz: parseFloat(document.getElementById('m1-prod-holz').value) || 3,
+    lagerCap: parseFloat(document.getElementById('m1-lagercap').value) || 1000
+  };
+  document.getElementById('m1-loading').style.display = 'block';
+  document.getElementById('m1-result').style.display = 'none';
+  document.getElementById('m1-timeline-wrap').style.display = 'none';
+
+  setTimeout(()=>{
+    const {order, score} = m1Search(cfg, 2500);
+    const sim1 = m1Simulate(order, ['handelsschiff','fregatte'], cfg, true);
+    const sim2 = m1Simulate(order, ['fregatte','handelsschiff'], cfg, true);
+    const best = sim1.time <= sim2.time ? sim1 : sim2;
+
+    const mineOnly = order.filter(k => k!=='hg' && k!=='baracke' && k!=='werft');
+    const gCount = mineOnly.filter(k=>k==='gold').length;
+    const sCount = mineOnly.filter(k=>k==='stein').length;
+    const hCount = mineOnly.filter(k=>k==='holz').length;
+
+    document.getElementById('m1-mine-combo').textContent = `Gold ${gCount} / Stein ${sCount} / Holz ${hCount}`;
+
+    const startInput = document.getElementById('m1-serverstart').value;
+    const serverStart = startInput ? new Date(startInput) : new Date();
+    const fmtDate = (offsetSeconds) => {
+      const d = new Date(serverStart.getTime() + offsetSeconds*1000);
+      return d.toLocaleString('de-DE', {weekday:'short', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'});
+    };
+
+    document.getElementById('m1-finish-date').textContent = fmtDate(best.time) + (startInput ? '' : '  (ohne Serverstart-Angabe: ab jetzt gerechnet)');
+
+    const rowHtml = (name, start, end, cls) => `<tr class="${cls}"><td>${name}</td><td>${fmtDate(start)}</td><td>${fmtDate(end)}</td></tr>`;
+
+    const now = new Date();
+
+    // Bestimmt je Eintrag den Status (erledigt / laeuft gerade / naechster anstehender Schritt / zukuenftig)
+    // relativ zum aktuellen Datum - getrennt pro Tabelle, da die drei Queues parallel/unabhaengig laufen.
+    function renderGroup(entries, mapName){
+      let nextMarked = false;
+      return entries.map(e => {
+        const startDate = new Date(serverStart.getTime() + e.start*1000);
+        const endDate = new Date(serverStart.getTime() + e.end*1000);
+        let cls = '';
+        if(endDate <= now){
+          cls = 'row-done';
+        } else if(startDate <= now && now < endDate){
+          cls = 'row-active';
+        } else if(!nextMarked){
+          cls = 'row-next';
+          nextMarked = true;
+        }
+        return rowHtml(mapName(e), e.start, e.end, cls);
+      }).join('');
+    }
+
+    const tbodyMain = document.querySelector('#m1-table-main tbody');
+    const tbodyWerft = document.querySelector('#m1-table-werft tbody');
+    const tbodyBaracke = document.querySelector('#m1-table-baracke tbody');
+
+    tbodyMain.innerHTML = renderGroup(best.log.filter(e=>e.group==='main'), e=>e.name);
+    tbodyWerft.innerHTML = renderGroup(best.log.filter(e=>e.group==='werft'), e=>e.name);
+
+    let stCount = 0;
+    tbodyBaracke.innerHTML = renderGroup(best.log.filter(e=>e.group==='baracke'), e => {
+      stCount++;
+      return e.name === 'Steinewerfer' ? `Steinewerfer #${stCount}` : e.name;
+    });
+
+    document.getElementById('m1-loading').style.display = 'none';
+    document.getElementById('m1-result').style.display = 'block';
+    document.getElementById('m1-timeline-wrap').style.display = 'block';
+  }, 50);
+});
+
